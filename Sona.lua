@@ -2,7 +2,7 @@
 
 require('Dlib')
 local version = 1
-local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/Sona.lua", "Rudo-GoS-Scripts\\Sona", version)
+local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Sona.lua", "Rudo-GoS-Scripts\\Sona", version)
 if UP.newVersion() then UP.update() end
 
 if GetObjectName(GetMyHero()) == "Sona" then
