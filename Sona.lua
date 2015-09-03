@@ -38,7 +38,7 @@ DrawConfig.addParam("R", "Draw R Dmg", SCRIPT_PARAM_ONOFF, true)
 AutoLvlUp = scriptConfig("AutoLevel", "Auto Level Up")
 AutoLvlUp.addParam("EnableQ", "Enable Auto LvlUp Q", SCRIPT_PARAM_ONOFF, false)
 AutoLvlUp.addParam("EnableW", "Enable Auto LvlUp W", SCRIPT_PARAM_ONOFF, false)
--- Print
+-- Print Chat
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
