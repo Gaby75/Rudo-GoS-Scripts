@@ -1,7 +1,7 @@
 -- Credit: Thank to Zipppy, Cloud and Inferno to heal code
 
 require('Dlib')
-local version = 1
+local version = 2
 local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
 if UP.newVersion() then PrintChat("Rx Sona is Updated") and UP.update() end
 
