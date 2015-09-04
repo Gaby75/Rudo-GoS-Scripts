@@ -1,7 +1,7 @@
 -- Credit: Thank to Zipppy, Cloud and Inferno to heal code
 
 require('Dlib')
-local version = 2
+local version = 3
 local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
 if UP.newVersion() then PrintChat("Rx Sona is Updated") and UP.update() end
 
@@ -42,7 +42,7 @@ AutoLvlUp.addParam("EnableW", "Enable Auto LvlUp W", SCRIPT_PARAM_ONOFF, false)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.2"
+local ver = "Version: 0.3"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
@@ -61,7 +61,7 @@ AutoSpell()
 local unit = GetCurrentTarget()
         if IWalkConfig.Combo then
               local target = GetTarget(1100, DAMAGE_MAGIC)
-                if ValidTarget(target, 1100) then
+                if ValidTarget(target, 845) then
                        
 					    if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, GetCastRange(myHero,_Q)) and Config.Q then
                         CastSpell(_Q)
@@ -99,12 +99,12 @@ end)
  function Killsteal()  
               for i,enemy in pairs(GetEnemyHeroes()) do  
 			  if ValidTarget(target, 845) then
- if CanUseSpell(myHero,_Q) and ValidTarget(enemy, GetCastRange(myHero,_Q)) and KSConfig.KSQ and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, (40*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero))) then
+ if CanUseSpell(myHero,_Q) == READY and ValidTarget(enemy, GetCastRange(myHero,_Q)) and KSConfig.KSQ and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, (49*GetCastLevel(myHero,_Q) + 5 + 0.5*GetBonusAP(myHero))) then
  CastSpell(_Q)
 end 
               end
  			  if ValidTarget(target, 945) then
- if CanUseSpell(myHero,_R) and ValidTarget(enemy, GetCastRange(myHero,_R)) and KSConfig.KSR and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, (150*GetCastLevel(myHero,_R) + 0.5*GetBonusAP(myHero))) then
+ if CanUseSpell(myHero,_R) == READY and ValidTarget(enemy, GetCastRange(myHero,_R)) and KSConfig.KSR and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, (110*GetCastLevel(myHero,_R) + 20 + 0.5*GetBonusAP(myHero))) then
  CastSpell(_R)
  end
               end
@@ -121,7 +121,7 @@ end
  end
  end
  end
- if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.5 and QConfig.AutoW then
+ if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and QConfig.AutoW then
     CastSpell(_W)
  end
  if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and QConfig.AutoE then
@@ -141,12 +141,12 @@ end
  function DrawDMG()
 local unit = GetCurrentTarget()
 if ValidTarget(unit, 1150) then
-local Qdmg = CalcDamage(myHero, unit, 0,  (40*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero)))
+local Qdmg = CalcDamage(myHero, unit, 0, (49*GetCastLevel(myHero,_Q) + 5 + 0.5*GetBonusAP(myHero)))
 	if CanUseSpell(myHero,_Q) == READY and DrawConfig.Q then
 		DrawDmgOverHpBar(unit,GetCurrentHP(unit),Qdmg,0,0xff00ff00)
 	end
 
-local Rdmg = CalcDamage(myHero, unit, 0,  (150*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero)))
+local Rdmg = CalcDamage(myHero, unit, 0,  (110*GetCastLevel(myHero,_R) + 20 + 0.5*GetBonusAP(myHero)))
 	if CanUseSpell(myHero,_R) == READY and DrawConfig.R then
 		DrawDmgOverHpBar(unit,GetCurrentHP(unit),Rdmg,0,0xff00f000)	
 	end
@@ -232,8 +232,6 @@ elseif GetLevel(myHero) == 18 then
 end
 end
 
-PrintChat(string.format("<font color='#FF0000'>Simple Script </font><font color='#FFFF00'>Sona by Rudo : </font><font color='#08F7F3'>Loaded Success</font>")) 
-
 require 'deLibrary'
 
 ------------------------------------------------------------------------------------------------------------------
@@ -260,7 +258,7 @@ BattleRandomHoldTime =      2000,
 local AutoHealControl = {
 OurHealthCap =      20,
 InPeaceMode =       50,
-InBattleMode =      75,
+InBattleMode =      80,
 --Untested next
 UseNaviSystem =     false,
 MaxDistForNavi =    1100,
@@ -483,6 +481,8 @@ function DoLoop()
     -- End of script
 end
 OnLoop(function(arg) DoLoop() end)
+
+PrintChat(string.format("<font color='#FF0000'>Rx Scripts </font><font color='#FFFF00'>Sona by Rudo : </font><font color='#08F7F3'>Loaded Success</font>")) 
 
 end
 
