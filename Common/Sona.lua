@@ -3,7 +3,7 @@
 require('Dlib')
 local version = 3
 local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
-if UP.newVersion() then PrintChat("Rx Sona is Updated") and UP.update() end
+if UP.newVersion() then UP.update() end
 
 if GetObjectName(GetMyHero()) == "Sona" then
 -- Combo
