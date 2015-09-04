@@ -42,7 +42,7 @@ AutoLvlUp.addParam("EnableW", "Enable Auto LvlUp W", SCRIPT_PARAM_ONOFF, false)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.3"
+local ver = "Version: 0.4"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
