@@ -3,7 +3,9 @@
 require('Dlib')
 local version = 1
 local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
-if UP.newVersion() then UP.update() end
+if UP.newVersion() then UP.update() 
+PrintChat("Rx Sona is Updated")
+end
 
 if GetObjectName(GetMyHero()) == "Sona" then
 -- Combo
@@ -60,8 +62,8 @@ AutoSpell()
 
 local unit = GetCurrentTarget()
         if IWalkConfig.Combo then
-              local target = GetTarget(945, DAMAGE_MAGIC)
-                if ValidTarget(target, 945) then
+              local target = GetTarget(1100, DAMAGE_MAGIC)
+                if ValidTarget(target, 1100) then
                        
 					    if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, GetCastRange(myHero,_Q)) and Config.Q then
                         CastSpell(_Q)
@@ -84,8 +86,8 @@ OnLoop(function(myHero)
 
         if IWalkConfig.Harass then
               for i,enemy in pairs(GetEnemyHeroes()) do  
-              local target = GetTarget(845, DAMAGE_MAGIC)
-                if ValidTarget(target, 845) then
+              local target = GetTarget(840, DAMAGE_MAGIC)
+                if ValidTarget(target, 840) then
 					    if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, GetCastRange(myHero,_Q)) and Config.Q then
                         CastSpell(_Q)
 
