@@ -1,4 +1,4 @@
--- Credit: Thank to Zipppy, Cloud Inferno because help me
+-- Credit: Thank to Zipppy, Cloud and Inferno Inferno because help me
 
 require('Dlib')
 local version = 5
@@ -43,7 +43,7 @@ local AtSpell = root.addItem(SubMenu.new("Auto Spell"))
 	local ASQ = AtSpell.addItem(MenuBool.new("Auto Q",true))
 	local ASW = AtSpell.addItem(MenuBool.new("Auto W",true))
 	local ASE = AtSpell.addItem(MenuBool.new("Auto E",true))
-	local ASMana = AtSpell.addItem(MenuSlider.new("Auto Spell if My %MP >", 10, 0, 50, 5))
+	local ASMana = AtSpell.addItem(MenuSlider.new("Auto Spell if My %MP >", 10, 0, 60, 1))
     
 -- Drawings Menu --
 local Drawings = root.addItem(SubMenu("Drawings"))
@@ -51,6 +51,7 @@ local Drawings = root.addItem(SubMenu("Drawings"))
 	local DrawW = Drawings.addItem(MenuBool.new("Range W",true))
 	local DrawE = Drawings.addItem(MenuBool.new("Range E",true))
 	local DrawR = Drawings.addItem(MenuBool.new("Range R",true))
+	local DrawText = Drawings.addItem(MenuBool.new("Draw Test",true))
 	
 -- Misc Mennu --
 local Misc = root.addItem(SubMenu("Misc"))
@@ -75,7 +76,7 @@ PrintChat(textTable[3])
 PrintChat(textTable[4])
 -- End Print --
 
-	
+require('IAC')		
 myIAC = IAC()
 
 CHANELLING_SPELLS = {
@@ -175,18 +176,11 @@ local leveltable = { _W, _Q, _E, _W, _W, _R, _W, _W, _Q, _Q, _R, _Q, _Q, _E, _E,
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
 
-local HeroPos = GetOrigin(myHero)
-if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
-if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
-if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
-if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
-
     if (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then 
               for i,enemy in pairs(GetEnemyHeroes()) do				  
 	local target = GetCurrentTarget()
       if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue() then
 	  CastSpell(_Q)
- end
  end
  end
  if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and ASW.getValue then
@@ -195,9 +189,25 @@ if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff
  if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and ASE.getValue then
     CastSpell(_E)
  end
+ end
+ local HeroPos = GetOrigin(myHero)
+if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
+if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
+if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+ if DrawText.getValue() then
+	for _, enemy in pairs(GetEnemyHeroes()) do
+		if ValidTarget(enemy) then
+		    local enemyPos = GetOrigin(enemy)
+			local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
+			local enemyText, color = GetDrawText(enemy)
+			DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
+		end
+	end
+end
     end)
 
-require 'deLibrary'
+require ('deLibrary')
 
 ------------------------------------------------------------------------------------------------------------------
 -- You can change everything below this line
