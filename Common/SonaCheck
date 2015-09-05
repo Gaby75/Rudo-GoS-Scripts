@@ -176,21 +176,6 @@ local leveltable = { _W, _Q, _E, _W, _W, _R, _W, _W, _Q, _Q, _R, _Q, _Q, _E, _E,
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
 
-local HeroPos = GetOrigin(myHero)
-if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
-if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
-if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
-if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
- if DrawText.getValue() then
-	for _, enemy in pairs(GetEnemyHeroes()) do
-		if ValidTarget(enemy) then
-		    local enemyPos = GetOrigin(enemy)
-			local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
-			local enemyText, color = GetDrawText(enemy)
-			DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
-		end
-	end
-end
     if (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then 
               for i,enemy in pairs(GetEnemyHeroes()) do				  
 	local target = GetCurrentTarget()
@@ -205,6 +190,21 @@ end
     CastSpell(_E)
  end
  end
+ local HeroPos = GetOrigin(myHero)
+if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
+if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
+if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+ if DrawText.getValue() then
+	for _, enemy in pairs(GetEnemyHeroes()) do
+		if ValidTarget(enemy) then
+		    local enemyPos = GetOrigin(enemy)
+			local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
+			local enemyText, color = GetDrawText(enemy)
+			DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
+		end
+	end
+end
     end)
 
 require ('deLibrary')
