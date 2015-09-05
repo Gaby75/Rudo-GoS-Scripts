@@ -1,236 +1,201 @@
--- Credit: Thank to Zipppy, Cloud and Inferno to heal code
+-- Credit: Thank to Zipppy, Cloud Inferno because help me
 
 require('Dlib')
-local version = 3
+local version = 5
 local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
 if UP.newVersion() then UP.update() end
+----------------------------------------------------------------------
 
-if GetObjectName(GetMyHero()) == "Sona" then
--- Combo
-Config = scriptConfig("Sona", "Combo Sona")
-Config.addParam("Q", "Use Q", SCRIPT_PARAM_ONOFF, true)
-Config.addParam("W", "Use W", SCRIPT_PARAM_ONOFF, true)
-Config.addParam("E", "Use E", SCRIPT_PARAM_ONOFF, true)
-Config.addParam("R", "Use R", SCRIPT_PARAM_ONOFF, true)
--- Harass Enemy
-HarassConfig = scriptConfig("Harass", "Harass:")
-HarassConfig.addParam("HarassQ", "Harass Q (C)", SCRIPT_PARAM_ONOFF, true)
--- Auto Q
-QConfig = scriptConfig("AutoSpell", "Auto Spell")
-QConfig.addParam("AutoQ", "Enable AutoQ", SCRIPT_PARAM_ONOFF, true)
-QConfig.addParam("AutoW", "Enable AutoW", SCRIPT_PARAM_ONOFF, true)
-QConfig.addParam("AutoE", "Enable AutoE", SCRIPT_PARAM_ONOFF, true)
--- Kill Steal
-KSConfig = scriptConfig("KS", "Killsteal:")
-KSConfig.addParam("KSQ", "Killsteal with Q", SCRIPT_PARAM_ONOFF, true)
-KSConfig.addParam("KSR", "Killsteal with R", SCRIPT_PARAM_ONOFF, false)
--- Range Draw
-DrawingsConfig = scriptConfig("Drawings", "Drawings")
-DrawingsConfig.addParam("DrawQ","Draw Q", SCRIPT_PARAM_ONOFF, true)
-DrawingsConfig.addParam("DrawW","Draw W", SCRIPT_PARAM_ONOFF, true)
-DrawingsConfig.addParam("DrawE","Draw E", SCRIPT_PARAM_ONOFF, true)
-DrawingsConfig.addParam("DrawR","Draw R", SCRIPT_PARAM_ONOFF, true)
--- Damage Draw
-DrawConfig = scriptConfig("DrawDMG", "Damage Draw")
-DrawConfig.addParam("Q", "Draw Q Dmg", SCRIPT_PARAM_ONOFF, true)
-DrawConfig.addParam("R", "Draw R Dmg", SCRIPT_PARAM_ONOFF, true)
--- Auto Level UP
-AutoLvlUp = scriptConfig("AutoLevel", "Auto Level Up")
-AutoLvlUp.addParam("EnableQ", "Enable Auto LvlUp Q", SCRIPT_PARAM_ONOFF, false)
-AutoLvlUp.addParam("EnableW", "Enable Auto LvlUp W", SCRIPT_PARAM_ONOFF, false)
--- Print
+DelayAction(function ()
+        for _, imenu in pairs(menuTable) do
+                local submenu = menu.addItem(SubMenu.new(imenu.name))
+                for _,subImenu in pairs(imenu) do
+                        if subImenu.type == SCRIPT_PARAM_ONOFF then
+                                local ggeasy = submenu.addItem(MenuBool.new(subImenu.t, subImenu.value))
+                                OnLoop(function(myHero) subImenu.value = ggeasy.getValue() end)
+                        elseif subImenu.type == SCRIPT_PARAM_KEYDOWN then
+                                local ggeasy = submenu.addItem(MenuKeyBind.new(subImenu.t, subImenu.key))
+                                OnLoop(function(myHero) subImenu.key = ggeasy.getValue(true) end)
+                        elseif subImenu.type == SCRIPT_PARAM_INFO then
+                                submenu.addItem(MenuSeparator.new(subImenu.t))
+                        end
+                end
+        end
+        _G.DrawMenu = function ( ... )  end
+end, 1000)
+
+-- Main Menu --
+local root = menu.addItem(SubMenu.new("Rx Sona"))
+    
+-- Combo Menu --
+local Combo = root.addItem(SubMenu.new("Combo"))
+	local QCB = Combo.addItem(MenuBool.new("Use Q",true))
+	local WCB = Combo.addItem(MenuBool.new("Use W",true))
+	local ECB = Combo.addItem(MenuBool.new("Use E",true))
+	local RCB = Combo.addItem(MenuBool.new("Use R",true))
+	
+-- Harass Menu --
+local Harass = root.addItem(SubMenu.new("Harass"))
+	local QH = Harass.addItem(MenuBool.new("Use Q",true))
+    
+-- Auto Spell Menu --
+local AtSpell = root.addItem(SubMenu.new("Auto Spell"))
+	local ASQ = AtSpell.addItem(MenuBool.new("Auto Q",true))
+	local ASW = AtSpell.addItem(MenuBool.new("Auto W",true))
+	local ASE = AtSpell.addItem(MenuBool.new("Auto E",true))
+	local ASMana = AtSpell.addItem(MenuSlider.new("Auto Spell if My %MP >", 10, 0, 50, 5))
+    
+-- Drawings Menu --
+local Drawings = root.addItem(SubMenu("Drawings"))
+	local DrawQ = Drawings.addItem(MenuBool.new("Range Q",true))
+	local DrawW = Drawings.addItem(MenuBool.new("Range W",true))
+	local DrawE = Drawings.addItem(MenuBool.new("Range E",true))
+	local DrawR = Drawings.addItem(MenuBool.new("Range R",true))
+	
+-- Misc Mennu --
+local Misc = root.addItem(SubMenu("Misc"))
+   local KS = Misc.addItem(SubMenu("Kill Steal"))
+	local QKS = KS.addItem(MenuBool.new("KS with Q",true))
+	local RKS = KS.addItem(MenuBool.new("KS with Q",true))
+   local AntiSkill = Misc.addItem(SubMenu("Stop Skill Enemy"))
+    local RAnti = AntiSkill.addItem(MenuBool.new("R Stop Skill Enemy",true))
+   local AutoLvlUp = Misc.addItem(SubMenu("Auto Level Up"))
+    local AutoSkillUpQ = AutoLvlUp.addItem(MenuBool.new("AutoLvlUp Q", true))
+    local AutoSkillUpW = AutoLvlUp.addItem(MenuBool.new("AutoLvlUp W", true))
+
+-- End Menu --
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.4"
+local ver = "Version: 0.5"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 PrintChat(textTable[4])
+-- End Print --
 
+	
 myIAC = IAC()
 
-OnLoop(function(myHero)
-Drawings()
-Killsteal()
-DrawDMG()
-AutoLevel()
-AutoSpell()
+CHANELLING_SPELLS = {
+    ["Caitlyn"]                     = {_R},
+    ["Ezreal"]                      = {_R},
+    ["Katarina"]                    = {_R},
+    ["Kennen"]                      = {_R},
+    ["FiddleSticks"]                = {_R},
+    ["Galio"]                       = {_R},
+    ["Lucian"]                      = {_R},
+    ["MissFortune"]                 = {_R},
+    ["VelKoz"]                      = {_R},
+    ["Nunu"]                        = {_R},
+    ["Karthus"]                     = {_R},
+    ["Malzahar"]                    = {_R},
+    ["Xerath"]                      = {_R},
+    ["Rengar"]                      = {_R},
+    ["Riven"]                       = {_R},
+    ["Shen"]                        = {_R},
+    ["Twisted Fate"]                = {_R},
+	["Tahm Kench"]                  = {_R},
+}
 
-local unit = GetCurrentTarget()
-        if IWalkConfig.Combo then
-              local target = GetTarget(1100, DAMAGE_MAGIC)
-                if ValidTarget(target, 845) then
-                       
-					    if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, GetCastRange(myHero,_Q)) and Config.Q then
-                        CastSpell(_Q)
-						end
-                        if CanUseSpell(myHero, _W) == READY and ValidTarget(target, GetCastRange(myHero,_W)) and Config.W then
-						CastSpell(_W)
-						end
-						if CanUseSpell(myHero, _E) == READY and ValidTarget(target, GetCastRange(myHero,_E)) and Config.E then
-                        CastSpell(_E)
-						end
-						local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
-                        if CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and ValidTarget(target, GetCastRange(myHero,_R)) and Config.R then
-                        CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
-						end
-                end
-        end
-end)
-
-OnLoop(function(myHero)
-
-        if IWalkConfig.Harass then
-              for i,enemy in pairs(GetEnemyHeroes()) do  
-              local target = GetTarget(840, DAMAGE_MAGIC)
-                if ValidTarget(target, 840) then
-					    if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, GetCastRange(myHero,_Q)) and Config.Q then
-                        CastSpell(_Q)
-
-				end	
-
-	        end
-	end		
-end
-end)
-
- function Killsteal()  
-              for i,enemy in pairs(GetEnemyHeroes()) do  
-			  if ValidTarget(target, 845) then
- if CanUseSpell(myHero,_Q) == READY and ValidTarget(enemy, GetCastRange(myHero,_Q)) and KSConfig.KSQ and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, (49*GetCastLevel(myHero,_Q) + 5 + 0.5*GetBonusAP(myHero))) then
- CastSpell(_Q)
-end 
-              end
- 			  if ValidTarget(target, 945) then
- if CanUseSpell(myHero,_R) == READY and ValidTarget(enemy, GetCastRange(myHero,_R)) and KSConfig.KSR and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, (110*GetCastLevel(myHero,_R) + 20 + 0.5*GetBonusAP(myHero))) then
- CastSpell(_R)
- end
-              end
- end
- end
+local callback = nil
  
-  function AutoSpell()
-    if (GetCurrentMana(myHero)/GetMaxMana(myHero))>0.1 then
+OnProcessSpell(function(unit, spell)    
+    if not callback or not unit or GetObjectType(unit) ~= Obj_AI_Hero  or GetTeam(unit) == GetTeam(GetMyHero()) then return end
+    local unitChanellingSpells = CHANELLING_SPELLS[GetObjectName(unit)]
+ 
+        if unitChanellingSpells then
+            for _, spellSlot in pairs(unitChanellingSpells) do
+                if spell.name == GetCastName(unit, spellSlot) then callback(unit, CHANELLING_SPELLS) end
+            end
+		end
+end)
+ 
+function addAntiSkillCallback( callback0 )
+        callback = callback0
+end
+
+addAntiSkillCallback(function(target, spellType)
+local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),2400,250,1000,150,false,true)
+  if IsInDistance(target, 1000) and CanUseSpell(myHero,_R) == READY and RAnti.getValue() and spellType == CHANELLING_SPELLS then
+    CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
+  end
+end)
+
+OnLoop(function(myHero)
+    if IWalkConfig.Combo then
+	local target = GetCurrentTarget()
+		
+		if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and QCB.getValue() then
+		CastSpell(_Q)
+        end
+					
+		if CanUseSpell(myHero, _W) == READY and ValidTarget(target, 840) and WCB.getValue() then
+		CastSpell(_W)
+		end
+				
+		if CanUseSpell(myHero, _E) == READY and ValidTarget(target, 1000) and ECB.getValue() then
+		CastSpell(_E)
+		end
+		
+		if CanUseSpell(myHero, _R) == READY and ValidTarget(target, 900) and RCB.getValue() then
+		CastSpell(_R)
+        end
+					
+	end
+	
+	if IWalkConfig.Harass then 
+	local target = GetCurrentTarget()
+		
+		if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and QH.getValue() then
+		CastSpell(_Q)
+        end	
+	end
+	
+for i,enemy in pairs(GetEnemyHeroes()) do
+		
+	  local ExtraDmg = 0
+		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+		ExtraDmg = ExtraDmg + 0.1*GetBonusAP(myHero) + 100
+		end
+	if CanUseSpell(myHero, _Q) and ValidTarget(enemy, 845) and QKS.getValue() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
+		CastSpell(_Q)
+	elseif CanUseSpell(myHero, _R) and ValidTarget(enemy, 960) and RKS.getValue() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
+        CastSpell(_R)
+	end
+end
+	
+  if AutoSkillUpQ.getValue() then  
+local leveltable = { _Q, _W, _E, _Q, _Q, _R, _Q, _Q, _W, _W, _R, _W, _W, _E, _E, _R, _E, _E} -- <<< Max Q first - Thank Inferno for this code
+LevelSpell(leveltable[GetLevel(myHero)]) 
+  end
+  if AutoSkillUpW.getValue() then  
+local leveltable = { _W, _Q, _E, _W, _W, _R, _W, _W, _Q, _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- <<< Max W first - Thank Inferno
+LevelSpell(leveltable[GetLevel(myHero)]) 
+  end
+
+local HeroPos = GetOrigin(myHero)
+if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
+if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
+if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+
+    if (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then 
               for i,enemy in pairs(GetEnemyHeroes()) do				  
-              local target = GetTarget(840, DAMAGE_MAGIC)
-                if ValidTarget(target, 840) then
- if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, GetCastRange(myHero,_Q)) and QConfig.AutoQ then
- CastSpell(_Q)
+	local target = GetCurrentTarget()
+      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue() then
+	  CastSpell(_Q)
  end
  end
  end
- if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and QConfig.AutoW then
+ if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and ASW.getValue then
     CastSpell(_W)
  end
- if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and QConfig.AutoE then
+ if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and ASE.getValue then
     CastSpell(_E)
  end
-    end
- end
- 
- function Drawings()
-myHeroPos = GetOrigin(myHero)
-if CanUseSpell(myHero, _Q) == READY and DrawingsConfig.DrawQ then DrawCircle(myHeroPos.x,myHeroPos.y,myHeroPos.z,GetCastRange(myHero,_Q),3,100,0xff00ff00) end
-if CanUseSpell(myHero, _W) == READY and DrawingsConfig.DrawW then DrawCircle(myHeroPos.x,myHeroPos.y,myHeroPos.z,GetCastRange(myHero,_W),3,100,0xff00ff00) end
-if CanUseSpell(myHero, _E) == READY and DrawingsConfig.DrawE then DrawCircle(myHeroPos.x,myHeroPos.y,myHeroPos.z,GetCastRange(myHero,_E),3,100,0xff00ff00) end
-if CanUseSpell(myHero, _R) == READY and DrawingsConfig.DrawR then DrawCircle(myHeroPos.x,myHeroPos.y,myHeroPos.z,GetCastRange(myHero,_R),3,100,0xff00ff00) end
-end
-
- function DrawDMG()
-local unit = GetCurrentTarget()
-if ValidTarget(unit, 1150) then
-local Qdmg = CalcDamage(myHero, unit, 0, (49*GetCastLevel(myHero,_Q) + 5 + 0.5*GetBonusAP(myHero)))
-	if CanUseSpell(myHero,_Q) == READY and DrawConfig.Q then
-		DrawDmgOverHpBar(unit,GetCurrentHP(unit),Qdmg,0,0xff00ff00)
-	end
-
-local Rdmg = CalcDamage(myHero, unit, 0,  (110*GetCastLevel(myHero,_R) + 20 + 0.5*GetBonusAP(myHero)))
-	if CanUseSpell(myHero,_R) == READY and DrawConfig.R then
-		DrawDmgOverHpBar(unit,GetCurrentHP(unit),Rdmg,0,0xff00f000)	
-	end
-end
-end
-
-function AutoLevel()    
- if    AutoLvlUp.EnableQ
- and GetLevel(myHero) >= 1  and GetLevel(myHero) < 2 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_E)
-end
- if    AutoLvlUp.EnableW
- and GetLevel(myHero) >= 1  and GetLevel(myHero) < 2 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_E)
-end
-end
+    end)
 
 require 'deLibrary'
 
@@ -410,7 +375,7 @@ end
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
     if (checkDist and GetDistance(target) > 1000) then return end
-    if (CanUseSpell(myHero, _W) == READY) then
+    if (CanUseSpell(myHero, _W) == READY) and (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then
         CastTargetSpell(target, _W)
     end
 end
@@ -480,13 +445,28 @@ function DoLoop()
         end
     -- End of script
 end
-OnLoop(function(arg) DoLoop() end)
+OnLoop(function(arg) DoLoop() end) 
 
-PrintChat(string.format("<font color='#FF0000'>Rx Scripts </font><font color='#FFFF00'>Sona by Rudo : </font><font color='#08F7F3'>Loaded Success</font>")) 
-
+function GetDrawText(enemy)
+	local ExtraDmg = 0
+	if Ignite and CanUseSpell(myHero, Ignite) == READY then
+	ExtraDmg = ExtraDmg + 20*GetLevel(myHero)+50
+	end
+	
+	local ExtraDmg2 = 0
+	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+	ExtraDmg2 = ExtraDmg2 + 0.1*GetBonusAP(myHero) + 100
+	end
+	
+	if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'Q = Kill!', ARGB(255, 200, 160, 0)
+	elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'R = Kill!', ARGB(255, 200, 160, 0)
+	elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'Q + R = Kill!', ARGB(255, 200, 160, 0)
+	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'Q + R + Ignite = Kill!', ARGB(255, 200, 160, 0)
+	else
+		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
+	end
 end
-
-if GetObjectName(GetMyHero()) ~="Sona" then
-PrintChat("Script only Support for Sona")
-end
-
