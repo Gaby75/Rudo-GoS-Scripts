@@ -68,7 +68,7 @@ local Misc = root.addItem(SubMenu("Misc"))
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.5"
+local ver = "Version: 0.55"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
@@ -179,7 +179,7 @@ LevelSpell(leveltable[GetLevel(myHero)])
     if (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then 
               for i,enemy in pairs(GetEnemyHeroes()) do				  
 	local target = GetCurrentTarget()
-      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue() then
+      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue then
 	  CastSpell(_Q)
  end
  end
