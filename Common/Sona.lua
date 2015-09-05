@@ -179,14 +179,14 @@ LevelSpell(leveltable[GetLevel(myHero)])
     if (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then 
               for i,enemy in pairs(GetEnemyHeroes()) do				  
 	local target = GetCurrentTarget()
-      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue then
+      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue() then
 	  CastSpell(_Q)
  end
  end
- if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and ASW.getValue then
+ if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and ASW.getValue() then
     CastSpell(_W)
  end
- if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and ASE.getValue then
+ if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and ASE.getValue() then
     CastSpell(_E)
  end
  end
@@ -480,3 +480,5 @@ function GetDrawText(enemy)
 		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
 	end
 end
+
+notification("RxSona by Rudo loaded.", 10000)
