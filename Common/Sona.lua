@@ -51,7 +51,7 @@ local Drawings = root.addItem(SubMenu("Drawings"))
 	local DrawW = Drawings.addItem(MenuBool.new("Range W",true))
 	local DrawE = Drawings.addItem(MenuBool.new("Range E",true))
 	local DrawR = Drawings.addItem(MenuBool.new("Range R",true))
-	local DrawText = Drawings.addItem(MenuBool.new("Draw Test",true))
+	local DrawsText = Drawings.addItem(MenuBool.new("Draw Test",true))
 	
 -- Misc Mennu --
 local Misc = root.addItem(SubMenu("Misc"))
@@ -195,7 +195,7 @@ if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff
 if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
 if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
 if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
- if DrawText.getValue() then
+ if DrawsText.getValue() then
 	for _, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(enemy) then
 		    local enemyPos = GetOrigin(enemy)
