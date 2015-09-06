@@ -75,7 +75,6 @@ local Items = root.addItem(SubMenu("Auto Use Items"))
 	  local CheckMP = PotionMP.addItem(MenuSlider.new("Auto Use if %MP <", 40, 5, 50, 1))
     local FrostQC = Items.addItem(SubMenu("Auto Use Frost Queen's Claim"))
 	  local FQC = FrostQC.addItem(MenuBool.new("Enable", true))
-	  local CheckEnemy = FrostQC.addItem(MenuSlider.new("Auto Use if Enemy >=", 2, 1, 5, 1))
 	  
 -- End Menu --
 local info = "Rx Sona Loaded."
