@@ -33,6 +33,7 @@ local Combo = root.addItem(SubMenu.new("Combo"))
 	local WCB = Combo.addItem(MenuBool.new("Use W",true))
 	local ECB = Combo.addItem(MenuBool.new("Use E",true))
 	local RCB = Combo.addItem(MenuBool.new("Use R",true))
+	local FQCCB = Combo.addItem(MenuBool.new("Use Frost Queen's Claim",true))
 	
 -- Harass Menu --
 local Harass = root.addItem(SubMenu.new("Harass"))
@@ -40,29 +41,29 @@ local Harass = root.addItem(SubMenu.new("Harass"))
     
 -- Auto Spell Menu --
 local AtSpell = root.addItem(SubMenu.new("Auto Spell"))
-	local ASQ = AtSpell.addItem(MenuBool.new("Auto Q",true))
-	local ASW = AtSpell.addItem(MenuBool.new("Auto W",true))
-	local ASE = AtSpell.addItem(MenuBool.new("Auto E",true))
+	local ASQ = AtSpell.addItem(MenuBool.new("Auto Q", true))
+	local ASW = AtSpell.addItem(MenuBool.new("Auto W", true))
+	local ASE = AtSpell.addItem(MenuBool.new("Auto E", true))
 	local ASMana = AtSpell.addItem(MenuSlider.new("Auto Spell if My %MP >", 10, 0, 60, 1))
     
 -- Drawings Menu --
 local Drawings = root.addItem(SubMenu("Drawings"))
-	local DrawQ = Drawings.addItem(MenuBool.new("Range Q",true))
-	local DrawW = Drawings.addItem(MenuBool.new("Range W",true))
-	local DrawE = Drawings.addItem(MenuBool.new("Range E",true))
-	local DrawR = Drawings.addItem(MenuBool.new("Range R",true))
-	local DrawsText = Drawings.addItem(MenuBool.new("Draw Test",true))
+	local DrawQ = Drawings.addItem(MenuBool.new("Range Q", true))
+	local DrawW = Drawings.addItem(MenuBool.new("Range W", true))
+	local DrawE = Drawings.addItem(MenuBool.new("Range E", true))
+	local DrawR = Drawings.addItem(MenuBool.new("Range R", true))
+	local DrawsText = Drawings.addItem(MenuBool.new("Draw Test", true))
 	
 -- Misc Mennu --
 local Misc = root.addItem(SubMenu("Misc"))
    local KS = Misc.addItem(SubMenu("Kill Steal"))
-	local QKS = KS.addItem(MenuBool.new("KS with Q",true))
-	local RKS = KS.addItem(MenuBool.new("KS with Q",true))
+	local QKS = KS.addItem(MenuBool.new("KS with Q", true))
+	local RKS = KS.addItem(MenuBool.new("KS with Q", true))
    local AntiSkill = Misc.addItem(SubMenu("Stop Skill Enemy"))
-    local RAnti = AntiSkill.addItem(MenuBool.new("R Stop Skill Enemy",true))
+    local RAnti = AntiSkill.addItem(MenuBool.new("R Stop Skill Enemy", true))
    local AutoLvlUp = Misc.addItem(SubMenu("Auto Level Up"))
-    local AutoSkillUpQ = AutoLvlUp.addItem(MenuBool.new("AutoLvlUp Q", true))
-    local AutoSkillUpW = AutoLvlUp.addItem(MenuBool.new("AutoLvlUp W", true))
+    local AutoSkillUpQ = AutoLvlUp.addItem(MenuBool.new("Auto Lvl Up Q", true))
+    local AutoSkillUpW = AutoLvlUp.addItem(MenuBool.new("Auto Lvl Up W", true))
 	
 --- Use Items Menu --
 local Items = root.addItem(SubMenu("Auto Use Items"))
@@ -72,6 +73,9 @@ local Items = root.addItem(SubMenu("Auto Use Items"))
     local PotionMP = Items.addItem(SubMenu("Use Potion MP"))
 	  local PotMP = PotionMP.addItem(MenuBool.new("Use Mana Potion", true))
 	  local CheckMP = PotionMP.addItem(MenuSlider.new("Auto Use if %MP <", 40, 5, 50, 1))
+    local FrostQC = Items.addItem(SubMenu("Auto Use Frost Queen's Claim"))
+	  local FQC = FrostQC.addItem(MenuBool.new("Enable", true))
+	  local CheckEnemy = FrostQC.addItem(MenuSlider.new("Auto Use if Enemy >=", 2, 1, 5, 1))
 	  
 -- End Menu --
 local info = "Rx Sona Loaded."
@@ -162,6 +166,15 @@ local myHeroPos = GetOrigin(myHero)
 		if CanUseSpell(myHero, _R) == READY and ValidTarget(target, 900) and RCB.getValue() then
 		CastSpell(_R)
         end
+		if FQCCB.getValue() then
+			local frostquc = GetItemSlot(myHero, 3096)
+		if frostquc >= 0 then
+			local FPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
+		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and ValidTarget(target, 880) and FPred.HitChance == 1 then  
+		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z));
+		end
+		end
+		end	
 					
 	end
 
@@ -188,6 +201,7 @@ for i,enemy in pairs(GetEnemyHeroes()) do
 	end
 end
 	
+        -- Auto Level Up --
   if AutoSkillUpQ.getValue() then  
 local leveltable = { _Q, _W, _E, _Q, _Q, _R, _Q, _Q, _W, _W, _R, _W, _W, _E, _E, _R, _E, _E} -- <<< Max Q first - Thank Inferno for this code
 LevelSpell(leveltable[GetLevel(myHero)]) 
@@ -237,6 +251,19 @@ LevelSpell(leveltable[GetLevel(myHero)])
 				end
 			end
 
+				if FQC.getValue() then
+				for i,enemy in pairs(GetEnemyHeroes()) do
+              local target = GetCurrentTarget()
+				local frostquc = GetItemSlot(myHero, 3096)
+					if frostquc >= 0 then
+		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and (GetMoveSpeed(enemy))>1.2 and ValidTarget(target, 880) then  
+						CastSpell(GetItemSlot(myHero, 3049))
+		end
+				    end
+				end
+		        end
+						
+			
          -- Drawings --
  local HeroPos = GetOrigin(myHero)
 if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
