@@ -1,7 +1,7 @@
--- Credit: Thank to Zipppy, Cloud and Inferno Inferno because help me
+-- Credit: Thank to Zipppy, Cloud, Deftsu and Inferno Inferno because help me
 
 require('Dlib')
-local version = 5
+local version = 6
 local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
 if UP.newVersion() then UP.update() end
 ----------------------------------------------------------------------
@@ -63,18 +63,31 @@ local Misc = root.addItem(SubMenu("Misc"))
    local AutoLvlUp = Misc.addItem(SubMenu("Auto Level Up"))
     local AutoSkillUpQ = AutoLvlUp.addItem(MenuBool.new("AutoLvlUp Q", true))
     local AutoSkillUpW = AutoLvlUp.addItem(MenuBool.new("AutoLvlUp W", true))
-
+	
+--- Use Items Menu --
+local Items = root.addItem(SubMenu("Auto Use Items"))
+    local PotionHP = Items.addItem(SubMenu("Use Potion HP"))
+	  local PotHP = PotionHP.addItem(MenuBool.new("Use Health Potion", true))
+	  local CheckHP = PotionHP.addItem(MenuSlider.new("Auto Use if %HP <", 50, 10, 60, 1))
+    local PotionMP = Items.addItem(SubMenu("Use Potion MP"))
+	  local PotMP = PotionMP.addItem(MenuBool.new("Use Mana Potion", true))
+	  local CheckMP = PotionMP.addItem(MenuSlider.new("Auto Use if %MP <", 40, 5, 50, 1))
+	  
 -- End Menu --
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.55"
+local ver = "Version: 0.6"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 PrintChat(textTable[4])
 -- End Print --
+
+global_ticks = 0
+currentTicks = GetTickCount()
+
 
 require('IAC')		
 myIAC = IAC()
@@ -125,6 +138,12 @@ local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),
 end)
 
 OnLoop(function(myHero)
+
+local myHero = GetMyHero()
+local target = GetCurrentTarget()
+local myHeroPos = GetOrigin(myHero)
+
+        -- Combo --
     if IWalkConfig.Combo then
 	local target = GetCurrentTarget()
 		
@@ -145,7 +164,8 @@ OnLoop(function(myHero)
         end
 					
 	end
-	
+
+        -- Harass --
 	if IWalkConfig.Harass then 
 	local target = GetCurrentTarget()
 		
@@ -156,6 +176,7 @@ OnLoop(function(myHero)
 	
 for i,enemy in pairs(GetEnemyHeroes()) do
 		
+        -- Kill Steal --
 	  local ExtraDmg = 0
 		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
 		ExtraDmg = ExtraDmg + 0.1*GetBonusAP(myHero) + 100
@@ -176,7 +197,8 @@ local leveltable = { _W, _Q, _E, _W, _W, _R, _W, _W, _Q, _Q, _R, _Q, _Q, _E, _E,
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
 
-    if (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then 
+         -- Auto Spell --
+    if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 > ASMana.getValue() then 
               for i,enemy in pairs(GetEnemyHeroes()) do				  
 	local target = GetCurrentTarget()
       if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue() then
@@ -190,6 +212,32 @@ LevelSpell(leveltable[GetLevel(myHero)])
     CastSpell(_E)
  end
  end
+         -- Auto Use Items --
+			if (global_ticks + 15000) < currentTicks then
+				if PotHP.getValue() then
+				local potionslot = GetItemSlot(myHero, 2003)
+					if potionslot > 0 then
+						if (GetCurrentHP(myHero)/GetMaxHP(myHero))*100 < CheckHP.getValue() then  
+						global_ticks = currentTicks
+						CastSpell(GetItemSlot(myHero, 2003))
+						end
+					end
+				end
+			end
+			
+			if (global_ticks + 15000) < currentTicks then
+				if PotMP.getValue() then
+				local potionslot = GetItemSlot(myHero, 2004)
+					if potionslot > 0 then
+						if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 < CheckMP.getValue() then  
+						global_ticks = currentTicks
+						CastSpell(GetItemSlot(myHero, 2004))
+						end
+					end
+				end
+			end
+
+         -- Drawings --
  local HeroPos = GetOrigin(myHero)
 if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
 if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
@@ -385,7 +433,7 @@ end
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
     if (checkDist and GetDistance(target) > 1000) then return end
-    if (CanUseSpell(myHero, _W) == READY) and (GetCurrentMana(myHero)/GetMaxMana(myHero)) > ASMana.getValue() then
+    if (CanUseSpell(myHero, _W) == READY) and (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 > ASMana.getValue() then
         CastTargetSpell(target, _W)
     end
 end
@@ -481,4 +529,5 @@ function GetDrawText(enemy)
 	end
 end
 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and have a Good Game :3</font>")) 
 notification("RxSona by Rudo loaded.", 10000)
