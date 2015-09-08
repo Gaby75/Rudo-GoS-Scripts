@@ -1,3 +1,4 @@
+-- Rx Sona Version 0.7 by Rudo.
 --Updated Sona for Inspired Ver19 and IOW
 --------------------------------------------
 
@@ -314,7 +315,20 @@ local myHeroPos = GetOrigin(myHero)
 				end
 			end
 			
- 	------ Start Drawings ------
+  	------ Start Use Items _Use Mana Potion_ ------
+function UseFQC()
+				for i,enemy in pairs(GetEnemyHeroes()) do
+              local target = GetCurrentTarget()
+				local frostquc = GetItemSlot(myHero, 3096)
+					if frostquc >= 0 then
+		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and (GetMoveSpeed(enemy))>1.2 and ValidTarget(target, 880) then  
+						CastSpell(GetItemSlot(myHero, 3049))
+		end
+				    end
+				end
+end
+	
+	------ Start Drawings ------
 function Drawings()
  local HeroPos = GetOrigin(myHero)
 if myMenu.Draws.DrawQ:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
