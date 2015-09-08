@@ -1,10 +1,82 @@
--- Credit: Thank to Zipppy, Cloud, Deftsu and Inferno Inferno because help me
+--Updated Sona for Inspired Ver19 and IOW
+--------------------------------------------
 
-require('Dlib')
-local version = 6
-local UP=Updater.new("anhvu2001ct/Rudo-GoS-Scripts/master/Common/Sona.lua", "Common\\Sona", version)
-if UP.newVersion() then UP.update() end
-----------------------------------------------------------------------
+---- Create a Menu ----
+myMenu = Menu("Rx Sona", "sona")
+
+---- Combo ----
+myMenu:SubMenu("cb", "Sona Combo")
+myMenu.cb:Boolean("QCB", "Use Q", true)
+myMenu.cb:Boolean("WCB", "Use W", true)
+myMenu.cb:Boolean("ECB", "Use E", true)
+myMenu.cb:Boolean("RCB", "Use R", true)
+myMenu.cb:Boolean("FQCCB", "Use Frost Queen's Claim", true)
+
+---- Harass Menu ----
+myMenu:SubMenu("hr", "Harass")
+myMenu.hr:Boolean("HrQ", "Use Q", true)
+
+---- Auto Spell Menu ----
+myMenu:SubMenu("AtSpell", "Auto Spell")
+myMenu.AtSpell:Boolean("ASEb", "Enable Aut Spell", true)
+myMenu.AtSpell:Boolean("ASQ", "Use Q", true)
+myMenu.AtSpell:Boolean("ASW", "Use W", true)
+myMenu.AtSpell:Boolean("ASE", "Use E", true)
+myMenu.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
+
+---- Drawings Menu ----
+myMenu:SubMenu("Draws", "Drawings")
+myMenu.Draws:Boolean("DrawsEb", "Enable Drawings", true)
+myMenu.Draws:Boolean("DrawQ", "Range Q", true)
+myMenu.Draws:Boolean("DrawW", "Range W", true)
+myMenu.Draws:Boolean("DrawE", "Range E", true)
+myMenu.Draws:Boolean("DrawR", "Range R", true)
+myMenu.Draws:Boolean("DrawTest", "Draw Test", true)
+
+---- Misc Menu ----
+myMenu:SubMenu("Miscset", "Misc")
+myMenu.Miscset:SubMenu("KS", "Kill Steal")
+myMenu.Miscset.KS:Boolean("KSEb", "Enable KillSteal", true)
+myMenu.Miscset.KS:Boolean("QKS", "KS with Q", true)
+myMenu.Miscset.KS:Boolean("RKS", "KS with R", true)
+myMenu.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
+myMenu.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R",true)
+myMenu.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
+myMenu.Miscset.AutoLvlUp:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)   - <------ Full Q Frist.
+myMenu.Miscset.AutoLvlUp:Boolean("AutoSkillUpW", "Auto Lvl Up W", true)   - <------ Full W Frist.
+
+---- Use Items Menu ----
+myMenu:SubMenu("Items", "Auto Use Items")
+myMenu.Items:SubMenu("PotionHP", "Use Potion HP")
+myMenu.Items.PotionHP:Boolean("PotHP", "Enable Use Potion HP", true)
+myMenu.Items.PotionHP:Slider("CheckHP", "Auto Use if %HP <", 50, 5, 80, 1)
+myMenu.Items:SubMenu("PotionMP", "Use Potion MP")
+myMenu.Items.PotionMP:Boolean("PotMP", "Enable Use Potion MP", true)
+myMenu.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
+myMenu.Items:SubMenu("FrostQC", "Auto Use Frost Queen's Claim")
+myMenu.Items.FrostQC:Boolean("FQC" "Enable", true)
+
+---------- End Menu ----------
+
+
+local info = "Rx Sona Loaded."
+local upv = "Upvote if you like it!"
+local sig = "Made by Rudo"
+local ver = "Version: 0.7"
+textTable = {info,upv,sig,ver}
+PrintChat(textTable[1])
+PrintChat(textTable[2])
+PrintChat(textTable[3])
+PrintChat(textTable[4])
+
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and have a Good Game :3</font>")) 
+notification("RxSona by Rudo loaded.", 10000)
+
+----- End Print -----
+
+-------------------------------------------------------require('DLib')-------------------------------------------------------
+
+-------------------------------------------------------Starting--------------------------------------------------------------
 
 DelayAction(function ()
         for _, imenu in pairs(menuTable) do
@@ -24,96 +96,33 @@ DelayAction(function ()
         _G.DrawMenu = function ( ... )  end
 end, 1000)
 
--- Main Menu --
-local root = menu.addItem(SubMenu.new("Rx Sona"))
-    
--- Combo Menu --
-local Combo = root.addItem(SubMenu.new("Combo"))
-	local QCB = Combo.addItem(MenuBool.new("Use Q",true))
-	local WCB = Combo.addItem(MenuBool.new("Use W",true))
-	local ECB = Combo.addItem(MenuBool.new("Use E",true))
-	local RCB = Combo.addItem(MenuBool.new("Use R",true))
-	local FQCCB = Combo.addItem(MenuBool.new("Use Frost Queen's Claim",true))
-	
--- Harass Menu --
-local Harass = root.addItem(SubMenu.new("Harass"))
-	local QH = Harass.addItem(MenuBool.new("Use Q",true))
-    
--- Auto Spell Menu --
-local AtSpell = root.addItem(SubMenu.new("Auto Spell"))
-	local ASQ = AtSpell.addItem(MenuBool.new("Auto Q", true))
-	local ASW = AtSpell.addItem(MenuBool.new("Auto W", true))
-	local ASE = AtSpell.addItem(MenuBool.new("Auto E", true))
-	local ASMana = AtSpell.addItem(MenuSlider.new("Auto Spell if My %MP >", 10, 0, 60, 1))
-    
--- Drawings Menu --
-local Drawings = root.addItem(SubMenu("Drawings"))
-	local DrawQ = Drawings.addItem(MenuBool.new("Range Q", true))
-	local DrawW = Drawings.addItem(MenuBool.new("Range W", true))
-	local DrawE = Drawings.addItem(MenuBool.new("Range E", true))
-	local DrawR = Drawings.addItem(MenuBool.new("Range R", true))
-	local DrawsText = Drawings.addItem(MenuBool.new("Draw Test", true))
-	
--- Misc Mennu --
-local Misc = root.addItem(SubMenu("Misc"))
-   local KS = Misc.addItem(SubMenu("Kill Steal"))
-	local QKS = KS.addItem(MenuBool.new("KS with Q", true))
-	local RKS = KS.addItem(MenuBool.new("KS with Q", true))
-   local AntiSkill = Misc.addItem(SubMenu("Stop Skill Enemy"))
-    local RAnti = AntiSkill.addItem(MenuBool.new("R Stop Skill Enemy", true))
-   local AutoLvlUp = Misc.addItem(SubMenu("Auto Level Up"))
-    local AutoSkillUpQ = AutoLvlUp.addItem(MenuBool.new("Auto Lvl Up Q", true))
-    local AutoSkillUpW = AutoLvlUp.addItem(MenuBool.new("Auto Lvl Up W", true))
-	
---- Use Items Menu --
-local Items = root.addItem(SubMenu("Auto Use Items"))
-    local PotionHP = Items.addItem(SubMenu("Use Potion HP"))
-	  local PotHP = PotionHP.addItem(MenuBool.new("Use Health Potion", true))
-	  local CheckHP = PotionHP.addItem(MenuSlider.new("Auto Use if %HP <", 50, 10, 60, 1))
-    local PotionMP = Items.addItem(SubMenu("Use Potion MP"))
-	  local PotMP = PotionMP.addItem(MenuBool.new("Use Mana Potion", true))
-	  local CheckMP = PotionMP.addItem(MenuSlider.new("Auto Use if %MP <", 40, 5, 50, 1))
-    local FrostQC = Items.addItem(SubMenu("Auto Use Frost Queen's Claim"))
-	  local FQC = FrostQC.addItem(MenuBool.new("Enable", true))
-	  
--- End Menu --
-local info = "Rx Sona Loaded."
-local upv = "Upvote if you like it!"
-local sig = "Made by Rudo"
-local ver = "Version: 0.65"
-textTable = {info,upv,sig,ver}
-PrintChat(textTable[1])
-PrintChat(textTable[2])
-PrintChat(textTable[3])
-PrintChat(textTable[4])
--- End Print --
 
 global_ticks = 0
 currentTicks = GetTickCount()
 
 
-require('IAC')		
-myIAC = IAC()
-
+require('IOW')
 CHANELLING_SPELLS = {
     ["Caitlyn"]                     = {_R},
-    ["Ezreal"]                      = {_R},
     ["Katarina"]                    = {_R},
-    ["Kennen"]                      = {_R},
     ["FiddleSticks"]                = {_R},
     ["Galio"]                       = {_R},
     ["Lucian"]                      = {_R},
     ["MissFortune"]                 = {_R},
     ["VelKoz"]                      = {_R},
     ["Nunu"]                        = {_R},
+    ["Shen"]                        = {_R},
     ["Karthus"]                     = {_R},
     ["Malzahar"]                    = {_R},
+    ["Pantheon"]                    = {_R},
+    ["Warwick"]                     = {_R},
     ["Xerath"]                      = {_R},
+    ["Ezreal"]                      = {_R},
+	["Kennen"]                      = {_R},
     ["Rengar"]                      = {_R},
-    ["Riven"]                       = {_R},
-    ["Shen"]                        = {_R},
     ["Twisted Fate"]                = {_R},
 	["Tahm Kench"]                  = {_R},
+    ["Ezreal"]                      = {_R},
 }
 
 local callback = nil
@@ -135,37 +144,34 @@ end
 
 addAntiSkillCallback(function(target, spellType)
 local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),2400,250,1000,150,false,true)
-  if IsInDistance(target, 1000) and CanUseSpell(myHero,_R) == READY and RAnti.getValue() and spellType == CHANELLING_SPELLS then
+  if IsInDistance(target, 1000) and CanUseSpell(myHero,_R) == READY and myMenu.Miscset.AntiSkill.RAnti:Value() and spellType == CHANELLING_SPELLS then
     CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
   end
 end)
 
 OnLoop(function(myHero)
-
-local myHero = GetMyHero()
-local target = GetCurrentTarget()
-local myHeroPos = GetOrigin(myHero)
-
-        -- Combo --
-    if IWalkConfig.Combo then
-	local target = GetCurrentTarget()
-		
-		if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and QCB.getValue() then
+    local target = IOW:GetTarget()
+	------ Start Combo ------
+    if IOW:Mode() == "Combo" then
+	
+		if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and myMenu.cb.QCB:Value() then
 		CastSpell(_Q)
         end
 					
-		if CanUseSpell(myHero, _W) == READY and ValidTarget(target, 840) and WCB.getValue() then
+		if CanUseSpell(myHero, _W) == READY and ValidTarget(target, 840) and myMenu.cb.WCB:getValue() then
 		CastSpell(_W)
 		end
 				
-		if CanUseSpell(myHero, _E) == READY and ValidTarget(target, 1000) and ECB.getValue() then
+		if CanUseSpell(myHero, _E) == READY and ValidTarget(target, 1000) and myMenu.cb.ECB:Value() then
 		CastSpell(_E)
 		end
 		
-		if CanUseSpell(myHero, _R) == READY and ValidTarget(target, 900) and RCB.getValue() then
-		CastSpell(_R)
+		local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
+        if CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and ValidTarget(target, 950) and Config.R then
+        CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
         end
-		if FQCCB.getValue() then
+		
+		if myMenu.cb.FQCCB:Value() then
 			local frostquc = GetItemSlot(myHero, 3096)
 		if frostquc >= 0 then
 			local FPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
@@ -175,17 +181,76 @@ local myHeroPos = GetOrigin(myHero)
 		end
 		end	
 					
-	end
-
-        -- Harass --
-	if IWalkConfig.Harass then 
-	local target = GetCurrentTarget()
-		
-		if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and QH.getValue() then
+	elseif IOW:Mode() == "Harass" then
+	------ Start Harass ------
+        if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and myMenu.hr.HrQ:Value() then
 		CastSpell(_Q)
         end	
 	end
 	
+if myMenu.AtSpell.ASEb:Value() then
+	AutoSpell()
+	end
+	
+if myMenu.Miscset.KS.KSEb:Value() then
+	KillSteal()
+	end
+		
+if myMenu.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then
+	UpFullQ()
+	end
+	
+if myMenu.Miscset.AutoLvlUp.AutoSkillUpW:Value() then
+	UpFullW()
+	end
+	
+if myMenu.Items.PotionHP.PotHP:Value() then	
+	UsePotHP()
+	end
+	
+if myMenu.Items.PotionMP.PotMP:Value() then	
+	UsePotMP()
+	end
+	
+if myMenu.Items.FrostQC.FQC:Value() then
+	UseFQC()
+	end
+	
+if myMenu.Draws.DrawsEb:Value() then
+	Drawings()
+	end
+end)
+ 
+ 
+IOW:EnableAutoAttacks()
+IOW:DisableAutoAttacks()
+IOW:EnableMovement()
+IOW:DisableMovement()
+IOW:EnableOrbwalking()
+IOW:DisableOrbwalking()
+
+------------------------------------------------------- Start Function -------------------------------------------------------
+
+	------ Start Auto Spell ------
+function AutoSpell()
+ if 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > myMenu.AtSpell.ASMana:Value() then
+               for i,enemy in pairs(GetEnemyHeroes()) do				  
+	local target = GetCurrentTarget()
+      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and myMenu.AtSpell.ASQ:Value() then
+	  CastSpell(_Q)
+ end
+ end
+  if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and myMenu.AtSpell.ASW:Value() then
+    CastSpell(_W)
+ end
+ if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and myMenu.AtSpell.ASE:Value() then
+    CastSpell(_E)
+ end
+ end
+ end
+ 
+ 	------ Start Kill Steal ------
+function KillSteal()
 for i,enemy in pairs(GetEnemyHeroes()) do
 		
         -- Kill Steal --
@@ -193,44 +258,39 @@ for i,enemy in pairs(GetEnemyHeroes()) do
 		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
 		ExtraDmg = ExtraDmg + 0.1*GetBonusAP(myHero) + 100
 		end
-	if CanUseSpell(myHero, _Q) and ValidTarget(enemy, 845) and QKS.getValue() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
+	if CanUseSpell(myHero, _Q) and ValidTarget(enemy, 845) and myMenu.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
 		CastSpell(_Q)
-	elseif CanUseSpell(myHero, _R) and ValidTarget(enemy, 960) and RKS.getValue() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
+	elseif CanUseSpell(myHero, _R) and ValidTarget(enemy, 960) and myMenu.Miscset.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
         CastSpell(_R)
 	end
 end
-	
-        -- Auto Level Up --
-  if AutoSkillUpQ.getValue() then  
+end
+
+ 	------ Start Auto Level Up _Full Q Frist_ ------
+function UpFullQ()
+  if myMenu.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then  
 local leveltable = { _Q, _W, _E, _Q, _Q, _R, _Q, _Q, _W, _W, _R, _W, _W, _E, _E, _R, _E, _E} -- <<< Max Q first - Thank Inferno for this code
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
-  if AutoSkillUpW.getValue() then  
+ end
+ 
+  	------ Start Auto Level Up _Full W Frist_ ------
+function UpFullW()
+  if myMenu.Miscset.AutoLvlUp.AutoSkillUpW:Value() then  
 local leveltable = { _W, _Q, _E, _W, _W, _R, _W, _W, _Q, _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- <<< Max W first - Thank Inferno
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
+end
 
-         -- Auto Spell --
-    if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 > ASMana.getValue() then 
-              for i,enemy in pairs(GetEnemyHeroes()) do				  
-	local target = GetCurrentTarget()
-      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and ASQ.getValue() then
-	  CastSpell(_Q)
- end
- end
- if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and ASW.getValue() then
-    CastSpell(_W)
- end
- if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and ASE.getValue() then
-    CastSpell(_E)
- end
- end
-         -- Auto Use Items --
+ 	------ Start Use Items _Use Health Potion_ ------
+function UsePotHP()
+local myHero = GetMyHero()
+local target = GetCurrentTarget()
+local myHeroPos = GetOrigin(myHero)
 			if (global_ticks + 15000) < currentTicks then
-				if PotHP.getValue() then
 				local potionslot = GetItemSlot(myHero, 2003)
 					if potionslot > 0 then
-						if (GetCurrentHP(myHero)/GetMaxHP(myHero))*100 < CheckHP.getValue() then  
+						if (GetCurrentHP(myHero)/GetMaxHP(myHero))*100 < myMenu.Items.PotionHP.CheckHP:Value() then  
 						global_ticks = currentTicks
 						CastSpell(GetItemSlot(myHero, 2003))
 						end
@@ -238,38 +298,30 @@ LevelSpell(leveltable[GetLevel(myHero)])
 				end
 			end
 			
+ 	------ Start Use Items _Use Mana Potion_ ------
+function UsePotMP()
+local myHero = GetMyHero()
+local target = GetCurrentTarget()
+local myHeroPos = GetOrigin(myHero)
 			if (global_ticks + 15000) < currentTicks then
-				if PotMP.getValue() then
 				local potionslot = GetItemSlot(myHero, 2004)
 					if potionslot > 0 then
-						if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 < CheckMP.getValue() then  
+						if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 < myMenu.Items.PotionMP.CheckMP:Value() then  
 						global_ticks = currentTicks
 						CastSpell(GetItemSlot(myHero, 2004))
 						end
 					end
 				end
 			end
-
-				if FQC.getValue() then
-				for i,enemy in pairs(GetEnemyHeroes()) do
-              local target = GetCurrentTarget()
-				local frostquc = GetItemSlot(myHero, 3096)
-					if frostquc >= 0 then
-		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and (GetMoveSpeed(enemy))>1.2 and ValidTarget(target, 880) then  
-						CastSpell(GetItemSlot(myHero, 3049))
-		end
-				    end
-				end
-		        end
-						
 			
-         -- Drawings --
+ 	------ Start Drawings ------
+function Drawings()
  local HeroPos = GetOrigin(myHero)
-if DrawQ.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
-if DrawW.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
-if DrawE.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
-if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
- if DrawsText.getValue() then
+if myMenu.Draws.DrawQ:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
+if myMenu.Draws.DrawW:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+if myMenu.Draws.DrawE:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
+if myMenu.Draws.DrawR:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
+ if myMenu.Draws.DrawTest:Value() then
 	for _, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(enemy) then
 		    local enemyPos = GetOrigin(enemy)
@@ -278,8 +330,10 @@ if DrawR.getValue() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff
 			DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
 		end
 	end
+ end
 end
-    end)
+
+------------------------------------------------------- End Function -------------------------------------------------------
 
 require ('deLibrary')
 
@@ -554,6 +608,3 @@ function GetDrawText(enemy)
 		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
 	end
 end
-
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and have a Good Game :3</font>")) 
-notification("RxSona by Rudo loaded.", 10000)
