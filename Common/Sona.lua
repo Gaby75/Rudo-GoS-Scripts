@@ -315,7 +315,7 @@ local myHeroPos = GetOrigin(myHero)
 				end
 			end
 			
-  	------ Start Use Items _Use Mana Potion_ ------
+  	------ Start Use Items _Use Frost Queen's Claim_ ------
 function UseFQC()
 				for i,enemy in pairs(GetEnemyHeroes()) do
               local target = GetCurrentTarget()
