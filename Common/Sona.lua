@@ -220,6 +220,9 @@ function AutoSpell()
  end
   if CanUseSpell(myHero, _W) == READY and 100*(GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and RxSonaMenu.AtSpell.ASW:Value() then
     CastSpell(_W)
+    if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and RxSonaMenu.AtSpell.ASE:Value() then
+    CastSpell(_E)
+ end
  end
  end
  end
