@@ -1,61 +1,63 @@
--- Rx Sona Version 0.7 by Rudo.
+-- Rx Sona Version 0.8 by Rudo.
 --Updated Sona for Inspired Ver19 and IOW
 --------------------------------------------
 
 ---- Create a Menu ----
-myMenu = Menu("Rx Sona", "sona")
+RxSonaMenu = Menu("Rx Sona", "sona")
 
 ---- Combo ----
-myMenu:SubMenu("cb", "Sona Combo")
-myMenu.cb:Boolean("QCB", "Use Q", true)
-myMenu.cb:Boolean("WCB", "Use W", true)
-myMenu.cb:Boolean("ECB", "Use E", true)
-myMenu.cb:Boolean("RCB", "Use R", true)
-myMenu.cb:Boolean("FQCCB", "Use Frost Queen's Claim", true)
+RxSonaMenu:SubMenu("cb", "Sona Combo")
+RxSonaMenu.cb:Boolean("QCB", "Use Q", true)
+RxSonaMenu.cb:Boolean("WCB", "Use W", true)
+RxSonaMenu.cb:Boolean("ECB", "Use E", true)
+RxSonaMenu.cb:Boolean("RCB", "Use R", true)
+RxSonaMenu.cb:Boolean("FQCCB", "Use Frost Queen's Claim", true)
 
 ---- Harass Menu ----
-myMenu:SubMenu("hr", "Harass")
-myMenu.hr:Boolean("HrQ", "Use Q", true)
+RxSonaMenu:SubMenu("hr", "Harass")
+RxSonaMenu.hr:Boolean("HrQ", "Use Q", true)
 
 ---- Auto Spell Menu ----
-myMenu:SubMenu("AtSpell", "Auto Spell")
-myMenu.AtSpell:Boolean("ASEb", "Enable Aut Spell", true)
-myMenu.AtSpell:Boolean("ASQ", "Use Q", true)
-myMenu.AtSpell:Boolean("ASW", "Use W", true)
-myMenu.AtSpell:Boolean("ASE", "Use E", true)
-myMenu.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
+RxSonaMenu:SubMenu("AtSpell", "Auto Spell")
+RxSonaMenu.AtSpell:Boolean("ASEb", "Enable Aut Spell", true)
+RxSonaMenu.AtSpell:Boolean("ASQ", "Use Q", true)
+RxSonaMenu.AtSpell:Boolean("ASW", "Use W", true)
+RxSonaMenu.AtSpell:Boolean("ASE", "Use E", true)
+RxSonaMenu.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
 
 ---- Drawings Menu ----
-myMenu:SubMenu("Draws", "Drawings")
-myMenu.Draws:Boolean("DrawsEb", "Enable Drawings", true)
-myMenu.Draws:Boolean("DrawQ", "Range Q", true)
-myMenu.Draws:Boolean("DrawW", "Range W", true)
-myMenu.Draws:Boolean("DrawE", "Range E", true)
-myMenu.Draws:Boolean("DrawR", "Range R", true)
-myMenu.Draws:Boolean("DrawTest", "Draw Test", true)
+RxSonaMenu:SubMenu("Draws", "Drawings")
+RxSonaMenu.Draws:Boolean("DrawsEb", "Enable Drawings", true)
+RxSonaMenu.Draws:Boolean("DrawQ", "Range Q", true)
+RxSonaMenu.Draws:Boolean("DrawW", "Range W", true)
+RxSonaMenu.Draws:Boolean("DrawE", "Range E", true)
+RxSonaMenu.Draws:Boolean("DrawR", "Range R", true)
+RxSonaMenu.Draws:Boolean("DrawTest", "Draw Test", true)
 
 ---- Misc Menu ----
-myMenu:SubMenu("Miscset", "Misc")
-myMenu.Miscset:SubMenu("KS", "Kill Steal")
-myMenu.Miscset.KS:Boolean("KSEb", "Enable KillSteal", true)
-myMenu.Miscset.KS:Boolean("QKS", "KS with Q", true)
-myMenu.Miscset.KS:Boolean("RKS", "KS with R", true)
-myMenu.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
-myMenu.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R",true)
-myMenu.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
-myMenu.Miscset.AutoLvlUp:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)   - <------ Full Q Frist.
-myMenu.Miscset.AutoLvlUp:Boolean("AutoSkillUpW", "Auto Lvl Up W", true)   - <------ Full W Frist.
+RxSonaMenu:SubMenu("Miscset", "Misc")
+RxSonaMenu.Miscset:SubMenu("KS", "Kill Steal")
+RxSonaMenu.Miscset.KS:Boolean("KSEb", "Enable KillSteal", true)
+RxSonaMenu.Miscset.KS:Boolean("QKS", "KS with Q", true)
+RxSonaMenu.Miscset.KS:Boolean("RKS", "KS with R", true)
+RxSonaMenu.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
+RxSonaMenu.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R",true)
+RxSonaMenu.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
+RxSonaMenu.Miscset.AutoLvlUp:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)   ------ Full Q Frist.
+RxSonaMenu.Miscset.AutoLvlUp:Boolean("AutoSkillUpW", "Auto Lvl Up W", true)
+RxSonaMenu.Miscset.KS:Boolean("IgniteKS", "KS with Ignite", true )
+   ------ Full W Frist.
 
 ---- Use Items Menu ----
-myMenu:SubMenu("Items", "Auto Use Items")
-myMenu.Items:SubMenu("PotionHP", "Use Potion HP")
-myMenu.Items.PotionHP:Boolean("PotHP", "Enable Use Potion HP", true)
-myMenu.Items.PotionHP:Slider("CheckHP", "Auto Use if %HP <", 50, 5, 80, 1)
-myMenu.Items:SubMenu("PotionMP", "Use Potion MP")
-myMenu.Items.PotionMP:Boolean("PotMP", "Enable Use Potion MP", true)
-myMenu.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
-myMenu.Items:SubMenu("FrostQC", "Auto Use Frost Queen's Claim")
-myMenu.Items.FrostQC:Boolean("FQC" "Enable", true)
+RxSonaMenu:SubMenu("Items", "Auto Use Items")
+RxSonaMenu.Items:SubMenu("PotionHP", "Use Potion HP")
+RxSonaMenu.Items.PotionHP:Boolean("PotHP", "Enable Use Potion HP", true)
+RxSonaMenu.Items.PotionHP:Slider("CheckHP", "Auto Use if %HP <", 50, 5, 80, 1)
+RxSonaMenu.Items:SubMenu("PotionMP", "Use Potion MP")
+RxSonaMenu.Items.PotionMP:Boolean("PotMP", "Enable Use Potion MP", true)
+RxSonaMenu.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
+RxSonaMenu.Items:SubMenu("FrostQC", "Auto Use Frost Queen's Claim")
+RxSonaMenu.Items.FrostQC:Boolean("FQC", "Enable", true)
 
 ---------- End Menu ----------
 
@@ -63,7 +65,7 @@ myMenu.Items.FrostQC:Boolean("FQC" "Enable", true)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.7"
+local ver = "Version: 0.8"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
@@ -71,31 +73,12 @@ PrintChat(textTable[3])
 PrintChat(textTable[4])
 
 PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and have a Good Game :3</font>")) 
-notification("RxSona by Rudo loaded.", 10000)
 
 ----- End Print -----
 
 -------------------------------------------------------require('DLib')-------------------------------------------------------
 
 -------------------------------------------------------Starting--------------------------------------------------------------
-
-DelayAction(function ()
-        for _, imenu in pairs(menuTable) do
-                local submenu = menu.addItem(SubMenu.new(imenu.name))
-                for _,subImenu in pairs(imenu) do
-                        if subImenu.type == SCRIPT_PARAM_ONOFF then
-                                local ggeasy = submenu.addItem(MenuBool.new(subImenu.t, subImenu.value))
-                                OnLoop(function(myHero) subImenu.value = ggeasy.getValue() end)
-                        elseif subImenu.type == SCRIPT_PARAM_KEYDOWN then
-                                local ggeasy = submenu.addItem(MenuKeyBind.new(subImenu.t, subImenu.key))
-                                OnLoop(function(myHero) subImenu.key = ggeasy.getValue(true) end)
-                        elseif subImenu.type == SCRIPT_PARAM_INFO then
-                                submenu.addItem(MenuSeparator.new(subImenu.t))
-                        end
-                end
-        end
-        _G.DrawMenu = function ( ... )  end
-end, 1000)
 
 
 global_ticks = 0
@@ -129,14 +112,14 @@ CHANELLING_SPELLS = {
 local callback = nil
  
 OnProcessSpell(function(unit, spell)    
-    if not callback or not unit or GetObjectType(unit) ~= Obj_AI_Hero  or GetTeam(unit) == GetTeam(GetMyHero()) then return end
-    local unitChanellingSpells = CHANELLING_SPELLS[GetObjectName(unit)]
+        if not callback or not unit or GetObjectType(unit) ~= Obj_AI_Hero  or GetTeam(unit) == GetTeam(GetMyHero()) then return end
+        local unitChanellingSpells = CHANELLING_SPELLS[GetObjectName(unit)]
  
         if unitChanellingSpells then
             for _, spellSlot in pairs(unitChanellingSpells) do
                 if spell.name == GetCastName(unit, spellSlot) then callback(unit, CHANELLING_SPELLS) end
             end
-		end
+	end
 end)
  
 function addAntiSkillCallback( callback0 )
@@ -144,39 +127,40 @@ function addAntiSkillCallback( callback0 )
 end
 
 addAntiSkillCallback(function(target, spellType)
-local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),2400,250,1000,150,false,true)
-  if IsInDistance(target, 1000) and CanUseSpell(myHero,_R) == READY and myMenu.Miscset.AntiSkill.RAnti:Value() and spellType == CHANELLING_SPELLS then
+  local EPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2400,250,1000,150,false,true)
+  if GoS:IsInDistance(target, 1000) and CanUseSpell(myHero,_E) == READY and RxSonaMenu.Miscset.AntiSkill.RAnti:Value() and spellType == CHANELLING_SPELLS then
     CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
   end
 end)
 
 OnLoop(function(myHero)
-    local target = IOW:GetTarget()
+		        local target = IOW:GetTarget()
+		        local mousePos = GetMousePos()
 	------ Start Combo ------
     if IOW:Mode() == "Combo" then
 	
-		if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and myMenu.cb.QCB:Value() then
+		if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(target, 845) and RxSonaMenu.cb.QCB:Value() then
 		CastSpell(_Q)
         end
 					
-		if CanUseSpell(myHero, _W) == READY and ValidTarget(target, 840) and myMenu.cb.WCB:getValue() then
+		if CanUseSpell(myHero, _W) == READY and GoS:ValidTarget(target, 840) and RxSonaMenu.cb.WCB:Value() then
 		CastSpell(_W)
 		end
 				
-		if CanUseSpell(myHero, _E) == READY and ValidTarget(target, 1000) and myMenu.cb.ECB:Value() then
+		if CanUseSpell(myHero, _E) == READY and GoS:ValidTarget(target, 1000) and RxSonaMenu.cb.ECB:Value() then
 		CastSpell(_E)
 		end
 		
-		local RPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
-        if CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and ValidTarget(target, 950) and Config.R then
+		local RPred = GetPredictionForPlayer(GoS:GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
+        if CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(target, 950) and RxSonaMenu.cb.RCB:Value() then
         CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
         end
 		
-		if myMenu.cb.FQCCB:Value() then
+		if RxSonaMenu.cb.FQCCB:Value() then
 			local frostquc = GetItemSlot(myHero, 3096)
 		if frostquc >= 0 then
-			local FPred = GetPredictionForPlayer(GetMyHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
-		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and ValidTarget(target, 880) and FPred.HitChance == 1 then  
+			local FPred = GetPredictionForPlayer(GoS:GetMyHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
+		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
 		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z));
 		end
 		end
@@ -184,92 +168,90 @@ OnLoop(function(myHero)
 					
 	elseif IOW:Mode() == "Harass" then
 	------ Start Harass ------
-        if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and myMenu.hr.HrQ:Value() then
+        if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(target, 845) and RxSonaMenu.hr.HrQ:Value() then
 		CastSpell(_Q)
         end	
 	end
 	
-if myMenu.AtSpell.ASEb:Value() then
+if RxSonaMenu.AtSpell.ASEb:Value() then
 	AutoSpell()
 	end
 	
-if myMenu.Miscset.KS.KSEb:Value() then
+if RxSonaMenu.Miscset.KS.KSEb:Value() then
 	KillSteal()
 	end
 		
-if myMenu.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then
+if RxSonaMenu.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then
 	UpFullQ()
 	end
 	
-if myMenu.Miscset.AutoLvlUp.AutoSkillUpW:Value() then
+if RxSonaMenu.Miscset.AutoLvlUp.AutoSkillUpW:Value() then
 	UpFullW()
 	end
 	
-if myMenu.Items.PotionHP.PotHP:Value() then	
+if RxSonaMenu.Items.PotionHP.PotHP:Value() then	
 	UsePotHP()
 	end
 	
-if myMenu.Items.PotionMP.PotMP:Value() then	
+if RxSonaMenu.Items.PotionMP.PotMP:Value() then	
 	UsePotMP()
 	end
 	
-if myMenu.Items.FrostQC.FQC:Value() then
+if RxSonaMenu.Items.FrostQC.FQC:Value() then
 	UseFQC()
 	end
 	
-if myMenu.Draws.DrawsEb:Value() then
+if RxSonaMenu.Draws.DrawsEb:Value() then
 	Drawings()
 	end
 end)
  
- 
-IOW:EnableAutoAttacks()
-IOW:DisableAutoAttacks()
-IOW:EnableMovement()
-IOW:DisableMovement()
-IOW:EnableOrbwalking()
-IOW:DisableOrbwalking()
 
 ------------------------------------------------------- Start Function -------------------------------------------------------
 
 	------ Start Auto Spell ------
 function AutoSpell()
- if 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > myMenu.AtSpell.ASMana:Value() then
-               for i,enemy in pairs(GetEnemyHeroes()) do				  
-	local target = GetCurrentTarget()
-      if CanUseSpell(myHero, _Q) == READY and ValidTarget(target, 845) and myMenu.AtSpell.ASQ:Value() then
+ if 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > RxSonaMenu.AtSpell.ASMana:Value() then
+               for i,enemy in pairs(GoS:GetEnemyHeroes()) do				  
+	local target = IOW:GetTarget()
+      if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(target, 845) and RxSonaMenu.AtSpell.ASQ:Value() then
 	  CastSpell(_Q)
  end
  end
-  if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and myMenu.AtSpell.ASW:Value() then
+  if CanUseSpell(myHero, _W) == READY and 100*(GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and RxSonaMenu.AtSpell.ASW:Value() then
     CastSpell(_W)
- end
- if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and myMenu.AtSpell.ASE:Value() then
-    CastSpell(_E)
  end
  end
  end
  
  	------ Start Kill Steal ------
 function KillSteal()
-for i,enemy in pairs(GetEnemyHeroes()) do
+for i,enemy in pairs(GoS:GetEnemyHeroes()) do
 		
         -- Kill Steal --
+ 	local RPred = GetPredictionForPlayer(GoS:GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
 	  local ExtraDmg = 0
 		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
 		ExtraDmg = ExtraDmg + 0.1*GetBonusAP(myHero) + 100
 		end
-	if CanUseSpell(myHero, _Q) and ValidTarget(enemy, 845) and myMenu.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
+
+		if Ignite and RxSonaMenu.Miscset.KS.IgniteKS:Value() then
+                  if CanUseSpell(myHero, Ignite) == READY and 20*GetLevel(myHero)+50 > GetCurrentHP(enemy)+GetHPRegen(enemy)*2.5 and GoS:GetDistanceSqr(GetOrigin(enemy)) < 600*600 then
+                  CastTargetSpell(enemy, Ignite)
+                  end
+                end
+
+	if CanUseSpell(myHero, _Q) and GoS:ValidTarget(enemy, 845) and RxSonaMenu.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
 		CastSpell(_Q)
-	elseif CanUseSpell(myHero, _R) and ValidTarget(enemy, 960) and myMenu.Miscset.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
-        CastSpell(_R)
+    elseif CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(target, 950) and RxSonaMenu.Miscset.KS.RKS:Valua and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 20 + 100*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg) then
+        CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
 	end
 end
 end
 
  	------ Start Auto Level Up _Full Q Frist_ ------
 function UpFullQ()
-  if myMenu.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then  
+  if RxSonaMenu.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then  
 local leveltable = { _Q, _W, _E, _Q, _Q, _R, _Q, _Q, _W, _W, _R, _W, _W, _E, _E, _R, _E, _E} -- <<< Max Q first - Thank Inferno for this code
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
@@ -277,7 +259,7 @@ LevelSpell(leveltable[GetLevel(myHero)])
  
   	------ Start Auto Level Up _Full W Frist_ ------
 function UpFullW()
-  if myMenu.Miscset.AutoLvlUp.AutoSkillUpW:Value() then  
+  if RxSonaMenu.Miscset.AutoLvlUp.AutoSkillUpW:Value() then  
 local leveltable = { _W, _Q, _E, _W, _W, _R, _W, _W, _Q, _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- <<< Max W first - Thank Inferno
 LevelSpell(leveltable[GetLevel(myHero)]) 
   end
@@ -291,7 +273,7 @@ local myHeroPos = GetOrigin(myHero)
 			if (global_ticks + 15000) < currentTicks then
 				local potionslot = GetItemSlot(myHero, 2003)
 					if potionslot > 0 then
-						if (GetCurrentHP(myHero)/GetMaxHP(myHero))*100 < myMenu.Items.PotionHP.CheckHP:Value() then  
+						if (GetCurrentHP(myHero)/GetMaxHP(myHero))*100 < RxSonaMenu.Items.PotionHP.CheckHP:Value() then  
 						global_ticks = currentTicks
 						CastSpell(GetItemSlot(myHero, 2003))
 						end
@@ -307,7 +289,7 @@ local myHeroPos = GetOrigin(myHero)
 			if (global_ticks + 15000) < currentTicks then
 				local potionslot = GetItemSlot(myHero, 2004)
 					if potionslot > 0 then
-						if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 < myMenu.Items.PotionMP.CheckMP:Value() then  
+						if (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 < RxSonaMenu.Items.PotionMP.CheckMP:Value() then  
 						global_ticks = currentTicks
 						CastSpell(GetItemSlot(myHero, 2004))
 						end
@@ -317,11 +299,11 @@ local myHeroPos = GetOrigin(myHero)
 			
   	------ Start Use Items _Use Frost Queen's Claim_ ------
 function UseFQC()
-				for i,enemy in pairs(GetEnemyHeroes()) do
+				for i,enemy in pairs(GoS:GetEnemyHeroes()) do
               local target = GetCurrentTarget()
 				local frostquc = GetItemSlot(myHero, 3096)
 					if frostquc >= 0 then
-		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and (GetMoveSpeed(enemy))>1.2 and ValidTarget(target, 880) then  
+		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and (GetMoveSpeed(enemy))>1.2 and GoS:ValidTarget(target, 880) then  
 						CastSpell(GetItemSlot(myHero, 3049))
 		end
 				    end
@@ -331,13 +313,13 @@ end
 	------ Start Drawings ------
 function Drawings()
  local HeroPos = GetOrigin(myHero)
-if myMenu.Draws.DrawQ:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,880,3,100,0xff00ff00) end
-if myMenu.Draws.DrawW:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
-if myMenu.Draws.DrawE:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,975,3,100,0xff00ff00) end
-if myMenu.Draws.DrawR:Value() then DrawCircle(HeroPos.x,HeroPos.y,HeroPos.z,550,3,100,0xff00ff00) end
- if myMenu.Draws.DrawTest:Value() then
-	for _, enemy in pairs(GetEnemyHeroes()) do
-		if ValidTarget(enemy) then
+if RxSonaMenu.Draws.DrawQ:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,850,3,100,0xff00ff00) end
+if RxSonaMenu.Draws.DrawW:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,1000,3,100,0xff00ff00) end
+if RxSonaMenu.Draws.DrawE:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,350,3,100,0xff00ff00) end
+if RxSonaMenu.Draws.DrawR:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,1000,3,100,0xff00ff00) end
+ if RxSonaMenu.Draws.DrawTest:Value() then
+	for _, enemy in pairs(GoS:GetEnemyHeroes()) do
+		if GoS:ValidTarget(enemy) then
 		    local enemyPos = GetOrigin(enemy)
 			local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
 			local enemyText, color = GetDrawText(enemy)
@@ -527,7 +509,7 @@ end
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
     if (checkDist and GetDistance(target) > 1000) then return end
-    if (CanUseSpell(myHero, _W) == READY) and (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 > ASMana.getValue() then
+    if (CanUseSpell(myHero, _W) == READY) and (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 > RxSonaMenu.AtSpell.ASMana:Value() then
         CastTargetSpell(target, _W)
     end
 end
@@ -597,7 +579,6 @@ function DoLoop()
         end
     -- End of script
 end
-OnLoop(function(arg) DoLoop() end) 
 
 function GetDrawText(enemy)
 	local ExtraDmg = 0
@@ -610,13 +591,13 @@ function GetDrawText(enemy)
 	ExtraDmg2 = ExtraDmg2 + 0.1*GetBonusAP(myHero) + 100
 	end
 	
-	if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+	if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
 		return 'Q = Kill!', ARGB(255, 200, 160, 0)
-	elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+	elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
 		return 'R = Kill!', ARGB(255, 200, 160, 0)
-	elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+	elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
 		return 'Q + R = Kill!', ARGB(255, 200, 160, 0)
-	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
 		return 'Q + R + Ignite = Kill!', ARGB(255, 200, 160, 0)
 	else
 		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
