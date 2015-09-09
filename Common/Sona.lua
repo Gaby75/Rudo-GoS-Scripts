@@ -1,4 +1,4 @@
--- Rx Sona Version 0.8 by Rudo.
+-- Rx Sona Version 0.85 by Rudo.
 --Updated Sona for Inspired Ver19 and IOW
 --------------------------------------------
 
@@ -65,7 +65,7 @@ RxSonaMenu.Items.FrostQC:Boolean("FQC", "Enable", true)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.8"
+local ver = "Version: 0.85"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
@@ -151,7 +151,7 @@ OnLoop(function(myHero)
 		CastSpell(_E)
 		end
 		
-		local RPred = GetPredictionForPlayer(GoS:GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
+		local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,true)
         if CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(target, 950) and RxSonaMenu.cb.RCB:Value() then
         CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
         end
@@ -159,7 +159,7 @@ OnLoop(function(myHero)
 		if RxSonaMenu.cb.FQCCB:Value() then
 			local frostquc = GetItemSlot(myHero, 3096)
 		if frostquc >= 0 then
-			local FPred = GetPredictionForPlayer(GoS:GetMyHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
+			local FPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
 		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
 		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z));
 		end
@@ -213,12 +213,12 @@ end)
 function AutoSpell()
  if 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > RxSonaMenu.AtSpell.ASMana:Value() then
                for i,enemy in pairs(GoS:GetEnemyHeroes()) do				  
-	local target = IOW:GetTarget()
+	local target = GetCurrentTarget()
       if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(target, 845) and RxSonaMenu.AtSpell.ASQ:Value() then
 	  CastSpell(_Q)
  end
  end
-  if CanUseSpell(myHero, _W) == READY and 100*(GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and RxSonaMenu.AtSpell.ASW:Value() then
+  if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and RxSonaMenu.AtSpell.ASW:Value() then
     CastSpell(_W)
     if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and RxSonaMenu.AtSpell.ASE:Value() then
     CastSpell(_E)
@@ -232,7 +232,7 @@ function KillSteal()
 for i,enemy in pairs(GoS:GetEnemyHeroes()) do
 		
         -- Kill Steal --
- 	local RPred = GetPredictionForPlayer(GoS:GetMyHeroPos(),target,GetMoveSpeed(target),2400,300,1000,150,false,false)
+ 	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2400,200,1000,150,false,true)
 	  local ExtraDmg = 0
 		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
 		ExtraDmg = ExtraDmg + 0.1*GetBonusAP(myHero) + 100
@@ -246,7 +246,7 @@ for i,enemy in pairs(GoS:GetEnemyHeroes()) do
 
 	if CanUseSpell(myHero, _Q) and GoS:ValidTarget(enemy, 845) and RxSonaMenu.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + ExtraDmg) then
 		CastSpell(_Q)
-    elseif CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(target, 950) and RxSonaMenu.Miscset.KS.RKS:Valua and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 20 + 100*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg) then
+    elseif CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(target, 950) and RxSonaMenu.Miscset.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 20 + 100*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg) then
         CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
 	end
 end
