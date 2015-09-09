@@ -127,8 +127,8 @@ function addAntiSkillCallback( callback0 )
 end
 
 addAntiSkillCallback(function(target, spellType)
-  local EPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2400,250,1000,150,false,true)
-  if GoS:IsInDistance(target, 1000) and CanUseSpell(myHero,_E) == READY and RxSonaMenu.Miscset.AntiSkill.RAnti:Value() and spellType == CHANELLING_SPELLS then
+  local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2400,250,1000,150,false,true)
+  if GoS:IsInDistance(target, 1000) and CanUseSpell(myHero,_R) == READY and RxSonaMenu.Miscset.AntiSkill.RAnti:Value() and spellType == CHANELLING_SPELLS then
     CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
   end
 end)
