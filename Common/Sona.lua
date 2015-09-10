@@ -1,4 +1,4 @@
--- Rx Sona Version 0.85 by Rudo.
+-- Rx Sona Version 0.88 by Rudo.
 -- Updated Sona for Inspired Ver19 and IOW
 -- Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script.
 --------------------------------------------
@@ -66,14 +66,14 @@ Sona.Items.FrostQC:Boolean("FQC", "Enable", true)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.85"
+local ver = "Version: 0.88"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 PrintChat(textTable[4])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and have a Good Game :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -212,6 +212,7 @@ end)
 
 	------ Start Auto Spell ------
 function AutoSpell()
+	if Sona.AtSpell.ASEb:Value() then
  if 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > Sona.AtSpell.ASMana:Value() then
                for i,enemy in pairs(GoS:GetEnemyHeroes()) do				  
 	local target = GetCurrentTarget()
@@ -223,6 +224,7 @@ function AutoSpell()
     CastSpell(_W)
     if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and Sona.AtSpell.ASE:Value() then
     CastSpell(_E)
+    end
  end
  end
  end
@@ -230,6 +232,7 @@ function AutoSpell()
  
  	------ Start Kill Steal ------
 function KillSteal()
+ 	if Sona.Miscset.KS.KSEb:Value then
 for i,enemy in pairs(GoS:GetEnemyHeroes()) do
 		
         -- Kill Steal --
@@ -251,6 +254,7 @@ for i,enemy in pairs(GoS:GetEnemyHeroes()) do
         CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
 	end
 end
+	end
 end
 
  	------ Start Auto Level Up _Full Q Frist_ ------
@@ -294,7 +298,7 @@ elseif GetLevel(myHero) == 18 then
         LevelSpell(_E)
 end
   end
- end
+end
  
   	------ Start Auto Level Up _Full W Frist_ ------
 function UpFullW()
@@ -341,6 +345,7 @@ end
 
  	------ Start Use Items _Use Health Potion_ ------
 function UsePotHP()
+ if Sona.Items.PotionHP.PotHP:Value() then
 local myHero = GetMyHero()
 local target = GetCurrentTarget()
 local myHeroPos = GetOrigin(myHero)
@@ -355,8 +360,10 @@ local myHeroPos = GetOrigin(myHero)
 				end
 			end
 			
+  end		
  	------ Start Use Items _Use Mana Potion_ ------
 function UsePotMP()
+ if Sona.Items.PotionMP.PotMP:Value() then
 local myHero = GetMyHero()
 local target = GetCurrentTarget()
 local myHeroPos = GetOrigin(myHero)
@@ -371,8 +378,10 @@ local myHeroPos = GetOrigin(myHero)
 				end
 			end
 			
+  end			
   	------ Start Use Items _Use Frost Queen's Claim_ ------
 function UseFQC()
+ if Sona.Items.FrostQC.FQC:Value() then
 				for i,enemy in pairs(GoS:GetEnemyHeroes()) do
               local target = GetCurrentTarget()
 				local frostquc = GetItemSlot(myHero, 3096)
@@ -382,10 +391,13 @@ function UseFQC()
 		end
 				    end
 				end
+
+  end
 end
 	
 	------ Start Drawings ------
 function Drawings()
+  if Sona.Draws.DrawsEb:Value() then
  local HeroPos = GetOrigin(myHero)
 if Sona.Draws.DrawQ:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,850,3,100,0xff00ff00) end
 if Sona.Draws.DrawW:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,1000,3,100,0xff00ff00) end
@@ -401,6 +413,7 @@ if Sona.Draws.DrawR:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y
 		end
 	end
  end
+  end
 end
 
 ------------------------------------------------------- End Function -------------------------------------------------------
