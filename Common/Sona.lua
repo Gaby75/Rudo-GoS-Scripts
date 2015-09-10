@@ -44,8 +44,8 @@ Sona.Miscset.KS:Boolean("RKS", "KS with R", true)
 Sona.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
 Sona.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R",true)
 Sona.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
-Sona.Miscset.AutoLvlUp:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)   ------ Full Q Frist.
-Sona.Miscset.AutoLvlUp:Boolean("AutoSkillUpW", "Auto Lvl Up W", true)   ------ Full W Frist.
+Sona.Miscset.AutoLvlUp:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)   ------ Full Q First.
+Sona.Miscset.AutoLvlUp:Boolean("AutoSkillUpW", "Auto Lvl Up W", true)   ------ Full W First.
 
 Sona.Miscset.KS:Boolean("IgniteKS", "KS with Ignite", true )
    
@@ -84,7 +84,6 @@ PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font colo
 
 global_ticks = 0
 currentTicks = GetTickCount()
-
 
 require('IOW')
 CHANELLING_SPELLS = {
@@ -231,9 +230,9 @@ function AutoSpell()
  
  	------ Start Kill Steal ------
 function KillSteal()
- 	if Sona.Miscset.KS.KSEb:Value then
+ 	if Sona.Miscset.KS.KSEb:Value() then
 for i,enemy in pairs(GoS:GetEnemyHeroes()) do
-		
+
         -- Kill Steal --
  	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2400,200,1000,150,false,true)
 	  local ExtraDmg = 0
@@ -256,7 +255,7 @@ end
 	end
 end
 
- 	------ Start Auto Level Up _Full Q Frist_ ------
+ 	------ Start Auto Level Up _Full Q First_ ------
 function UpFullQ()
   if Sona.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then  
 if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
@@ -299,7 +298,7 @@ end
   end
 end
  
-  	------ Start Auto Level Up _Full W Frist_ ------
+  	------ Start Auto Level Up _Full W First_ ------
 function UpFullW()
   if Sona.Miscset.AutoLvlUp.AutoSkillUpW:Value() then  
 if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
@@ -403,21 +402,45 @@ if Sona.Draws.DrawW:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y
 if Sona.Draws.DrawE:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,350,3,100,0xff00ff00) end
 if Sona.Draws.DrawR:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,1000,3,100,0xff00ff00) end
  if Sona.Draws.DrawTest:Value() then
-	for _, enemy in pairs(GoS:GetEnemyHeroes()) do
+	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		if GoS:ValidTarget(enemy) then
 		    local enemyPos = GetOrigin(enemy)
-			local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
-			local enemyText, color = GetDrawText(enemy)
-			DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
+		    local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
+		    local enemyText, color = GetDrawText(enemy)
+		    DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
 		end
 	end
- end
   end
+end
+end
+
+function GetDrawText(enemy)
+	local ExtraDmg = 0
+	if Ignite and CanUseSpell(myHero, Ignite) == READY then
+	ExtraDmg = ExtraDmg + 20*GetLevel(myHero)+50
+	end
+	
+	local ExtraDmg2 = 0
+	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+	ExtraDmg2 = ExtraDmg2 + 0.1*GetBonusAP(myHero) + 100
+	end
+	
+	if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'Q = Kill!', ARGB(255, 200, 160, 0)
+	elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'R = Kill!', ARGB(255, 200, 160, 0)
+	elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'Q + R = Kill!', ARGB(255, 200, 160, 0)
+	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
+		return 'Q + R + Ignite = Kill!', ARGB(255, 200, 160, 0)
+	else
+		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
+	end
 end
 
 ------------------------------------------------------- End Function -------------------------------------------------------
 
-require ('deLibrary')
+require 'deLibrary'
 
 ------------------------------------------------------------------------------------------------------------------
 -- You can change everything below this line
@@ -426,10 +449,10 @@ require ('deLibrary')
 -- Assigned buttons
 local Button = {
 Show_Help =                                 Keys.F1,
-Draw_HUD =                                  Keys.F4,
-AutoHeal =                                  Keys.F2,
-DrawHealCircles =                           Keys.F3,
-SwitchNaviSystem =                          Keys.F5,
+Draw_HUD =                                  Keys.F2,
+AutoHeal =                                  Keys.Numpad1,
+DrawHealCircles =                           Keys.Numpad2,
+UseNaviSystem =                             Keys.Numpad3,
 }
 
 -- Settings for control champion features
@@ -444,10 +467,8 @@ local AutoHealControl = {
 OurHealthCap =      20,
 InPeaceMode =       50,
 InBattleMode =      80,
---Untested next
-UseNaviSystem =     false,
-MaxDistForNavi =    1100,
-DoCheckDistNavi =   false,
+MaxDistForNavi =    800,
+DoCheckDistNavi =   true,
 }
 
 -- Configurable delays (If your fps don't drop, can lower this values.)
@@ -468,6 +489,7 @@ Show_Help =                                         true,
 Draw_HUD =                                          true,
 AutoHeal =                                          true,
 DrawHealCircles =                                   true,
+UseNaviSystem =                                     true,
 }
 
 -- Switches
@@ -480,7 +502,7 @@ Show_Help =                                         function() Setting.Show_Help
 Draw_HUD =                                          function() Setting.Draw_HUD         = not Setting.Draw_HUD          end,
 AutoHeal =                                          function() Setting.AutoHeal         = not Setting.AutoHeal          end,
 DrawHealCircles =                                   function() Setting.DrawHealCircles  = not Setting.DrawHealCircles   end,
-SwitchNaviSystem =                                  function() AutoHealControl.UseNaviSystem  = not AutoHealControl.UseNaviSystem   end,
+UseNaviSystem =                                     function() Setting.UseNaviSystem    = not Setting.UseNaviSystem     end,
 }
 
 ------------------------------------------------------------------------------------------------------------------
@@ -491,12 +513,12 @@ SwitchNaviSystem =                                  function() AutoHealControl.U
 -- Key Control -- STARTED
 ------------------------------------------------------------------------------------------------------------------
 
-local KPC = attachKeyPressor()
+local KPC = attachKeyManager()
 KPC.AddEventSingle(Button.Show_Help,            ButtonFunction.Show_Help)
 KPC.AddEventSingle(Button.Draw_HUD,             ButtonFunction.Draw_HUD)
 KPC.AddEventSingle(Button.AutoHeal,             ButtonFunction.AutoHeal)
 KPC.AddEventSingle(Button.DrawHealCircles,      ButtonFunction.DrawHealCircles)
-if AutoHealControl.UseNaviSystem then KPC.AddEventSingle(Button.SwitchNaviSystem,     ButtonFunction.SwitchNaviSystem) end
+KPC.AddEventSingle(Button.UseNaviSystem,        ButtonFunction.UseNaviSystem)
 
 ------------------------------------------------------------------------------------------------------------------
 -- Key Control -- ENDED
@@ -510,28 +532,26 @@ if AutoHealControl.UseNaviSystem then KPC.AddEventSingle(Button.SwitchNaviSystem
 function Draw_Help()
     local borders = 2
     local offset = {x = 10+borders, y = 10+borders}
-    local size = {x = 210+borders*2, y = 70+borders*2}
+    local size = {x = 246+borders*2, y = 77+borders*2}
     
     -- Borders/Background
     FillRect(offset.x-borders,offset.y-borders,size.x,size.y,TColors.Black(0xA0))
     -- Top text
-    DrawTextSmall("SONA HELPER",                          60+offset.x,    0+offset.y, Colors.Lime)
+    DrawTextSmall("SORAKA HELPER",                          60+offset.x,    0+offset.y, Colors.Lime)
     DrawTextSmall("BY INFERNO",                             108+offset.x,   7+offset.y, Colors.Red)
     -- Mid text
     DrawTextSmall("KEYS TO OPERATE SCRIPT:",                6+offset.x,     21+offset.y, Colors.White)
     DrawTextSmall("F1: SHOW/HIDE THIS WINDOW",              12+offset.x,    28+offset.y, Colors.White)
-    DrawTextSmall("F2: TOGGLE AUTOHEAL ON/OFF",             12+offset.x,    35+offset.y, Colors.White)
-    DrawTextSmall("F3: TOGGLE AUTOHEAL HELPER ON/OFF",      12+offset.x,    42+offset.y, Colors.White)
-    DrawTextSmall("F4: TOGGLE HUD ON/OFF",                  12+offset.x,    49+offset.y, Colors.White)
+    DrawTextSmall("F2: TOGGLE HUD ON/OFF",                  12+offset.x,    35+offset.y, Colors.White)
+    DrawTextSmall("NUMPAD 1: TOGGLE AUTOHEAL ON/OFF",       12+offset.x,    42+offset.y, Colors.White)
+    DrawTextSmall("NUMPAD 2: TOGGLE AUTOHEAL HELPER ON/OFF",12+offset.x,    49+offset.y, Colors.White)
+    DrawTextSmall("NUMPAD 3: TOGGLE N.A.V.I SYSTEM",        12+offset.x,    56+offset.y, Colors.White)
     -- Postfix
-    DrawTextSmall("HEAL YOUR ELO!",                         126+offset.x,   63+offset.y, Colors.Yellow)
+    DrawTextSmall("HEAL YOUR ELO!",                         162+offset.x,   70+offset.y, Colors.Yellow)
 end
 
 function Draw_HUD()
-    DrawTextSmall("Autoheal: "..(Setting.AutoHeal and "On" or "Off"), 396, 942, Setting.AutoHeal and Colors.Lime or Colors.Red)
-    if AutoHealControl.UseNaviSystem then
-        DrawTextSmall("N.A.V.I", 396, 935, Colors.Green)
-    end
+    DrawTextSmall("Autoheal: "..(not Setting.AutoHeal and "Off" or (Setting.UseNaviSystem and "N.A.V.I." or "On")), 396, 942, Setting.AutoHeal and Colors.Lime or Colors.Red)
 end
 
 ------------------------------------------------------------------------------------------------------------------
@@ -547,14 +567,27 @@ local function GetHealPotential(target, percent)
     if hp >= percent or hp == 0 or dist >= AutoHealControl.MaxDistForNavi then
         return 0
     else
-        return 1 / ((AutoHealControl.MaxDistForNavi - dist) / (percent - hp))
+        return (percent - hp) / (AutoHealControl.MaxDistForNavi - dist)
     end
 end
 
-local function getCircleColor(target, percent, colorfrom, colorto)
-    local StartR, StartG, StartB = colorfrom[1], colorfrom[2], colorfrom[3]
-    local EndR, EndG, EndB = colorto[1], colorto[2], colorto[3]
-    local Multiplier = GetPercentHP(target) / percent -- It should be Percent - 0 / HealHP - 0, but since it is 0...
+local function getCircleColor(target, percent, colors)
+    local targethp = GetPercentHP(target)
+    if targethp > percent then return Colors.White end
+    
+    local stepsize = percent / (#colors - 1)
+    local step
+    for i=1, #colors-1 do
+        if stepsize*(i-1) <= targethp and stepsize*i > targethp then
+            step = i
+            break
+        end
+    end
+    step = step == nil and #colors-1 or step
+
+    local StartR, StartG, StartB = colors[step+1][1], colors[step+1][2], colors[step+1][3]
+    local EndR, EndG, EndB = colors[step][1], colors[step][2], colors[step][3]
+    local Multiplier = (targethp - stepsize*(step-1)) / (stepsize)
     
     -- Protection from stupidity
     Multiplier = Multiplier > 1 and 1 or Multiplier
@@ -572,17 +605,16 @@ function doDrawHealCircles(potential)
     -- Because AllyHeroes don't check for 'alive/dead' and so on, we checking everyting inside function.
     if (AllyList == nil) then return end
 
-    local cStart =  Switch.BattleMode and {0,255,0} or {0,128,0}
-    local cEnd =    Switch.BattleMode and {255,0,0} or {128,0,0}
+    local colors =  Switch.BattleMode and {{255,0,0}, {255,255,0}, {0,255,0}} or {{128,0,0}, {128,128,0}, {0,128,0}}
     
     for i=1, #AllyList do
-        DrawCircle(GetOrigin(AllyList[i]), 1000, 2, 0, getCircleColor(AllyList[i], DrawPercent, cStart, cEnd))
+        DrawCircle(GetOrigin(AllyList[i]), 1000, 2, 0, getCircleColor(AllyList[i], DrawPercent, colors))
     end
     
     if potential then
         local PrimaryTarget = HeroManager.AllyHeroes(function(a) return IsValidTarget(a, AutoHealControl.MaxDistForNavi, false) and GetPercentHP(a) < DrawPercent and GetNetworkID(a) ~= GetNetworkID(myHero) end, function(a,b) return GetHealPotential(a, DrawPercent) > GetHealPotential(b, DrawPercent) end)
         if PrimaryTarget ~= nil then
-            DrawCircle(GetOrigin(PrimaryTarget[1]), 125, 5, 0, getCircleColor(PrimaryTarget[1], DrawPercent, cStart, cEnd))
+            DrawCircle(GetOrigin(PrimaryTarget[1]), 125, 5, 0, getCircleColor(PrimaryTarget[1], DrawPercent, colors))
         end
     end
 end
@@ -595,7 +627,7 @@ end
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
     if (checkDist and GetDistance(target) > 1000) then return end
-    if (CanUseSpell(myHero, _W) == READY) and  (GetCurrentMana(myHero)/GetMaxMana(myHero)) > Sona.AtSpell.ASMana:Value() /100 then
+    if (CanUseSpell(myHero, _W) == READY) and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > Sona.AtSpell.ASMana:Value() then
         CastTargetSpell(target, _W)
     end
 end
@@ -609,9 +641,9 @@ function doAutoHeal(potential)
 
     local AllyList
     if not potential then
-    AllyList = HeroManager.AllyHeroes(function(a) return IsValidTarget(a, 1000, false) and GetPercentHP(a) < HealPercent and GetNetworkID(a) ~= GetNetworkID(myHero) end, function(a,b) return GetPercentHP(a) < GetPercentHP(b) end)
+        AllyList = HeroManager.AllyHeroes(function(a) return IsValidTarget(a, 1000, false) and GetPercentHP(a) < HealPercent and GetNetworkID(a) ~= GetNetworkID(myHero) end, function(a,b) return GetPercentHP(a) < GetPercentHP(b) end)
     else
-    AllyList = HeroManager.AllyHeroes(function(a) return IsValidTarget(a, AutoHealControl.MaxDistForNavi, false) and GetPercentHP(a) < HealPercent and GetNetworkID(a) ~= GetNetworkID(myHero) end, function(a,b) return GetHealPotential(a, HealPercent) > GetHealPotential(b, HealPercent) end)
+        AllyList = HeroManager.AllyHeroes(function(a) return IsValidTarget(a, AutoHealControl.MaxDistForNavi, false) and GetPercentHP(a) < HealPercent and GetNetworkID(a) ~= GetNetworkID(myHero) end, function(a,b) return GetHealPotential(a, HealPercent) > GetHealPotential(b, HealPercent) end)
     end
     -- This is valid function that will return table of allies that is sorted by health.
     -- Because AllyHeroes don't check for 'alive/dead' and so on, we checking everyting inside function.
@@ -648,7 +680,7 @@ local DoLoop_NextCheckTime = 0
 function DoLoop()
     -- Drawings
         if Setting.Show_Help            then Draw_Help()                end
-        if Setting.DrawHealCircles      then doDrawHealCircles(AutoHealControl.UseNaviSystem) end
+        if Setting.DrawHealCircles      then doDrawHealCircles(Setting.UseNaviSystem) end
         if Setting.Draw_HUD             then Draw_HUD()                 end
     -- End drawings
 
@@ -661,31 +693,11 @@ function DoLoop()
     -- Actual action code
         UpdateBattleMode()
         if not IsDead(myHero) and not IsRecalling(myHero) then --If Hero is ready
-            if Setting.AutoHeal         then doAutoHeal(AutoHealControl.UseNaviSystem) end
+            if Setting.AutoHeal         then doAutoHeal(Setting.UseNaviSystem) end
         end
     -- End of script
 end
+OnLoop(function(arg) DoLoop() end)
 
-function GetDrawText(enemy)
-	local ExtraDmg = 0
-	if Ignite and CanUseSpell(myHero, Ignite) == READY then
-	ExtraDmg = ExtraDmg + 20*GetLevel(myHero)+50
-	end
-	
-	local ExtraDmg2 = 0
-	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*GetBonusAP(myHero) + 100
-	end
-	
-	if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
-		return 'Q = Kill!', ARGB(255, 200, 160, 0)
-	elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
-		return 'R = Kill!', ARGB(255, 200, 160, 0)
-	elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
-		return 'Q + R = Kill!', ARGB(255, 200, 160, 0)
-	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 5 + 49*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 20 + 110*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
-		return 'Q + R + Ignite = Kill!', ARGB(255, 200, 160, 0)
-	else
-		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
-	end
-end
+-- Autohide help window after 4s
+DelayManager.AddAction(4000, ButtonFunction.Show_Help)
