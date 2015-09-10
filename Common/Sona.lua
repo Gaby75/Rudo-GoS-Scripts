@@ -136,7 +136,6 @@ end)
 
 OnLoop(function(myHero)
 		        local target = IOW:GetTarget()
-		        local mousePos = GetMousePos()
 	------ Start Combo ------
     if IOW:Mode() == "Combo" then
 	
@@ -596,7 +595,7 @@ end
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
     if (checkDist and GetDistance(target) > 1000) then return end
-    if (CanUseSpell(myHero, _W) == READY) and (GetCurrentMana(myHero)/GetMaxMana(myHero))*100 > Sona.AtSpell.ASMana:Value() then
+    if (CanUseSpell(myHero, _W) == READY) and  (GetCurrentMana(myHero)/GetMaxMana(myHero)) > Sona.AtSpell.ASMana:Value() /100 then
         CastTargetSpell(target, _W)
     end
 end
