@@ -140,7 +140,7 @@ end
 
 addAntiSkillCallback(function(target, spellType)
   local EPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1600,200,1125,60,true,false)
-  if GoS:IsInDistance(target, 1125) and CanUseSpell(myHero,_R) == READY and Xerath.Miscset.AntiSkill.EAnti:Value() and spellType == CHANELLING_SPELLS then
+  if GoS:IsInDistance(target, 1125) and CanUseSpell(myHero,_E) == READY and Xerath.Miscset.AntiSkill.EAnti:Value() and spellType == CHANELLING_SPELLS then
     CastSkillShot(_E,EPred.PredPos.x,EPred.PredPos.y,EPred.PredPos.z)
   end
 end)
