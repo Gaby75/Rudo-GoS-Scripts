@@ -1,4 +1,4 @@
--- Rx Xerath Version 0.1 by Rudo.
+-- Rx Xerath Version 0.15 by Rudo.
 -- Updated for Inspired Ver19 and IOW
 --------------------------------------------
 
@@ -78,7 +78,7 @@ Xerath.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
 local info = "Rx Xerath Loaded."
 local upv = "Upvote if you like it!"
 local sig = "Made by Rudo"
-local ver = "Version: 0.1"
+local ver = "Version: 0.15"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
