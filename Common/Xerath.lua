@@ -482,7 +482,7 @@ function AutoUR()
 	 local rRange = 2000 + GetCastLevel(myHero, _R) * 1200
 	local target = GoS:GetTarget(rRange, DAMAGE_MAGIC)
 	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,700,rRange,375,false,true)
-    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartAtUR.AutoR:Value() and GoS:ValidTarget(target,rRange) and RPred.HitChance == 1 and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 3*(135 + 55*GetCastLevel(myHero,_R) + 0.433*GetBonusAP(myHero)) + ExtraDmg2) then
+    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartAtUR.AutoR:Value() and GoS:ValidTarget(target,2000 + GetCastLevel(myHero, _R) * 1200) and RPred.HitChance == 1 and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 3*(135 + 55*GetCastLevel(myHero,_R) + 0.433*GetBonusAP(myHero)) + ExtraDmg2) then
 	waitTickCount = GetTickCount() + 1400
 	CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z) 
 	DelayAction(function() CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)end, 700)
@@ -499,7 +499,7 @@ function PressKR()
   if waitTickCount < GetTickCount() then
  	local target = GoS:GetTarget(rRange, DAMAGE_MAGIC)
 	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,700,rRange,375,false,true)
-    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartURK.KeyUR:Value() and GoS:ValidTarget(target,rRange) and RPred.HitChance == 1 then
+    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartURK.KeyUR:Value() and GoS:ValidTarget(target,2000 + GetCastLevel(myHero, _R) * 1200) and RPred.HitChance == 1 then
 	waitTickCount = GetTickCount() + 1400
 	CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z) 
 	DelayAction(function() CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)end, 700)
