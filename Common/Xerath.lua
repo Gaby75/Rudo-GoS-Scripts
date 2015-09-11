@@ -94,8 +94,6 @@ PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font colo
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('IOW')
 
-global_ticks = 0
-currentTicks = GetTickCount()
 
 CHANELLING_SPELLS = {
     ["Caitlyn"]                     = {_R},
@@ -206,15 +204,16 @@ OnLoop(function(myHero)
 	
 	------ Start Lane Clear ------	
     if IOW:Mode() == "LaneClear" and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) >= Xerath.FreezeLane.LCMana:Value() then
-		for _,X in pairs(GoS:GetAllMinions(MINION_ENEMY)) do
-		local PMinion = GetOrigin(minion)
+                for _,minion in pairs(GetAllMinions(MINION_ENEMY)) do    
+                        --if GoS:IsInDistance(minion, 1500) then
+		local minionPoS = GetOrigin(minion)
 		
-		if CanUseSpell(myHero, _Q) == READY and Xerath.FreezeLane.QLC:Value() and GoS:ValidTarget(X, 1500) then
-		CastSkillShot(_Q,PMinion.x, PMinion.y, PMinion.z)
+		if CanUseSpell(myHero, _Q) == READY and Xerath.FreezeLane.QLC:Value() and GoS:ValidTarget(minion, 1500) then
+		CastSkillShot(_Q,minionPoS.x, minionPoS.y, minionPoS.z)
 		end
 		
-		if CanUseSpell(myHero, _W) == READY and Xerath.FreezeLane.WLC:Value() and GoS:ValidTarget(X, 1100) then
-		CastSkillShot(_W,PMinion.x, PMinion.y, PMinion.z)
+		if CanUseSpell(myHero, _W) == READY and Xerath.FreezeLane.WLC:Value() and GoS:ValidTarget(minion, 1100) then
+		CastSkillShot(_W,minionPoS.x, minionPoS.y, minionPoS.z)
 		end
         end
     end
@@ -481,7 +480,7 @@ function AutoUR()
 
 	local target = GoS:GetTarget(2000 + GetCastLevel(myHero, _R) * 1200, DAMAGE_MAGIC)
 	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,700,2000 + GetCastLevel(myHero, _R) * 1200,375,false,true)
-    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartAtUR.AutoR:Value() and RPred.HitChance == 1 and ValidTarget(target, 2000 + GetCastLevel(myHero, _R) * 1200) and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 3*(135 + 55*GetCastLevel(myHero,_R) + 0.433*GetBonusAP(myHero)) + ExtraDmg2) then
+    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartAtUR.AutoR:Value() and RPred.HitChance == 1 and GoS:ValidTarget(target, 2000 + GetCastLevel(myHero, _R) * 1200) and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 3*(135 + 55*GetCastLevel(myHero,_R) + 0.433*GetBonusAP(myHero)) + ExtraDmg2) then
 	waitTickCount = GetTickCount() + 1400
 	CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z) 
 	DelayAction(function() CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)end, 700)
@@ -497,7 +496,7 @@ function PressKR()
   if waitTickCount < GetTickCount() then
  	local target = GoS:GetTarget(2000 + GetCastLevel(myHero, _R) * 1200, DAMAGE_MAGIC)
 	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,700,2000 + GetCastLevel(myHero, _R) * 1200,375,false,true)
-    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartURK.KeyUR:Value() and RPred.HitChance == 1 and ValidTarget(target, 2000 + GetCastLevel(myHero, _R) * 1200) then
+    if CanUseSpell(myHero, _R) == READY and Xerath.Ultimate.StartURK.KeyUR:Value() and RPred.HitChance == 1 and GoS:ValidTarget(target, 2000 + GetCastLevel(myHero, _R) * 1200) then
 	waitTickCount = GetTickCount() + 1400
 	CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z) 
 	DelayAction(function() CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)end, 700)
