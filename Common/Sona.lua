@@ -1,5 +1,5 @@
 -- Rx Sona Version 0.9 by Rudo.
--- Updated Sona for Inspired Ver19 and IOW
+-- Updated Sona for Inspired Ver21 and IOW
 -- Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script.
 --------------------------------------------
 
