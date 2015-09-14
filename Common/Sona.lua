@@ -1,3 +1,4 @@
+-- Thanks Deftsu, Cloud, Zypppy and Inferno because help me to write this script. :)
 -- Rx Sona Version 0.9 by Rudo.
 -- Updated Sona for Inspired Ver21 and IOW
 -- Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script.
