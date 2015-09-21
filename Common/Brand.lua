@@ -187,16 +187,16 @@ OnLoop(function(myHero)
 		local target = GetCurrentTarget()			
 			
        local WPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,850,GetCastRange(myHero,_W),250,false,true)			
-		if CanUseW and GoS:ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Brand.cb.WCB:Value() then
+		if CanUseW and GoS:ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Brand.hr.HrW:Value() then
 		CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
 		end
 			
-		if CanUseE and GoS:ValidTarget(target, GetCastRange(myHero,_E)) and Brand.cb.ECB:Value() then
+		if CanUseE and GoS:ValidTarget(target, GetCastRange(myHero,_E)) and Brand.hr.HrE:Value() then
 		CastTargetSpell(_E)
 		end
 		
 	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,250,GetCastRange(myHero,_Q),60,true,false)
-	    if GotBuff(target, "brandablaze") ~= 0 and CanUseQ and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Brand.cb.QCB:Value() then
+	    if GotBuff(target, "brandablaze") ~= 0 and CanUseQ and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Brand.hr.HrQ:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 	end
@@ -207,11 +207,11 @@ OnLoop(function(myHero)
                         -- if GoS:IsInDistance(minion, 1500) then
 		local minionPoS = GetOrigin(minion)
 		
-		if CanUseW and Xerath.FreezeLane.WLC:Value() and GoS:ValidTarget(minion, GetCastRange(myHero,_W)) then
+		if CanUseW and Brand.FreezeLane.WLC:Value() and GoS:ValidTarget(minion, GetCastRange(myHero,_W)) then
 		CastSkillShot(_W,minionPoS.x, minionPoS.y, minionPoS.z)	
 		end
 		
-		if GotBuff(minion, "brandablaze") ~=0 and CanUseE and GoS:ValidTarget(minion, GetCastRange(myHero,_E)) and Xerath.FreezeLane.ELC:Value() then
+		if GotBuff(minion, "brandablaze") ~=0 and CanUseE and GoS:ValidTarget(minion, GetCastRange(myHero,_E)) and Brand.FreezeLane.ELC:Value() then
 		CastSkillShot(_E,minionPoS.x, minionPoS.y, minionPoS.z)	
 	    end
     end
@@ -231,7 +231,7 @@ OnLoop(function(myHero)
 		end
 		
 		if GotBuff(mob, "brandablaze") ~=0 and CanUseQ and Brand.JungleClear.QJC:Value() and GoS:ValidTarget(mob, GetCastRange(myHero,_Q)) then
-		CastSkillShot(_W,mobPoS.x, mobPoS.y, mobPoS.z)	
+		CastSkillShot(_Q,mobPoS.x, mobPoS.y, mobPoS.z)	
 		end
 	end
    end
@@ -412,11 +412,12 @@ local myHeroPos = GetOrigin(myHero)
    
 	------ Start Drawings ------
 function Drawings()
-if AhriMenu.Drawings.Q:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),3,100,0xffEE0000) end
-if AhriMenu.Drawings.W:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,100,0xffCCFF66) end
-if AhriMenu.Drawings.E:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xffCC3399) end
-if AhriMenu.Drawings.R:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
-if AhriMenu.Drawings.Text:Value() then
+  if Brand.Draws.DrawsEb:Value() then
+if Brand.Draws.DrawQ:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),3,100,0xffEE0000) end
+if Brand.Draws.DrawW:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,100,0xffCCFF66) end
+if Brand.Draws.DrawE:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xffCC3399) end
+if Brand.Draws.DrawR:Value() then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
+if Brand.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		if GoS:ValidTarget(enemy) then
 		    local enemyPos = GetOrigin(enemy)
@@ -426,6 +427,7 @@ if AhriMenu.Drawings.Text:Value() then
 		end
 	end
 end
+  end
 end
 
 function GetDrawText(enemy)
