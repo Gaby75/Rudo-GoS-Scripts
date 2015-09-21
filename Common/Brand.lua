@@ -141,11 +141,11 @@ function addInterrupterCallback( callback0 )
 end
 
 addInterrupterCallback(function(target, spellType)
-  local WPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,850,GetCastRange(myHero,_W),250,false,true)
-  if GoS:IsInDistance(target, GetCastRange(myHero,_W)) and CanUseW and WPred.HitChance == 1 and Brand.Interrupt.ItrW:Value() and spellType == CHANELLING_SPELLS then
-  CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
-  elseif GoS:IsInDistance(target, GetCastRange(myHero,_E)) and CanUseE and Brand.Interrupt.ItrE:Value() and spellType == CHANELLING_SPELLS then
+  if GoS:IsInDistance(target, GetCastRange(myHero,_E)) and CanUseE and Brand.Interrupt.ItrE:Value() and spellType == CHANELLING_SPELLS then
   CastSpell(_E)
+  local WPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,850,GetCastRange(myHero,_W),250,false,true)
+  elseif GoS:IsInDistance(target, GetCastRange(myHero,_W)) and CanUseW and WPred.HitChance == 1 and Brand.Interrupt.ItrW:Value() and spellType == CHANELLING_SPELLS then
+  CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
   end
 if GotBuff(target, "brandablaze")~=0 then
 local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,250,GetCastRange(myHero,_Q),60,true,false)
