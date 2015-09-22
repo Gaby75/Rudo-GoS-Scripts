@@ -1,7 +1,7 @@
 -- Rx Brand Version 0.2 by Rudo.
 -- Updated Brand for Inspired Ver26 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
--- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3
+-- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3 And thank Vision for test my script ^_^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Brand" then return end
 PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.2 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
