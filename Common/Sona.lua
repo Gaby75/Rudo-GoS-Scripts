@@ -1,9 +1,9 @@
--- Thanks Deftsu, Cloud, Zypppy and Inferno because help me to write this script. :)
--- Rx Sona Version 0.9 by Rudo.
--- Updated Sona for Inspired Ver21 and IOW
+-- Rx Sona Version 0.95 by Rudo.
+-- Updated Sona for Inspired Ver26 and IOW
 -- Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script.
 --------------------------------------------
 
+require('Inspired')
 ---- Create a Menu ----
 Sona = Menu("Rx Sona", "Sona")
 
@@ -34,7 +34,7 @@ Sona.Draws:Boolean("DrawQ", "Range Q", true)
 Sona.Draws:Boolean("DrawW", "Range W", true)
 Sona.Draws:Boolean("DrawE", "Range E", true)
 Sona.Draws:Boolean("DrawR", "Range R", true)
-Sona.Draws:Boolean("DrawTest", "Draw Test", true)
+Sona.Draws:Boolean("DrawText", "Draw Test", true)
 
 ---- Misc Menu ----
 Sona:SubMenu("Miscset", "Misc")
@@ -65,9 +65,9 @@ Sona.Items.FrostQC:Boolean("FQC", "Enable", true)
 
 
 local info = "Rx Sona Loaded."
-local upv = "Upvote if you like it!"
+local upv = "Upvote if you like it >3"
 local sig = "Made by Rudo"
-local ver = "Version: 0.9"
+local ver = "Version: 0.95"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
@@ -398,11 +398,11 @@ end
 function Drawings()
   if Sona.Draws.DrawsEb:Value() then
  local HeroPos = GetOrigin(myHero)
-if Sona.Draws.DrawQ:Value() and CanUseSpell(myHero, _Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,850,3,100,0xff00ff00) end
-if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,1000,3,100,0xff00ff00) end
-if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,350,3,100,0xff00ff00) end
-if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,1000,3,100,0xff00ff00) end
- if Sona.Draws.DrawTest:Value() then
+if Sona.Draws.DrawQ:Value() and CanUseSpell(myHero, _Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),3,100,0xff3366FF) end
+if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,100,0xff00FF33) end
+if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xff8201B2) end
+if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
+ if Sona.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		if GoS:ValidTarget(enemy) then
 		    local enemyPos = GetOrigin(enemy)
@@ -440,7 +440,7 @@ function GetDrawText(enemy)
 end
 
 ------------------------------------------------------- End Function -------------------------------------------------------
-
+require('deLibrary')
 require 'deLibrary'
 
 ------------------------------------------------------------------------------------------------------------------
