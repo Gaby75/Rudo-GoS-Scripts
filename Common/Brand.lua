@@ -521,11 +521,11 @@ function KillSteal()
 	CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 	killable=1
 	
-	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and enemyhp < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + ExtraDmg2)*2)) and ((CountEnemyHeroInRange(enemy,400)>=2 and CountEnemyHeroInRange(enemy,400)<=4) or (CountEnemyMinionInRange(enemy,400)>=1)) and GetCurrentMana(myHero)>=100 then
+	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+(GetHPRegen(enemy)/5) < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + ExtraDmg2)*2)) and ((CountEnemyHeroInRange(enemy,400)>=2 and CountEnemyHeroInRange(enemy,400)<=4) or (CountEnemyMinionInRange(enemy,400)>=1)) and GetCurrentMana(myHero)>=100 then
 	CastSpell(_R)
 	killable=1
 	
-	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and enemyhp < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + ExtraDmg2)*3)) and ((CountEnemyHeroInRange(enemy,400)==2) or (CountEnemyMinionInRange(enemy,400)<=3 and (CountEnemyMinionInRange(enemy,400)>=1) and GotBuff(enemy,"brandablaze")~=0 )) and GetCurrentMana(myHero)>=100 then
+	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+(GetHPRegen(enemy)/5) < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + ExtraDmg2)*3)) and ((CountEnemyHeroInRange(enemy,400)==2) or (CountEnemyMinionInRange(enemy,400)<=3 and (CountEnemyMinionInRange(enemy,400)>=1) and GotBuff(enemy,"brandablaze")~=0 )) and GetCurrentMana(myHero)>=100 then
 	CastSpell(_R)
 	killable=1
 	
