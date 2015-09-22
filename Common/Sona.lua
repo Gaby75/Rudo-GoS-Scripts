@@ -5,6 +5,7 @@
 
 require('Inspired')
 ---- Create a Menu ----
+if GetObjectName(myHero) ~= "Sona" then return end
 Sona = Menu("Rx Sona", "Sona")
 
 ---- Combo ----
