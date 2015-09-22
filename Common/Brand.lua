@@ -1,5 +1,5 @@
 -- Rx Brand Version 0.2 by Rudo.
--- Updated Brand for Inspired Ver25 and IOW
+-- Updated Brand for Inspired Ver26 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3
 ----------------------------------------------------
@@ -25,7 +25,7 @@ Brand.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 0)
 ---- Auto Spell Menu ----
 Brand:SubMenu("AtSpell", "Auto Spell")
 Brand.AtSpell:Boolean("ASEb", "Enable Auto Spell", true)
-Brand.AtSpell:Boolean("ASQ", "Use Q if can stun", true)
+Brand.AtSpell:Boolean("ASQ", "Use Q if can stun", false)
 Brand.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 40, 0, 100, 1)
 
 ---- Lane Clear Menu ----
@@ -484,7 +484,7 @@ elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_
 elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + CheckEDmg + CheckRDmg + ExtraDmg2 + ExtraDmg) then
   return 'Q + W + E + Ignite = Killable', ARGB(255, 200, 160, 0)
 else
-  return 'Cant Killable now', ARGB(255, 200, 160, 0)
+  return 'Cant Kill this Target', ARGB(255, 200, 160, 0)
  end
 end
 
