@@ -1,4 +1,4 @@
--- Rx Brand Version 0.1 by Rudo.
+-- Rx Brand Version 0.2 by Rudo.
 -- Updated Brand for Inspired Ver25 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3
