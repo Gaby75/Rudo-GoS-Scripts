@@ -1,10 +1,10 @@
--- Rx Brand Version 0.2 by Rudo.
+-- Rx Brand Version 0.3 by Rudo.
 -- Updated Brand for Inspired Ver26 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3 And thank Vision for test my script ^_^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Brand" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.2 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.3 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Brand = Menu("Rx Brand", "Brand")
 
@@ -150,6 +150,7 @@ OnLoop(function(myHero)
 	------ Start Combo ------
     if IOW:Mode() == "Combo" and killable==0 then
 		local target = GetCurrentTarget()
+		
 	local ExtraDmg2 = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
 	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
@@ -169,7 +170,7 @@ OnLoop(function(myHero)
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 
-		if GoS:ValidTarget(target, GetCastRange(myHero,_R)) and Brand.cb.RCB:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, target, 0, CheckRDmg + ExtraDmg2) then
+		if GoS:ValidTarget(target, GetCastRange(myHero,_R)) and Brand.cb.RCB:Value() and GetCurrentHP(target)+GetMagicShield(target)+GetDmgShield(target)+GetHPRegen(target) < GoS:CalcDamage(myHero, target, 0, CheckRDmg + ExtraDmg2) then
 	    if CanUseSpell(myHero,_R) == READY and CanUseSpell(myHero, _Q) ~= READY and CanUseSpell(myHero, _W) ~= READY and CanUseSpell(myHero, _E) ~= READY then
 		CastTargetSpell(_R)
 		end
