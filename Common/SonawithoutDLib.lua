@@ -224,7 +224,7 @@ function AutoSpell()
     CastSpell(_W)
   end
                for _, ally in pairs(GetAllyHeroes()) do
-		if GoS:GetDistance(enemy)<1251 then	   
+		if GoS:GetDistance(myHero, enemy)<1251 then	   
   if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(ally)/GetMaxHP(ally))<0.80 and Sona.AtSpell.ASW:Value() then
     CastTargetSpell(ally, _W)
   end
