@@ -1,4 +1,4 @@
--- Rx Sona Version 0.95 by Rudo.
+-- Rx Sona Version 1.0 by Rudo.
 -- Updated Sona for Inspired Ver26 and IOW
 -- Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script.
 --------------------------------------------
@@ -68,7 +68,7 @@ Sona.Items.FrostQC:Boolean("FQC", "Enable", true)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it >3"
 local sig = "Made by Rudo"
-local ver = "Version: 0.95"
+local ver = "Version: 1.0"
 textTable = {info,upv,sig,ver}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
@@ -444,6 +444,8 @@ end
 require('deLibrary')
 require 'deLibrary'
 
+-----------------------------------------------------------DeLibrary--------------------------------------------------
+
 ------------------------------------------------------------------------------------------------------------------
 -- You can change everything below this line
 ------------------------------------------------------------------------------------------------------------------
@@ -455,6 +457,7 @@ Draw_HUD =                                  Keys.F2,
 AutoHeal =                                  Keys.Numpad1,
 DrawHealCircles =                           Keys.Numpad2,
 UseNaviSystem =                             Keys.Numpad3,
+AimHelper =                                 Keys.Numpad4,
 }
 
 -- Settings for control champion features
@@ -471,6 +474,11 @@ InPeaceMode =       50,
 InBattleMode =      80,
 MaxDistForNavi =    800,
 DoCheckDistNavi =   true,
+}
+-- AimHelperSettings
+local AimControl = {
+QPredictPower = 0,
+EPredictPower = 0,
 }
 
 -- Configurable delays (If your fps don't drop, can lower this values.)
@@ -492,6 +500,7 @@ Draw_HUD =                                          true,
 AutoHeal =                                          true,
 DrawHealCircles =                                   true,
 UseNaviSystem =                                     true,
+AimHelper =                                         true,
 }
 
 -- Switches
@@ -505,11 +514,14 @@ Draw_HUD =                                          function() Setting.Draw_HUD 
 AutoHeal =                                          function() Setting.AutoHeal         = not Setting.AutoHeal          end,
 DrawHealCircles =                                   function() Setting.DrawHealCircles  = not Setting.DrawHealCircles   end,
 UseNaviSystem =                                     function() Setting.UseNaviSystem    = not Setting.UseNaviSystem     end,
+AimHelper =                                         function() Setting.AimHelper        = not Setting.AimHelper         end,
 }
 
 ------------------------------------------------------------------------------------------------------------------
 -- Inside Function Control -- ENDED
 ------------------------------------------------------------------------------------------------------------------
+
+-- Predictor
 
 ------------------------------------------------------------------------------------------------------------------
 -- Key Control -- STARTED
@@ -521,6 +533,8 @@ KPC.AddEventSingle(Button.Draw_HUD,             ButtonFunction.Draw_HUD)
 KPC.AddEventSingle(Button.AutoHeal,             ButtonFunction.AutoHeal)
 KPC.AddEventSingle(Button.DrawHealCircles,      ButtonFunction.DrawHealCircles)
 KPC.AddEventSingle(Button.UseNaviSystem,        ButtonFunction.UseNaviSystem)
+KPC.AddEventSingle(Button.AimHelper,            ButtonFunction.AimHelper)
+
 
 ------------------------------------------------------------------------------------------------------------------
 -- Key Control -- ENDED
@@ -534,7 +548,7 @@ KPC.AddEventSingle(Button.UseNaviSystem,        ButtonFunction.UseNaviSystem)
 function Draw_Help()
     local borders = 2
     local offset = {x = 10+borders, y = 10+borders}
-    local size = {x = 246+borders*2, y = 77+borders*2}
+    local size = {x = 246+borders*2, y = 84+borders*2}
     
     -- Borders/Background
     FillRect(offset.x-borders,offset.y-borders,size.x,size.y,TColors.Black(0xA0))
@@ -547,13 +561,17 @@ function Draw_Help()
     DrawTextSmall("F2: TOGGLE HUD ON/OFF",                  12+offset.x,    35+offset.y, Colors.White)
     DrawTextSmall("NUMPAD 1: TOGGLE AUTOHEAL ON/OFF",       12+offset.x,    42+offset.y, Colors.White)
     DrawTextSmall("NUMPAD 2: TOGGLE AUTOHEAL HELPER ON/OFF",12+offset.x,    49+offset.y, Colors.White)
-    DrawTextSmall("NUMPAD 3: TOGGLE N.A.V.I SYSTEM",        12+offset.x,    56+offset.y, Colors.White)
+    DrawTextSmall("NUMPAD 3: TOGGLE N.A.V.I SYSTEM ON/OFF", 12+offset.x,    56+offset.y, Colors.White)
+    DrawTextSmall("NUMPAD 4: TOGGLE AIM HELPER ON/OFF",     12+offset.x,    63+offset.y, Colors.White)
     -- Postfix
-    DrawTextSmall("HEAL YOUR ELO!",                         162+offset.x,   70+offset.y, Colors.Yellow)
+    DrawTextSmall("HEAL YOUR ELO!",                         162+offset.x,   77+offset.y, Colors.Yellow)
 end
 
 function Draw_HUD()
     DrawTextSmall("Autoheal: "..(not Setting.AutoHeal and "Off" or (Setting.UseNaviSystem and "N.A.V.I." or "On")), 396, 942, Setting.AutoHeal and Colors.Lime or Colors.Red)
+    if Setting.AimHelper then
+        DrawTextSmall("AimHelper Online", 396, 935, Colors.Lime)
+    end
 end
 
 ------------------------------------------------------------------------------------------------------------------
@@ -628,8 +646,8 @@ end
 -- Functions and Actions (This plugin) -- STARTED
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
-    if (checkDist and GetDistance(target) > 1000) then return end
-    if (CanUseSpell(myHero, _W) == READY) and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > Sona.AtSpell.ASMana:Value() then
+    if (checkDist and GetDistance(target) > 1000) and (100*GetCurrentMana(myHero)/GetMaxMana(myHero) > Sona.AtSpell.ASMana:Value())  then return end
+    if (CanUseSpell(myHero, _W) == READY) then
         CastTargetSpell(target, _W)
     end
 end
