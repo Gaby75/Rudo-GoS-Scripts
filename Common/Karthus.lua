@@ -1,10 +1,10 @@
--- Rx Karthus Version 0.1 by Rudo.
+-- Rx Karthus Version 0.2 by Rudo.
 -- Updated Karthus for Inspired Ver28 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.1 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.2 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
 
@@ -39,7 +39,6 @@ Karthus.JungleClear:Boolean("EJC", "Use E LaneClear", true)
 Karthus:SubMenu("KS", "Kill Steal")
 Karthus.KS:Boolean("KSEb", "Enable KillSteal", true)
 Karthus.KS:Boolean("QKS", "KS with Q", true)
-Karthus.KS:Boolean("WKS", "KS with W", true)
 Karthus.KS:Boolean("IgniteKS", "KS with Ignite", true)
 
 ---- Draw Enemy can KS with R Menu ----
@@ -224,12 +223,8 @@ function KillSteal()
 	 if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg2) then
 	CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)	
 	 end
-	
-	 if CanUseSpell(myHero,_E) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_E)) and Karthus.KS.EKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + ExtraDmg2) then
-	CastSpell(_E)
-	 end
- 	end
  end
+ 	end
 end
 
  	------ Start Auto Level Up _Full Q First then E ------
