@@ -27,8 +27,8 @@ Karthus.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 30, 0, 100, 
 
 ---- Last Hit Menu ----
 Karthus:SubMenu("LHMinion", "Last Hit Minion")
-Karthus.FreezeLane:Boolean("QLH", "Use Q Last Hit", true)
-Karthus.FreezeLane:Slider("LHMana", "Enable LastHit if %My MP >", 30, 0, 100, 0)
+Karthus.LHMinion:Boolean("QLH", "Use Q Last Hit", true)
+Karthus.LHMinion:Slider("LHMana", "Enable LastHit if %My MP >", 30, 0, 100, 0)
 
 ---- Jungle Clear Menu ----
 Karthus:SubMenu("JungleClear", "Jungle Clear")
@@ -157,10 +157,10 @@ OnLoop(function(myHero)
 	end
    end
 	------ Start LastHit ------
-   if IOW:Mode() == "LastHit" then
+   if IOW:Mode() == "LastHit" and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) >= Karthus.LHMinion.LHMana:Value() then
 	for _,minion in pairs(GoS:GetAllMinions(MINION_ENEMY)) do
 		local minionPoS = GetOrigin(minion)
-                        if GoS:IsInDistance(minion, 875) then
+                        if GoS:IsInDistance(minion, 875) and Karthus.LHMinion.QLH:Value() then
 			local hpMinions = GetCurrentHP(minion)
 			local CheckKillMinions = GoS:CalcDamage(myHero, minion, 0, CheckQDmg)	
 		if CheckKillMinions > hpMinions then
