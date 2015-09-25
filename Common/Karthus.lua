@@ -1,7 +1,7 @@
 -- Rx Karthus Version 0.1 by Rudo.
 -- Updated Karthus for Inspired Ver28 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
--- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Karthus. :3 And thank Vision for test my script ^_^
+-- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
 PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.1 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
@@ -55,7 +55,7 @@ Karthus.Draws:Boolean("DrawQ", "Range Q", true)
 Karthus.Draws:Boolean("DrawW", "Range W", true)
 Karthus.Draws:Boolean("DrawE", "Range E", true)
 Karthus.Draws:Boolean("DrawR", "Range R", true)
-Karthus.Draws:Boolean("DrawText", "Draw Test", true)
+Karthus.Draws:Boolean("DrawText", "Draw Text", true)
 
 ---- Misc Menu ----
 Karthus:SubMenu("Miscset", "Misc")
@@ -128,10 +128,14 @@ OnLoop(function(myHero)
 		CastSkillShot(_Q,minionPoS.x, minionPoS.y, minionPoS.z)	
 		end
 		
-		if CanUseSpell(myHero,_E) == READY and GoS:ValidTarget(minion, GetCastRange(myHero,_E)) and Karthus.FreezeLane.ELC:Value() then
+		if CanUseSpell(myHero,_E) == READY and GoS:IsInDistance(minion, GetCastRange(myHero,_E)) and GotBuff(myHero,"KarthusDefile") <= 0 and Karthus.FreezeLane.ELC:Value() then
 		CastSkillShot(_E,minionPoS.x, minionPoS.y, minionPoS.z)	
 	    end
-    end
+		if Karthus.FreezeLane.ELC:Value() and not GoS:IsInDistance(minion, GetCastRange(myHero,_E)) and GotBuff(myHero,"KarthusDefile") > 0 then
+        CastSkillShot(_E,minionPoS.x, minionPoS.y, minionPoS.z)	
+		end
+		
+	end
    end 
 
 	------ Start JungleClear ------  
@@ -139,12 +143,15 @@ OnLoop(function(myHero)
     for _,mob in pairs(GoS:GetAllMinions(MINION_JUNGLE)) do	
 		local mobPoS = GetOrigin(mob)
 		
-		if CanUseSpell(myHero,Q) == READY and Karthus.JungleClear.WJC:Value() and GoS:ValidTarget(mob, GetCastRange(myHero,_Q)) then
+		if CanUseSpell(myHero,Q) == READY and Karthus.JungleClear.QJC:Value() and GoS:ValidTarget(mob, GetCastRange(myHero,_Q)) then
 		CastSkillShot(_Q,mobPoS.x, mobPoS.y, mobPoS.z)	
 		end
 		
-		if CanUseSpell(myHero,_E) == READY and Karthus.JungleClear.EJC:Value() and GoS:ValidTarget(mob, GetCastRange(myHero,_E)) then
-		CastSkillShot(_W,mobPoS.x, mobPoS.y, mobPoS.z)	
+		if CanUseSpell(myHero,_E) == READY and GoS:IsInDistance(mob, GetCastRange(myHero,_E)) and GotBuff(myHero,"KarthusDefile") <= 0 and Karthus.JungleClear.EJC:Value() then
+		CastSkillShot(_E,mobPoS.x, mobPoS.y, mobPoS.z)	
+	    end
+		if  Karthus.JungleClear.EJC:Value() and not GoS:IsInDistance(mob, GetCastRange(myHero,_E)) and GotBuff(myHero,"KarthusDefile") > 0 then
+        CastSkillShot(_E,mobPoS.x, mobPoS.y, mobPoS.z)	
 		end
 		
 	end
@@ -225,7 +232,7 @@ function KillSteal()
  end
 end
 
-
+ 	------ Start Auto Level Up _Full Q First then E ------
 function AutoLvlUpQ()
 	if Karthus.Miscset.AutoSkillUpQ:Value() then
  if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
@@ -320,8 +327,8 @@ function AutoZhonya()
 	  CastSpell(GetItemSlot(myHero, 3157))
 	end
    end
-   if CanUseSpell(myHero,_E) ~= READY then
-    if GetItemSlot(myHero,3157) > 0 and ValidTarget(unit, 1000) then
+   if GoS:ValidTarget(unit, 1000) then
+    if GetItemSlot(myHero,3157) > 0 then
 	  CastSpell(GetItemSlot(myHero, 3157))
 	end
    end
@@ -331,6 +338,7 @@ end
 
 	------ Start R Killable Info ------
 function RKillableInfo()
+   if Karthus.InfoR.EninfoR:Value() then
     if CanUseSpell(myHero,_R) ~= READY then return end
 	
 	local ExtraDmg2 = 0
@@ -359,6 +367,7 @@ function RKillableInfo()
         end
   end
   DrawText(info,40,500,0,0xffff0000) 
+   end
 end
 	
 	------ Start Drawings ------
