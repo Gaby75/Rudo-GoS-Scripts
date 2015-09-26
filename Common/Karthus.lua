@@ -21,7 +21,7 @@ Karthus.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 0)
 
 ---- Lane Clear Menu ----
 Karthus:SubMenu("FreezeLane", "Lane Clear")
-Karthus.FreezeLane:Boolean("WLC", "Use Q LaneClear", true)
+Karthus.FreezeLane:Boolean("QLC", "Use Q LaneClear", true)
 Karthus.FreezeLane:Boolean("ELC", "Use E LaneClear", true)
 Karthus.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 30, 0, 100, 0)
 
@@ -53,7 +53,6 @@ Karthus.Draws:Boolean("DrawsEb", "Enable Drawings", true)
 Karthus.Draws:Boolean("DrawQ", "Range Q", true)
 Karthus.Draws:Boolean("DrawW", "Range W", true)
 Karthus.Draws:Boolean("DrawE", "Range E", true)
-Karthus.Draws:Boolean("DrawR", "Range R", true)
 Karthus.Draws:Boolean("DrawText", "Draw Text", true)
 
 ---- Misc Menu ----
@@ -113,7 +112,7 @@ OnLoop(function(myHero)
 		local target = GetCurrentTarget()			
 			
 	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),100,false,true)
-	    if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.cb.QCB:Value() then
+	    if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 	end
@@ -124,7 +123,7 @@ OnLoop(function(myHero)
                         -- if GoS:IsInDistance(minion, 1500) then
 		local minionPoS = GetOrigin(minion)
 		
-		if CanUseSpell(myHero,_Q) == READY and Karthus.FreezeLane.WLC:Value() and GoS:ValidTarget(minion, GetCastRange(myHero,_Q)) then
+		if CanUseSpell(myHero,_Q) == READY and Karthus.FreezeLane.QLC:Value() and GoS:ValidTarget(minion, GetCastRange(myHero,_Q)) then
 		CastSkillShot(_Q,minionPoS.x, minionPoS.y, minionPoS.z)	
 		end
 		
