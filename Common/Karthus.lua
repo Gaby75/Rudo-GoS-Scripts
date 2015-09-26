@@ -88,20 +88,20 @@ OnLoop(function(myHero)
     if IOW:Mode() == "Combo" then
 		local target = GetCurrentTarget()
 		
-		if CanUseSpell(myHero,_W) == READY and GoS:ValidTarget(target, 900) and Karthus.cb.WCB:Value() then
+		if CanUseSpell(myHero,_W) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, 900) and Karthus.cb.WCB:Value() then
 		CastTargetSpell(myHero, _W)
 		end
 		
 	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),100,false,true)
-	    if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.cb.QCB:Value() then
+	    if CanUseSpell(myHero,_Q) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.cb.QCB:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end		
 		
-		if CanUseSpell(myHero,_E) == READY and GoS:IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
+		if CanUseSpell(myHero,_E) == READY and IsObjectAlive(target) and GoS:IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
 		CastTargetSpell(myHero, _E)
 	    end
 
-		if Karthus.cb.ECB:Value() and not GoS:IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") > 0 then
+		if Karthus.cb.ECB:Value()and IsObjectAlive(target) and not GoS:IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") > 0 then
 		CastTargetSpell(myHero, _E)
 		end
 		
@@ -112,7 +112,7 @@ OnLoop(function(myHero)
 		local target = GetCurrentTarget()			
 			
 	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),100,false,true)
-	    if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
+	    if CanUseSpell(myHero,_Q) == READY and IsObjectAlive(target) GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 	end
@@ -334,7 +334,7 @@ end
 	------ Start R Killable Info ------
 function RKillableInfo()
    if Karthus.InfoR.EninfoR:Value() then
-    if CanUseSpell(myHero,_R) == READY then return end
+    if CanUseSpell(myHero,_R) ~= READY then return end
 	
 	local ExtraDmg2 = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
@@ -346,10 +346,9 @@ function RKillableInfo()
     info = ""
     for nID, enemy in pairs(GoS:GetEnemyHeroes()) do
         if IsObjectAlive(enemy) then
-            dmgR = ExtraDmg2 + GoS:CalcDamage(myHero, enemy, 0, CheckRDmg)
-            hpEnemies = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)
-			hp = GetCurrentHP(enemy)
-            if dmgR > hpEnemies then
+            realdmg = ExtraDmg2 + GoS:CalcDamage(myHero, enemy, 0, CheckRDmg)
+            hp = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)
+            if realdmg > hp then
                 info = info..GetObjectName(enemy)
                 if not IsVisible(enemy) then
                     info = info.." Not see Enemy in map maybe"
@@ -358,7 +357,7 @@ function RKillableInfo()
                     HoldPosition()
                 info = info.."  killable\n"
             end
-            -- info = info..GetObjectName(enemy).."    HP:"..hp.."  dmg: "..dmgR.." "..killable.."\n"
+            -- info = info..GetObjectName(enemy).."    HP:"..hp.."  dmg: "..realdmg.." "..killable.."\n"
         end
   end
   DrawText(info,40,500,0,0xffff0000) 
