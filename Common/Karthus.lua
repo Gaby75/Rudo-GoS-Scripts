@@ -1,5 +1,5 @@
 -- Rx Karthus Version 0.4 by Rudo.
--- Updated Karthus for Inspired Ver28 and IOW
+-- Updated Karthus for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
