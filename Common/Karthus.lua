@@ -3,7 +3,7 @@
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
---if GetObjectName(myHero) ~= "Karthus" then return end
+if GetObjectName(myHero) ~= "Karthus" then return end
 PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.4 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
