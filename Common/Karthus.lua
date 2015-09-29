@@ -1,10 +1,10 @@
--- Rx Karthus Version 0.4 by Rudo.
+-- Rx Karthus Version 0.45 by Rudo.
 -- Updated Karthus for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.4 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.45 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
 
@@ -92,7 +92,7 @@ OnLoop(function(myHero)
 		CastTargetSpell(myHero, _W)
 		end
 		
-	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),100,false,true)
+	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),190,false,true)
 	    if CanUseSpell(myHero,_Q) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.cb.QCB:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end		
@@ -111,7 +111,7 @@ OnLoop(function(myHero)
     if IOW:Mode() == "Harass" and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) >= Karthus.hr.HrMana:Value() then
 		local target = GetCurrentTarget()			
 			
-	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),100,false,true)
+	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),190,false,true)
 	    if CanUseSpell(myHero,_Q) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
@@ -212,7 +212,7 @@ function KillSteal()
 	end
  
         -- Kill Steal --
-	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,900,GetCastRange(myHero,_Q),100,false,true)
+	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,900,GetCastRange(myHero,_Q),190,false,true)
 	   
             if Ignite and Karthus.KS.IgniteKS:Value() then
                   if CanUseSpell(myHero, Ignite) == READY and 20*GetLevel(myHero)+50 > GetCurrentHP(enemy)+GetHPRegen(enemy)*2.5 and GoS:GetDistanceSqr(GetOrigin(enemy)) < 600*600 then
@@ -333,7 +333,7 @@ end
 
 	------ Start R Killable Info ------
 function RKillableInfo()
-   if Karthus.InfoR.EninfoR:Value() and CanUseSpell(myHero,_R) == READY then
+   if Karthus.InfoR.EninfoR:Value() and GetLevel(myHero) > 5 then
 	
 	local ExtraDmg2 = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
