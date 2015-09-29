@@ -350,13 +350,11 @@ function RKillableInfo()
             if realdmg > hp then
                 info = info..GetObjectName(enemy)
                 if not IsVisible(enemy) then
-                    info = info.." Not see Enemy in map maybe"
-                    HoldPosition()
+                    info = info.." Not see enemy in map maybe"
                 end
-                    HoldPosition()
-                info = info.."  killable\n"
+                info = info.."  Killable\n"
             end
-            -- info = info..GetObjectName(enemy).."    HP:"..hp.."  dmg: "..realdmg.." "..killable.."\n"
+            -- info = info..GetObjectName(enemy).."    HP:"..hp.."  dmg: "..realdmg.." "..Killable.."\n"
         end
   end
   DrawText(info,40,500,0,0xffff0000) 
@@ -366,9 +364,9 @@ end
 	------ Start Drawings ------
 function Drawings()
   if Karthus.Draws.DrawsEb:Value() then
-if Karthus.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),3,100,0xff87CEFA) end
-if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,100,0xff1C1C1C) end
-if Karthus.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xff7D26CD) end
+if Karthus.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),2,175,0xff87CEFA) end
+if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),2,175,0xff1C1C1C) end
+if Karthus.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),2,175,0xff7D26CD) end
 if Karthus.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		if GoS:ValidTarget(enemy) then
@@ -406,6 +404,6 @@ elseif ExtraDmg > 0 and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+
 elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + ExtraDmg + ExtraDmg2) then
   return 'Q + R + Ignite = Killable', ARGB(255, 200, 160, 0)
 else
-  return 'Cant Kill this Target', ARGB(255, 200, 160, 0)
+  return "Can't Kill this Target", ARGB(255, 200, 160, 0)
  end
 end
