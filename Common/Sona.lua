@@ -1,7 +1,17 @@
--- Rx Sona Version 1.0 by Rudo.
--- Updated Sona for Inspired Ver26 and IOW
+-- Rx Sona Version 1.1 by Rudo.
+-- Updated Sona for Inspired Ver30 and IOW
 -- Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script.
---------------------------------------------
+------------------------------------------------------------------------------------
+
+-- ..######...#######..###.....##....###
+-- .##....##.##.....##.####....##...##.##
+-- .##.......##.....##.##.##...##..##...##
+-- ..######..##.....##.##..##..##.##.....##
+-- .......##.##.....##.##...##.##.#########
+-- .##....##.##.....##.##....####.##.....##
+-- ..######...#######..##.....###.##.....##
+
+---------------------------------------------------
 
 require('Inspired')
 ---- Create a Menu ----
@@ -25,7 +35,6 @@ Sona:SubMenu("AtSpell", "Auto Spell")
 Sona.AtSpell:Boolean("ASEb", "Enable Aut Spell", true)
 Sona.AtSpell:Boolean("ASQ", "Use Q", true)
 Sona.AtSpell:Boolean("ASW", "Use W", true)
-Sona.AtSpell:Boolean("ASE", "Use E", true)
 Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
 
 ---- Drawings Menu ----
@@ -59,8 +68,6 @@ Sona.Items.PotionHP:Slider("CheckHP", "Auto Use if %HP <", 50, 5, 80, 1)
 Sona.Items:SubMenu("PotionMP", "Use Potion MP")
 Sona.Items.PotionMP:Boolean("PotMP", "Enable Use Potion MP", true)
 Sona.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
-Sona.Items:SubMenu("FrostQC", "Auto Use Frost Queen's Claim")
-Sona.Items.FrostQC:Boolean("FQC", "Enable", true)
 
 ---------- End Menu ----------
 
@@ -68,14 +75,12 @@ Sona.Items.FrostQC:Boolean("FQC", "Enable", true)
 local info = "Rx Sona Loaded."
 local upv = "Upvote if you like it >3"
 local sig = "Made by Rudo"
-local ver = "Version: 1.0"
-textTable = {info,upv,sig,ver}
+textTable = {info,upv,sig}
 PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
-PrintChat(textTable[4])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 1.1 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -84,8 +89,6 @@ PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font colo
 -------------------------------------------------------Starting--------------------------------------------------------------
 
 
-global_ticks = 0
-currentTicks = GetTickCount()
 
 require('IOW')
 CHANELLING_SPELLS = {
@@ -114,14 +117,14 @@ CHANELLING_SPELLS = {
 local callback = nil
  
 OnProcessSpell(function(unit, spell)    
-        if not callback or not unit or GetObjectType(unit) ~= Obj_AI_Hero  or GetTeam(unit) == GetTeam(GetMyHero()) then return end
+    if not callback or not unit or GetObjectType(unit) ~= Obj_AI_Hero  or GetTeam(unit) == GetTeam(GetMyHero()) then return end
         local unitChanellingSpells = CHANELLING_SPELLS[GetObjectName(unit)]
  
         if unitChanellingSpells then
             for _, spellSlot in pairs(unitChanellingSpells) do
                 if spell.name == GetCastName(unit, spellSlot) then callback(unit, CHANELLING_SPELLS) end
             end
-	end
+		end
 end)
  
 function addAntiSkillCallback( callback0 )
@@ -162,12 +165,13 @@ OnLoop(function(myHero)
 		if frostquc >= 0 then
 			local FPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
 		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
-		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z));
+		        CastSkillShot(GetItemSlot(myHero, 3096),FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z)
 		end
 		end
 		end	
-					
-	elseif IOW:Mode() == "Harass" then
+	end
+	
+	if IOW:Mode() == "Harass" then
 	------ Start Harass ------
         if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(target, 845) and Sona.hr.HrQ:Value() then
 		CastSpell(_Q)
@@ -198,10 +202,6 @@ if Sona.Items.PotionMP.PotMP:Value() then
 	UsePotMP()
 	end
 	
-if Sona.Items.FrostQC.FQC:Value() then
-	UseFQC()
-	end
-	
 if Sona.Draws.DrawsEb:Value() then
 	Drawings()
 	end
@@ -222,14 +222,10 @@ function AutoSpell()
  end
   if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
-    if CanUseSpell(myHero, _E) == READY and (GetMoveSpeed(myHero))<0.6 and Sona.AtSpell.ASE:Value() then
-    CastSpell(_E)
-    end
+  end
  end
- end
- end
- end
- 
+	end
+end
  	------ Start Kill Steal ------
 function KillSteal()
  	if Sona.Miscset.KS.KSEb:Value() then
@@ -260,7 +256,7 @@ end
  	------ Start Auto Level Up _Full Q First_ ------
 function UpFullQ()
   if Sona.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then  
-if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
+ if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
 	LevelSpell(_Q)
 elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
 	LevelSpell(_W)
@@ -296,14 +292,14 @@ elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
         LevelSpell(_E)
 elseif GetLevel(myHero) == 18 then
         LevelSpell(_E)
-end
+ end
   end
 end
  
   	------ Start Auto Level Up _Full W First_ ------
 function UpFullW()
   if Sona.Miscset.AutoLvlUp.AutoSkillUpW:Value() then  
-if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
+ if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
 	LevelSpell(_W)
 elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
 	LevelSpell(_Q)
@@ -339,12 +335,14 @@ elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
         LevelSpell(_E)
 elseif GetLevel(myHero) == 18 then
         LevelSpell(_E)
-end
+ end
   end
 end
 
  	------ Start Use Items _Use Health Potion_ ------
 function UsePotHP()
+global_ticks = 0
+currentTicks = GetTickCount()
  if Sona.Items.PotionHP.PotHP:Value() then
 local myHero = GetMyHero()
 local target = GetCurrentTarget()
@@ -357,12 +355,13 @@ local myHeroPos = GetOrigin(myHero)
 						CastSpell(GetItemSlot(myHero, 2003))
 						end
 					end
-				end
 			end
-			
-  end		
+ end		
+end		
  	------ Start Use Items _Use Mana Potion_ ------
 function UsePotMP()
+global_ticks = 0
+currentTicks = GetTickCount()
  if Sona.Items.PotionMP.PotMP:Value() then
 local myHero = GetMyHero()
 local target = GetCurrentTarget()
@@ -375,25 +374,9 @@ local myHeroPos = GetOrigin(myHero)
 						CastSpell(GetItemSlot(myHero, 2004))
 						end
 					end
-				end
 			end
-			
-  end			
-  	------ Start Use Items _Use Frost Queen's Claim_ ------
-function UseFQC()
- if Sona.Items.FrostQC.FQC:Value() then
-				for i,enemy in pairs(GoS:GetEnemyHeroes()) do
-              local target = GetCurrentTarget()
-				local frostquc = GetItemSlot(myHero, 3096)
-					if frostquc >= 0 then
-		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and (GetMoveSpeed(enemy))>1.2 and GoS:ValidTarget(target, 880) then  
-						CastSpell(GetItemSlot(myHero, 3049))
-		end
-				    end
-				end
-
-  end
-end
+ end			
+end			
 	
 	------ Start Drawings ------
 function Drawings()
