@@ -55,8 +55,8 @@ Sona.Miscset.KS:Boolean("RKS", "KS with R", true)
 Sona.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
 Sona.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R",true)
 Sona.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
-Sona.Miscset.AutoLvlUp:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)   ------ Full Q First.
-Sona.Miscset.AutoLvlUp:Boolean("AutoSkillUpW", "Auto Lvl Up W", true)   ------ Full W First.
+Sona.Miscset.AutoLvlUp:Boolean("UpSpellEb", "Enable Auto Lvl Up", true)
+Sona.Miscset.AutoLvlUp:List("AutoSkillUp", "Settings", 1, {"Q-W-E", "W-Q-E"}) 
 
 Sona.Miscset.KS:Boolean("IgniteKS", "KS with Ignite", true )
    
@@ -80,7 +80,7 @@ PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 1.1 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.1 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -165,7 +165,7 @@ OnLoop(function(myHero)
 		if frostquc >= 0 then
 			local FPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
 		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
-		        CastSkillShot(GetItemSlot(myHero, 3096),FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z)
+		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z))
 		end
 		end
 		end	
@@ -186,12 +186,8 @@ if Sona.Miscset.KS.KSEb:Value() then
 	KillSteal()
 	end
 		
-if Sona.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then
-	UpFullQ()
-	end
-	
-if Sona.Miscset.AutoLvlUp.AutoSkillUpW:Value() then
-	UpFullW()
+if Sona.Miscset.AutoLvlUp.UpSpellEb:Value() then
+	AutoUpSpell()
 	end
 	
 if Sona.Items.PotionHP.PotHP:Value() then	
@@ -253,90 +249,14 @@ end
 	end
 end
 
- 	------ Start Auto Level Up _Full Q First_ ------
-function UpFullQ()
-  if Sona.Miscset.AutoLvlUp.AutoSkillUpQ:Value() then  
- if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_E)
- end
+ 	------ Start Auto Level Up _Settings Full Q or Full W first ------
+function AutoUpSpell()
+ if Sona.Miscset.AutoLvlUp.UpSpellEb:Value() then
+  if Sona.Miscset.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First
+  elseif Sona.Miscset.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_W, _Q, _E, _W, _W , _R, _W , _W, _Q , _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- Full W First
   end
-end
- 
-  	------ Start Auto Level Up _Full W First_ ------
-function UpFullW()
-  if Sona.Miscset.AutoLvlUp.AutoSkillUpW:Value() then  
- if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_E)
+   LevelSpell(leveltable[GetLevel(myHero)])
  end
-  end
 end
 
  	------ Start Use Items _Use Health Potion_ ------
@@ -423,7 +343,7 @@ function GetDrawText(enemy)
 	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < ExtraDmg + GoS:CalcDamage(myHero, enemy, 0, 40*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 50 + 100*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
 		return 'Q + R + Ignite = Kill!', ARGB(255, 200, 160, 0)
 	else
-		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
+		return "Can't Kill Yet", ARGB(255, 200, 160, 0)
 	end
 end
 
