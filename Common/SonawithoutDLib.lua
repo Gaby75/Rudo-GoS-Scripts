@@ -358,6 +358,6 @@ function GetDrawText(enemy)
 	elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < ExtraDmg + GoS:CalcDamage(myHero, enemy, 0, 40*GetCastLevel(myHero,_Q) + 0.50*GetBonusAP(myHero) + 50 + 100*GetCastLevel(myHero,_R) + 0.50*GetBonusAP(myHero) + ExtraDmg2) then
 		return 'Q + R + Ignite = Kill!', ARGB(255, 200, 160, 0)
 	else
-		return 'Cant Kill Yet', ARGB(255, 200, 160, 0)
+		return "Can't Kill Yet", ARGB(255, 200, 160, 0)
 	end
 end
