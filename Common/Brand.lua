@@ -449,7 +449,8 @@ if Brand.Draws.DrawText:Value() then
 		end
 		 end
 	end
-
+  end
+end
 
 	------ Start Kill Steal ------
 function KillSteal()
