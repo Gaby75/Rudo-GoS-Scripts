@@ -1,10 +1,10 @@
--- Rx Brand Version 0.3 by Rudo.
--- Updated Brand for Inspired Ver26 and IOW
+-- Rx Brand Version 0.4 by Rudo.
+-- Updated Brand for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3 And thank Vision for test my script ^_^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Brand" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.3 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.4 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Brand = Menu("Rx Brand", "Brand")
 
@@ -20,7 +20,7 @@ Brand:SubMenu("hr", "Harass")
 Brand.hr:Boolean("HrQ", "Use Q", true)
 Brand.hr:Boolean("HrW", "Use W", true)
 Brand.hr:Boolean("HrE", "Use E", true)
-Brand.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 0)
+Brand.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 1)
 
 ---- Auto Spell Menu ----
 Brand:SubMenu("AtSpell", "Auto Spell")
@@ -32,7 +32,7 @@ Brand.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 40, 0, 100, 1)
 Brand:SubMenu("FreezeLane", "Lane Clear")
 Brand.FreezeLane:Boolean("WLC", "Use W LaneClear", true)
 Brand.FreezeLane:Boolean("ELC", "Use E LaneClear", true)
-Brand.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 30, 0, 100, 0)
+Brand.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 30, 0, 100, 1)
 
 ---- Jungle Clear Menu ----
 Brand:SubMenu("JungleClear", "Jungle Clear")
@@ -65,10 +65,9 @@ Brand.Draws:Boolean("DrawR", "Range R", true)
 Brand.Draws:Boolean("DrawText", "Draw Test", true)
 
 ---- Misc Menu ----
-Brand:SubMenu("Miscset", "Misc")
-Brand.Miscset:Boolean("AutoSkillUpQ", "Auto Lvl Up Q", true)  -- Full Q First
-Brand.Miscset:Boolean("AutoSkillUpW", "Auto Lvl Up W", false)  -- Full W First
-
+Brand:SubMenu("AutoLvlSpell", "Auto Level Up")
+Brand.AutoLvlSpell:Boolean("UpSpellEb", "Enable Auto Lvl Up", true)  
+Brand.AutoLvlSpell:List("AutoSkillUp", "Settings", 1, {"Q-W-E", "W-Q-E"}) 
 ---- Use Items Menu ----
 Brand:SubMenu("Items", "Auto Use Items")
 Brand.Items:SubMenu("PotionHP", "Use Potion HP")
@@ -133,7 +132,7 @@ end
 
 addInterrupterCallback(function(target, spellType)
   if GoS:IsInDistance(target, GetCastRange(myHero,_E)) and CanUseSpell(myHero,_E) == READY and Brand.Interrupt.ItrE:Value() and spellType == CHANELLING_SPELLS then
-  CastSpell(_E)
+  CastTargetSpell(myHero, _E)
   local WPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,850,GetCastRange(myHero,_W),250,false,true)
   elseif GoS:IsInDistance(target, GetCastRange(myHero,_W)) and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) ~= READY and WPred.HitChance == 1 and Brand.Interrupt.ItrW:Value() and spellType == CHANELLING_SPELLS then
   CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
@@ -151,9 +150,9 @@ OnLoop(function(myHero)
     if IOW:Mode() == "Combo" and killable==0 then
 		local target = GetCurrentTarget()
 		
-	local ExtraDmg2 = 0
+	local LudensEcho = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
+	LudensEcho = LudensEcho + 0.1*BonusAP + 100
 	end		
 			
        local WPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,850,GetCastRange(myHero,_W),250,false,true)			
@@ -170,7 +169,7 @@ OnLoop(function(myHero)
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 
-		if GoS:ValidTarget(target, GetCastRange(myHero,_R)) and Brand.cb.RCB:Value() and GetCurrentHP(target)+GetMagicShield(target)+GetDmgShield(target)+GetHPRegen(target) < GoS:CalcDamage(myHero, target, 0, CheckRDmg + ExtraDmg2) then
+		if GoS:ValidTarget(target, GetCastRange(myHero,_R)) and Brand.cb.RCB:Value() and GetCurrentHP(target)+GetMagicShield(target)+GetDmgShield(target)+GetHPRegen(target) < GoS:CalcDamage(myHero, target, 0, CheckRDmg + LudensEcho) then
 	    if CanUseSpell(myHero,_R) == READY and CanUseSpell(myHero, _Q) ~= READY and CanUseSpell(myHero, _W) ~= READY and CanUseSpell(myHero, _E) ~= READY then
 		CastTargetSpell(_R)
 		end
@@ -242,13 +241,9 @@ OnLoop(function(myHero)
   if Brand.Draws.DrawsEb:Value() then
 	Drawings()
 	end
-	
-  if Brand.Miscset.AutoSkillUpQ:Value() then --- Menu Full Q First
-	AutoLvlUpQ()
-	end
-	
-  if Brand.Miscset.AutoSkillUpW:Value() then --- Menu Full W First
-	AutoLvlUpW()
+
+if Brand.AutoLvlSpell.UpSpellEb:Value() then
+	AutoUpSpell()
 	end
 	
   if Brand.Items.PotionHP.PotHP:Value() then --- Menu Auto PotionHP
@@ -277,90 +272,14 @@ function AutoSpell()
 	end
 end
 
-	------ Start Auto Level Up _ Max Q First ------
-function AutoLvlUpQ()
-     if Brand.Miscset.AutoSkillUpQ:Value() then
-if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_E)
-end
-     end
-end
-
-	------ Start Auto Level Up _ Max W First ------
-function AutoLvlUpW()
-     if Brand.Miscset.AutoSkillUpW:Value() then
-if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_E)
-     end
-end
+ 	------ Start Auto Level Up _Settings Full Q or Full W first ------
+function AutoUpSpell()
+ if Brand.AutoLvlSpell.UpSpellEb:Value() then
+  if Brand.AutoLvlSpell.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First
+  elseif Sona.Miscset.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_W, _Q, _E, _W, _W , _R, _W , _W, _Q , _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- Full W First
+  end
+   LevelSpell(leveltable[GetLevel(myHero)])
+ end
 end
 
  	------ Start Use Items _Use Health Potion_ ------
@@ -414,89 +333,132 @@ if Brand.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle
 if Brand.Draws.DrawR:Value() and CanUseSpell(myHero,_R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
 if Brand.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
-		if GoS:ValidTarget(enemy) then
-		    local enemyPos = GetOrigin(enemy)
-		    local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
-		    local enemyText, color = GetDrawText(enemy)
-		    DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
-		end
-	end
-end
-  end
-end
-
-function GetDrawText(enemy)
-	local ExtraDmg = 0
+		 if GoS:ValidTarget(enemy) then
+		local LudensEcho = 0
+		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+		LudensEcho = LudensEcho + 0.1*GetBonusAP(myHero) + 100
+	    end
+	local EnbIgnite = 0
 	if Ignite and CanUseSpell(myHero, Ignite) == READY then
-	ExtraDmg = ExtraDmg + 20*GetLevel(myHero)+50
+	EnbIgnite = EnbIgnite + 20*GetLevel(myHero)+50
 	end
-	
-	local ExtraDmg2 = 0
-	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
+		    local originEnemies = GetOrigin(enemy)
+		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
+		    if CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + LudensEcho) then
+			DrawText("E = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + LudensEcho) then
+			DrawText("W = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
+			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckWDmg + LudensEcho) then
+			DrawText("E + W = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckQDmg + LudensEcho) then
+			DrawText("E + Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + LudensEcho) then
+			DrawText("W + Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + CheckEDmg + LudensEcho) then
+			DrawText("Q + W + E = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
+			DrawText("R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckRDmg + LudensEcho) then
+			DrawText("E + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckRDmg + LudensEcho) then
+			DrawText("W + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
+			DrawText("Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckWDmg + CheckRDmg + LudensEcho) then
+			DrawText("E + W + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckQDmg + CheckRDmg + LudensEcho) then
+			DrawText("E + Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + CheckRDmg + LudensEcho) then
+			DrawText("W + Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + CheckEDmg + CheckRDmg + LudensEcho) then
+			DrawText("Q + W + E + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + LudensEcho) then
+			DrawText("E + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + LudensEcho) then
+			DrawText("W + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
+			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckWDmg + LudensEcho) then
+			DrawText("E + W + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckQDmg + LudensEcho) then
+			DrawText("E + Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + LudensEcho) then
+			DrawText("W + Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + CheckEDmg + LudensEcho) then
+			DrawText("Q + W + E + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
+			DrawText("R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckRDmg + LudensEcho) then
+			DrawText("E + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckRDmg + LudensEcho) then
+			DrawText("W + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
+			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckRDmg + CheckEDmg + LudensEcho) then
+			DrawText("E + W + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + CheckEDmg + LudensEcho) then
+			DrawText("E + Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + CheckWDmg + LudensEcho) then
+			DrawText("W + Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckQDmg + CheckEDmg + CheckRDmg + LudensEcho) then
+			DrawText("Q + W + E + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			else
+			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xff00FF66)
+			end
+		    local maxhp = GetMaxHP(enemy)
+		    local currhp = GetCurrentHP(enemy)
+			local percent = 100*currhp/maxhp
+		    DrawText(string.format("%s HP: %d / %d | Percent HP = %d", GetObjectName(enemy), currhp, maxhp, percent),16,EnmTextPos.x,EnmTextPos.y+23,0xffffffff)
+			local CheckQWERDmg = CheckQDmg + CheckWDmg + CheckEDmg + CheckRDmg + LudensEcho
+			local CheckQWEDmg = CheckQDmg + CheckWDmg + CheckEDmg + LudensEcho
+			local CheckWRDmg = CheckWDmg + CheckRDmg + LudensEcho
+			local CheckQRDmg = CheckQDmg + CheckRDmg + LudensEcho
+			local CheckERDmg = CheckEDmg + CheckRDmg + LudensEcho
+			local CheckQWDmg = CheckQDmg + CheckWDmg + LudensEcho
+			local CheckWEDmg = CheckWDmg + CheckEDmg + LudensEcho
+			local CheckQEDmg = CheckQDmg + CheckEDmg + LudensEcho
+		    if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQWERDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _E) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQWEDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckWRDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQRDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _E) == READY and CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckERDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQWDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _E) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckWEDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQEDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckRDmg + LudensEcho,0xffffffff)
+			elseif CanUseSpell(myHero, _W) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckWDmg + LudensEcho,0xffffffff)
+			elseif CanUseSpell(myHero, _Q) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
+			elseif CanUseSpell(myHero, _E) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckEDmg + LudensEcho,0xffffffff)
+			else
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),LudensEcho,0xffffffff)
+			end
+		end
+		 end
 	end
 
- if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg2) then
-  return 'Killable with Q', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + ExtraDmg2) then
-  return 'Killable with W', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + ExtraDmg2) then
-  return 'Killable with E', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + ExtraDmg2) then
-  return 'Killable with R', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + ExtraDmg2) then
-  return 'Q + W = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckEDmg + ExtraDmg2) then
-  return 'Q + E = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + ExtraDmg2) then
-  return 'Q + R = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckEDmg + ExtraDmg2) then
-  return 'W + E = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckRDmg + ExtraDmg2) then
-  return 'W + E = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_E) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckRDmg + ExtraDmg2) then
-  return 'E + R = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + CheckEDmg + ExtraDmg2) then
-  return 'Q + W + E = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + CheckEDmg + CheckRDmg + ExtraDmg2) then
-  return 'Q + W + E + R = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg2 + ExtraDmg) then
-  return 'Q + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + ExtraDmg2 + ExtraDmg) then
-  return 'W + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + ExtraDmg2 + ExtraDmg) then
-  return 'E + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + ExtraDmg2 + ExtraDmg) then
-  return 'R + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + ExtraDmg2 + ExtraDmg) then
-  return 'Q + W + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckEDmg + ExtraDmg2 + ExtraDmg) then
-  return 'Q + E + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + ExtraDmg2 + ExtraDmg) then
-  return 'Q + R + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckEDmg + ExtraDmg2 + ExtraDmg) then
-  return 'W + E + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + CheckRDmg + ExtraDmg2 + ExtraDmg) then
-  return 'W + R + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_E) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + CheckRDmg + ExtraDmg2 + ExtraDmg) then
-  return 'E + R + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + CheckEDmg + ExtraDmg2 + ExtraDmg) then
-  return 'Q + W + E + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_W) == READY and CanUseSpell(myHero,_E) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckWDmg + CheckEDmg + CheckRDmg + ExtraDmg2 + ExtraDmg) then
-  return 'Q + W + E + Ignite = Killable', ARGB(255, 200, 160, 0)
-else
-  return 'Cant Kill this Target', ARGB(255, 200, 160, 0)
- end
-end
 
 	------ Start Kill Steal ------
 function KillSteal()
  	if Brand.KS.KSEb:Value() then
  for i,enemy in pairs(GoS:GetEnemyHeroes()) do
  
-    	local ExtraDmg2 = 0
+    	local LudensEcho = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
+	LudensEcho = LudensEcho + 0.1*BonusAP + 100
 	end
  
         -- Kill Steal --
@@ -509,24 +471,24 @@ function KillSteal()
                   end
             end
 		
-	if CanUseSpell(myHero,_E) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_E)) and Brand.KS.EKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + ExtraDmg2) then
-	CastSpell(_E)
+	if CanUseSpell(myHero,_E) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_E)) and Brand.KS.EKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckEDmg + LudensEcho) then
+	CastTargetSpell(_E)
 	killable=1
 	
-	elseif CanUseSpell(myHero,_W) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Brand.KS.WKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + ExtraDmg2) then
+	elseif CanUseSpell(myHero,_W) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Brand.KS.WKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckWDmg + LudensEcho) then
 	CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
 	killable=1
 	
-	elseif CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Brand.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg2) then
+	elseif CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Brand.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
 	CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 	killable=1
 	
-	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+(GetHPRegen(enemy)/5) < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + ExtraDmg2)*2)) and ((CountEnemyHeroInRange(enemy,400)>=2 and CountEnemyHeroInRange(enemy,400)<=4) or (CountEnemyMinionInRange(enemy,400)>=1)) and GetCurrentMana(myHero)>=100 then
-	CastSpell(_R)
+	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+(GetHPRegen(enemy)/5) < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + LudensEcho)*2)) and ((CountEnemyHeroInRange(enemy,400)>=2 and CountEnemyHeroInRange(enemy,400)<=4) or (CountEnemyMinionInRange(enemy,400)>=1)) and GetCurrentMana(myHero)>=100 then
+	CastTargetSpell(_R)
 	killable=1
 	
-	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+(GetHPRegen(enemy)/5) < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + ExtraDmg2)*3)) and ((CountEnemyHeroInRange(enemy,400)==2) or (CountEnemyMinionInRange(enemy,400)<=3 and (CountEnemyMinionInRange(enemy,400)>=1) and GotBuff(enemy,"brandablaze")~=0 )) and GetCurrentMana(myHero)>=100 then
-	CastSpell(_R)
+	elseif CanUseSpell(myHero,_R) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_R)) and Brand.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+(GetHPRegen(enemy)/5) < GoS:CalcDamage(myHero, enemy, 0, ((CheckRDmg + LudensEcho)*3)) and ((CountEnemyHeroInRange(enemy,400)==2) or (CountEnemyMinionInRange(enemy,400)<=3 and (CountEnemyMinionInRange(enemy,400)>=1) and GotBuff(enemy,"brandablaze")~=0 )) and GetCurrentMana(myHero)>=100 then
+	CastTargetSpell(_R)
 	killable=1
 	
 	else
