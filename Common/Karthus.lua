@@ -1,10 +1,10 @@
--- Rx Karthus Version 0.45 by Rudo.
+-- Rx Karthus Version 0.5 by Rudo.
 -- Updated Karthus for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.45 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.5 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
 
@@ -206,9 +206,9 @@ function KillSteal()
  	if Karthus.KS.KSEb:Value() then
  for i,enemy in pairs(GoS:GetEnemyHeroes()) do
  
- local ExtraDmg2 = 0
+ local LudensEcho = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
+	LudensEcho = LudensEcho + 0.1*BonusAP + 100
 	end
  
         -- Kill Steal --
@@ -220,7 +220,7 @@ function KillSteal()
                   end
             end
 		
-	 if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg2) then
+	 if CanUseSpell(myHero,_Q) == READY and GoS:ValidTarget(enemy, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
 	CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)	
 	 end
  end
@@ -335,9 +335,9 @@ end
 function RKillableInfo()
    if Karthus.InfoR.EninfoR:Value() and GetLevel(myHero) > 5 then
 	
-	local ExtraDmg2 = 0
+	local LudensEcho = 0
 	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
+	LudensEcho = LudensEcho + 0.1*BonusAP + 100
 	end
 	
     -- info = "R dmg : "..dmgR .. "\n"
@@ -345,7 +345,7 @@ function RKillableInfo()
     info = ""
     for nID, enemy in pairs(GoS:GetEnemyHeroes()) do
         if IsObjectAlive(enemy) then
-            realdmg = GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + ExtraDmg2)
+            realdmg = GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho)
             hp = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)
             if realdmg > hp then
                 info = info..GetObjectName(enemy)
@@ -369,41 +369,47 @@ if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCirc
 if Karthus.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),2,175,0xff7D26CD) end
 if Karthus.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
-		if GoS:ValidTarget(enemy) then
-		    local enemyPos = GetOrigin(enemy)
-		    local drawpos = WorldToScreen(1,enemyPos.x, enemyPos.y, enemyPos.z)
-		    local enemyText, color = GetDrawText(enemy)
-		    DrawText(enemyText, 20, drawpos.x, drawpos.y, color)
-		end
-	end
-end
-  end
-end
-
-function GetDrawText(enemy)
-	local ExtraDmg = 0
+		 if GoS:ValidTarget(enemy) then
+		local LudensEcho = 0
+		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+		LudensEcho = LudensEcho + 0.1*GetBonusAP(myHero) + 100
+	    end
+	local EnbIgnite = 0
 	if Ignite and CanUseSpell(myHero, Ignite) == READY then
-	ExtraDmg = ExtraDmg + 20*GetLevel(myHero)+50
+	EnbIgnite = EnbIgnite + 20*GetLevel(myHero)+50
 	end
-	
-	local ExtraDmg2 = 0
-	if GotBuff(myHero, "itemmagicshankcharge") > 99 then
-	ExtraDmg2 = ExtraDmg2 + 0.1*BonusAP + 100
+		    local originEnemies = GetOrigin(enemy)
+		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
+		    if CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
+			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
+			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
+			DrawText("R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
+			DrawText("Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
+			DrawText("R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
+			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			else
+			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xff00FF66)
+			end
+		    local maxhp = GetMaxHP(enemy)
+		    local currhp = GetCurrentHP(enemy)
+			local percent = 100*currhp/maxhp
+		    DrawText(string.format("%s HP: %d / %d | Percent HP = %d", GetObjectName(enemy), currhp, maxhp, percent),16,EnmTextPos.x,EnmTextPos.y+23,0xffffffff)
+			local CheckQRDmg = CheckQDmg + CheckRDmg + LudensEcho
+		    if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQRDmg,0xffffffff)
+			elseif CanUseSpell(myHero, _R) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckRDmg + LudensEcho,0xffffffff)
+			elseif CanUseSpell(myHero, _Q) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
+			else
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),LudensEcho,0xffffffff)
+			end
+		end
+		 end
 	end
-
- if CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg2) then
-  return 'Killable with Q', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + ExtraDmg + ExtraDmg2) then
-  return 'Q + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + ExtraDmg2) then
-  return 'Killable with R', ARGB(255, 200, 160, 0)
-elseif CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + ExtraDmg2) then
-  return 'Q + R = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + ExtraDmg + ExtraDmg2) then
-  return 'R + Ignite = Killable', ARGB(255, 200, 160, 0)
-elseif ExtraDmg > 0 and CanUseSpell(myHero,_Q) == READY and CanUseSpell(myHero,_R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + ExtraDmg + ExtraDmg2) then
-  return 'Q + R + Ignite = Killable', ARGB(255, 200, 160, 0)
-else
-  return "Can't Kill this Target", ARGB(255, 200, 160, 0)
- end
 end
