@@ -139,6 +139,10 @@ addAntiSkillCallback(function(target, spellType)
   end
 end)
 
+local BonusAP = GetBonusAP(myHero)
+local CheckQDmg = (GetCastLevel(myHero, _Q)*40) + (0.50*BonusAP)
+local CheckRDmg = (GetCastLevel(myHero, _R)*100) + 50 + (0.50*BonusAP)
+
 OnLoop(function(myHero)
 		        local target = IOW:GetTarget()
 	------ Start Combo ------
