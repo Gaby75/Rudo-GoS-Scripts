@@ -1,10 +1,10 @@
--- Rx Brand Version 0.4 by Rudo.
+-- Rx Brand Version 0.45 by Rudo.
 -- Updated Brand for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3 , Zypppy and Noddy because help me in Shoutbox :) . Thank snowbell and Maxxxel for script Brand. :3 And thank Vision for test my script ^_^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Brand" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.4 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Brand by Rudo </font><font color='#FFFF00'>Version 0.45 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Brand = Menu("Rx Brand", "Brand")
 
@@ -58,6 +58,7 @@ Brand.Interrupt:Boolean("ItrQ", "Use Q", true)
 ---- Drawings Menu ----
 Brand:SubMenu("Draws", "Drawings")
 Brand.Draws:Boolean("DrawsEb", "Enable Drawings", true)
+Brand.Draws:Slider("QualiDraw", "Quality Drawings", 80, 1, 255, 1)
 Brand.Draws:Boolean("DrawQ", "Range Q", true)
 Brand.Draws:Boolean("DrawW", "Range W", true)
 Brand.Draws:Boolean("DrawE", "Range E", true)
@@ -327,10 +328,10 @@ local myHeroPos = GetOrigin(myHero)
 	------ Start Drawings ------
 function Drawings()
   if Brand.Draws.DrawsEb:Value() then
-if Brand.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),3,100,0xffEE0000) end
-if Brand.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,100,0xffCCFF66) end
-if Brand.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xffCC3399) end
-if Brand.Draws.DrawR:Value() and CanUseSpell(myHero,_R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
+if Brand.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Brand.Draws.QualiDraw:Value(),0xffEE0000) end
+if Brand.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Brand.Draws.QualiDraw:Value(),0xffCCFF66) end
+if Brand.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Brand.Draws.QualiDraw:Value(),0xffCC3399) end
+if Brand.Draws.DrawR:Value() and CanUseSpell(myHero,_R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),1,Brand.Draws.QualiDraw:Value(),0xffFFFF33) end
 if Brand.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		 if GoS:ValidTarget(enemy) then
