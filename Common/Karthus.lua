@@ -4,7 +4,7 @@
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.5 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.55 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
 
@@ -365,9 +365,9 @@ end
 	------ Start Drawings ------
 function Drawings()
   if Karthus.Draws.DrawsEb:Value() then
-if Karthus.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Brand.Draws.QualiDraw:Value(),0xff87CEFA) end
-if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Brand.Draws.QualiDraw:Value(),0xff1C1C1C) end
-if Karthus.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Brand.Draws.QualiDraw:Value(),0xff7D26CD) end
+if Karthus.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Karthus.Draws.QualiDraw:Value(),0xff87CEFA) end
+if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Karthus.Draws.QualiDraw:Value(),0xff1C1C1C) end
+if Karthus.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Karthus.Draws.QualiDraw:Value(),0xff7D26CD) end
 if Karthus.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		 if GoS:ValidTarget(enemy) then
