@@ -41,6 +41,7 @@ Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
 ---- Drawings Menu ----
 Sona:SubMenu("Draws", "Drawings")
 Sona.Draws:Boolean("DrawsEb", "Enable Drawings", true)
+Sona.Draws:Slider("QualiDraw", "Quality Drawings", 80, 1, 255, 1)
 Sona.Draws:Boolean("DrawQ", "Range Q", true)
 Sona.Draws:Boolean("DrawW", "Range W", true)
 Sona.Draws:Boolean("DrawE", "Range E", true)
@@ -306,10 +307,10 @@ end
 	------ Start Drawings ------
 function Drawings()
   if Sona.Draws.DrawsEb:Value() then
-if Sona.Draws.DrawQ:Value() and CanUseSpell(myHero, _Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),3,100,0xff3366FF) end
-if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,100,0xff00FF33) end
-if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xff8201B2) end
-if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
+if Sona.Draws.DrawQ:Value() and CanUseSpell(myHero, _Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Sona.Draws.QualiDraw:Value(),0xff3366FF) end
+if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Sona.Draws.QualiDraw:Value(),0xff00FF33) end
+if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Sona.Draws.QualiDraw:Value(),0xff8201B2) end
+if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),1,Sona.Draws.QualiDraw:Value(),0xffFFFF33) end
  if Sona.Draws.DrawText:Value() then
 	for i,enemy in pairs(Gos:GetEnemyHeroes()) do
 		 if GoS:ValidTarget(enemy) then
