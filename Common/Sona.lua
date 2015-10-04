@@ -1,4 +1,4 @@
---[[ Rx Sona Version 1.2 by Rudo.
+--[[ Rx Sona Version 1.25 by Rudo.
  Updated Sona for Inspired Ver30 and IOW
  Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@
 
 require('Inspired')
 ---- Create a Menu ----
-if GetObjectName(myHero) ~= "Sona" then return end
+--if GetObjectName(myHero) ~= "Sona" then return end
 Sona = Menu("Rx Sona", "Sona")
 
 ---- Combo ----
@@ -81,7 +81,7 @@ PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.2 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.25 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -169,7 +169,7 @@ OnLoop(function(myHero)
 			local frostquc = GetItemSlot(myHero, 3096)
 		if frostquc >= 0 then
 			local FPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
-		if CanUseSpell(GetItemSlot(myHero, 3096)) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
+		if CanUseSpell(frostquc) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
 		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z))
 		end
 		end
@@ -311,7 +311,7 @@ if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle
 if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),3,100,0xff8201B2) end
 if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),3,100,0xffFFFF33) end
  if Sona.Draws.DrawText:Value() then
-	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
+	for i,enemy in pairs(Gos:GetEnemyHeroes()) do
 		 if GoS:ValidTarget(enemy) then
 		local LudensEcho = 0
 		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
@@ -355,6 +355,7 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 		 end
 	end
 	for _, myally in pairs(GoS:GetAllyHeroes()) do
+	     if GetObjectName(myally) ~= GetObjectName(myHero) then
 	    if IsObjectAlive(myally) then
 		    local originAllies = GetOrigin(myally)
 		    local AllyTextPos = WorldToScreen(1,originAllies.x, originAllies.y, originAllies.z)
@@ -363,14 +364,15 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 			local percentA = 100*currhpA/maxhpA
 		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
 			DrawText(string.format("Ally HP: %d / %d | Percent HP = %d", currhpA, maxhpA, percentA),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
-	     end
+	     end 
 		end
+		 end
 	end
 	    if IsObjectAlive(myHero) then
 		    local myorigin = GetOrigin(myHero)
 		    local mytextPos = WorldToScreen(1,myorigin.x, myorigin.y, myorigin.z)
-			local checkhealW = (GetCastLevel(myHero, _W)*20) + 10 (0.20*BonusAP)
-			local checkshieldW = (GetCastLevel(myHero, _W)*20) + 15 (0.20*BonusAP)
+			local checkhealW = (GetCastLevel(myHero, _W)*20) + 10 + (0.20*BonusAP)
+			local checkshieldW = (GetCastLevel(myHero, _W)*20) + 15 + (0.20*BonusAP)
 			DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", checkhealW, checkshieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
 	    end
  end
