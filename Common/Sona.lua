@@ -1,4 +1,4 @@
---[[ Rx Sona Version 1.25 by Rudo.
+--[[ Rx Sona Version 1.3 by Rudo.
  Updated Sona for Inspired Ver30 and IOW
  Require DeLibrary. Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
@@ -11,12 +11,12 @@
  .##....##.##.....##.##....####.##.....##
  ..######...#######..##.....###.##.....##
 
-                                                --]]
----------------------------------------------------
+                                                
+---------------------------------------------------]]
 
 require('Inspired')
 ---- Create a Menu ----
---if GetObjectName(myHero) ~= "Sona" then return end
+if GetObjectName(myHero) ~= "Sona" then return end
 Sona = Menu("Rx Sona", "Sona")
 
 ---- Combo ----
@@ -41,7 +41,7 @@ Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
 ---- Drawings Menu ----
 Sona:SubMenu("Draws", "Drawings")
 Sona.Draws:Boolean("DrawsEb", "Enable Drawings", true)
-Sona.Draws:Slider("QualiDraw", "Quality Drawings", 80, 1, 255, 1)
+Sona.Draws:Slider("QualiDraw", "Quality Drawings", 110, 1, 255, 1)
 Sona.Draws:Boolean("DrawQ", "Range Q", true)
 Sona.Draws:Boolean("DrawW", "Range W", true)
 Sona.Draws:Boolean("DrawE", "Range E", true)
@@ -82,7 +82,7 @@ PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.25 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.3 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -143,18 +143,21 @@ end)
 local BonusAP = GetBonusAP(myHero)
 local CheckQDmg = (GetCastLevel(myHero, _Q)*40) + (0.50*BonusAP)
 local CheckRDmg = (GetCastLevel(myHero, _R)*100) + 50 + (0.50*BonusAP)
+local DmgHealW = (GetCastLevel(myHero, _W)*20) + 10 + (0.20*BonusAP)
 
 OnLoop(function(myHero)
-		        local target = IOW:GetTarget()
+		        local target = GetCurrentTarget()
 	------ Start Combo ------
     if IOW:Mode() == "Combo" then
 	
 		if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(target, 845) and Sona.cb.QCB:Value() then
 		CastSpell(_Q)
         end
-					
-		if CanUseSpell(myHero, _W) == READY and GoS:ValidTarget(target, 840) and Sona.cb.WCB:Value() then
+		
+		for _, ally in pairs(GoS:GetAllyHeroes()) do
+		if CanUseSpell(myHero, _W) == READY and Sona.cb.WCB:Value() and 100*GetCurrentHP(myHero)/GetMaxHP(myHero) < DmgHealW or GoS:IsInDistance(ally, 1000) then
 		CastSpell(_W)
+		end
 		end
 				
 		if CanUseSpell(myHero, _E) == READY and GoS:ValidTarget(target, 1000) and Sona.cb.ECB:Value() then
@@ -168,10 +171,10 @@ OnLoop(function(myHero)
 		
 		if Sona.cb.FQCCB:Value() then
 			local frostquc = GetItemSlot(myHero, 3096)
-		if frostquc >= 0 then
+		if frostquc >= 1 then
 			local FPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1800,200,880,270,false,true)
-		if CanUseSpell(frostquc) == READY and GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
-		        CastSkillShot(GetItemSlot(myHero, 3096,FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z))
+		if GoS:ValidTarget(target, 880) and FPred.HitChance == 1 then  
+		        CastSkillShot(GetItemSlot(myHero, 3096),FPred.PredPos.x,FPred.PredPos.y,FPred.PredPos.z)
 		end
 		end
 		end	
@@ -222,7 +225,7 @@ function AutoSpell()
 	  CastSpell(_Q)
  end
  end
-  if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and Sona.AtSpell.ASW:Value() then
+  if CanUseSpell(myHero, _W) == READY and 100*GetCurrentHP(myHero)/GetMaxHP(myHero) < 55 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
   end
  end
@@ -337,7 +340,7 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
 			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
 			else
-			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xff00FF66)
+			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xff00FF99)
 			end
 		    local maxhp = GetMaxHP(enemy)
 		    local currhp = GetCurrentHP(enemy)
@@ -356,26 +359,23 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 		 end
 	end
 	for _, myally in pairs(GoS:GetAllyHeroes()) do
-	     if GetObjectName(myally) ~= GetObjectName(myHero) then
+		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
 	    if IsObjectAlive(myally) then
 		    local originAllies = GetOrigin(myally)
 		    local AllyTextPos = WorldToScreen(1,originAllies.x, originAllies.y, originAllies.z)
 		    local maxhpA = GetMaxHP(myally)
 		    local currhpA = GetCurrentHP(myally)
 			local percentA = 100*currhpA/maxhpA
-		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
 			DrawText(string.format("Ally HP: %d / %d | Percent HP = %d", currhpA, maxhpA, percentA),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
-	     end 
-		end
+	    end
 		 end
 	end
 	    if IsObjectAlive(myHero) then
 		    local myorigin = GetOrigin(myHero)
 		    local mytextPos = WorldToScreen(1,myorigin.x, myorigin.y, myorigin.z)
-			local checkhealW = (GetCastLevel(myHero, _W)*20) + 10 + (0.20*BonusAP)
 			local checkshieldW = (GetCastLevel(myHero, _W)*20) + 15 + (0.20*BonusAP)
-			DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", checkhealW, checkshieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
-	    end
+			DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", DmgHealW, checkshieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
+	    end	
  end
   end
 end
@@ -385,6 +385,7 @@ require('deLibrary')
 require 'deLibrary'
 
 -----------------------------------------------------------DeLibrary--------------------------------------------------
+
 
 ------------------------------------------------------------------------------------------------------------------
 -- You can change everything below this line
@@ -461,7 +462,6 @@ AimHelper =                                         function() Setting.AimHelper
 -- Inside Function Control -- ENDED
 ------------------------------------------------------------------------------------------------------------------
 
--- Predictor
 
 ------------------------------------------------------------------------------------------------------------------
 -- Key Control -- STARTED
@@ -474,7 +474,6 @@ KPC.AddEventSingle(Button.AutoHeal,             ButtonFunction.AutoHeal)
 KPC.AddEventSingle(Button.DrawHealCircles,      ButtonFunction.DrawHealCircles)
 KPC.AddEventSingle(Button.UseNaviSystem,        ButtonFunction.UseNaviSystem)
 KPC.AddEventSingle(Button.AimHelper,            ButtonFunction.AimHelper)
-
 
 ------------------------------------------------------------------------------------------------------------------
 -- Key Control -- ENDED
@@ -586,9 +585,9 @@ end
 -- Functions and Actions (This plugin) -- STARTED
 ------------------------------------------------------------------------------------------------------------------
 local function CastW(target, checkDist)
-    if (checkDist and GetDistance(target) > 1000) and (100*GetCurrentMana(myHero)/GetMaxMana(myHero) > Sona.AtSpell.ASMana:Value())  then return end
-    if (CanUseSpell(myHero, _W) == READY) then
-        CastTargetSpell(target, _W)
+    if (checkDist and GetDistance(target) <= 1000) then return end
+    if (CanUseSpell(myHero, _W) == READY) and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) > Sona.AtSpell.ASMana:Value() then
+        CastSpell(_W)
     end
 end
 
