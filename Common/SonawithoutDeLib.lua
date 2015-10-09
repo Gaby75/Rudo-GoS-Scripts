@@ -1,4 +1,4 @@
---[[ Rx Sona Without deLibrary Version 1.3 by Rudo.
+--[[ Rx Sona Without deLibrary Version 1.35 by Rudo.
  Updated Sona for Inspired Ver30 and IOW
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
@@ -36,6 +36,9 @@ Sona:SubMenu("AtSpell", "Auto Spell")
 Sona.AtSpell:Boolean("ASEb", "Enable Aut Spell", true)
 Sona.AtSpell:Boolean("ASQ", "Use Q", true)
 Sona.AtSpell:Boolean("ASW", "Use W", true)
+Sona.AtSpell:Slider("myHrHP", "Auto W if %My HP  <", 55, 1, 100, 1)
+Sona.AtSpell:Info("info1", "If no Enemy Heroes in 1250 range then Auto E if %HP Allies < 50%")
+Sona.AtSpell:Info("info2", "If Enemy Heroes in 1250 range then Auto E if %HP Allies < 80%")
 Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >", 10, 0, 80, 1)
 
 ---- Drawings Menu ----
@@ -54,7 +57,7 @@ Sona:SubMenu("Miscset", "Misc")
 Sona.Miscset:SubMenu("KS", "Kill Steal")
 Sona.Miscset.KS:Boolean("KSEb", "Enable KillSteal", true)
 Sona.Miscset.KS:Boolean("QKS", "KS with Q", true)
-Sona.Miscset.KS:Boolean("RKS", "KS with R", true)
+Sona.Miscset.KS:Boolean("RKS", "KS with R", false)
 Sona.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
 Sona.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R", true)
 Sona.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
@@ -82,7 +85,7 @@ PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.3 without deLibrary Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.35 without deLibrary Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -221,18 +224,18 @@ function AutoSpell()
 	  CastSpell(_Q)
  end
 
-  if CanUseSpell(myHero, _W) == READY and (GetCurrentHP(myHero)/GetMaxHP(myHero))<0.55 and Sona.AtSpell.ASW:Value() then
+  if CanUseSpell(myHero, _W) == READY and 100*(GetCurrentHP(myHero)/GetMaxHP(myHero)) < Sona.AtSpell.myHrHP:Value() and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
   end
                for _, ally in pairs(GoS:GetAllyHeroes()) do
 		if GoS:IsInDistance(enemy, 1250) then	   
-  if CanUseSpell(myHero, _W) == READY and GoS:ValidTarget(ally, 1000) and (GetCurrentHP(ally)/GetMaxHP(ally))<0.80 and Sona.AtSpell.ASW:Value() then
+  if CanUseSpell(myHero, _W) == READY and GoS:ValidTarget(ally, 1000) and (GetCurrentHP(ally)/GetMaxHP(ally)) < 0.80 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
   end
 		end
 
        if not GoS:IsInDistance(enemy, 1250) then
-  if CanUseSpell(myHero, _W) == READY and GoS:ValidTarget(ally, 1000) and (GetCurrentHP(ally)/GetMaxHP(ally))<0.50 and Sona.AtSpell.ASW:Value() then
+  if CanUseSpell(myHero, _W) == READY and GoS:ValidTarget(ally, 1000) and (GetCurrentHP(ally)/GetMaxHP(ally)) < 0.50 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
   end
        end
@@ -271,12 +274,10 @@ end
 
  	------ Start Auto Level Up _Settings Full Q or Full W first ------
 function AutoUpSpell()
- if Sona.Miscset.AutoLvlUp.UpSpellEb:Value() then
   if Sona.Miscset.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First
   elseif Sona.Miscset.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_W, _Q, _E, _W, _W , _R, _W , _W, _Q , _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- Full W First
   end
    LevelSpell(leveltable[GetLevel(myHero)])
- end
 end
 
  	------ Start Use Items _Use Health Potion_ ------
@@ -325,10 +326,10 @@ local myHeroPos = GetOrigin(myHero)
 	------ Start Drawings ------
 function Drawings()
   if Sona.Draws.DrawsEb:Value() then
-if Sona.Draws.DrawQ:Value() and CanUseSpell(myHero, _Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Sona.Draws.QualiDraw:Value(),0xff3366FF) end
-if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Sona.Draws.QualiDraw:Value(),0xff99FF66) end
-if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Sona.Draws.QualiDraw:Value(),0xff8201B2) end
-if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),1,Sona.Draws.QualiDraw:Value(),0xffFFFF33) end
+if Sona.Draws.DrawQ:Value() and CanUseSpell(myHero, _Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Sona.Draws.QualiDraw:Value(),0xff1E90FF) end
+if Sona.Draws.DrawW:Value() and CanUseSpell(myHero, _W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Sona.Draws.QualiDraw:Value(),0xff7CFC00) end
+if Sona.Draws.DrawE:Value() and CanUseSpell(myHero, _E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Sona.Draws.QualiDraw:Value(),0xff9B30FF) end
+if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_R),1,Sona.Draws.QualiDraw:Value(),0xffF8F578) end
  if Sona.Draws.DrawCircleAlly:Value() then
  	for _, myally in pairs(GoS:GetAllyHeroes()) do
 		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
@@ -337,8 +338,8 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 		    local maxhpA = GetMaxHP(myally)
 		    local currhpA = GetCurrentHP(myally)
 			local percentA = 100*currhpA/maxhpA
-		  if percentA < 70 then
-		    DrawCircle(originAllies.x,originAllies.y,originAllies.z,1000,0,100,0xffE4FFBD)
+		  if percentA < 60 then
+		    DrawCircle(originAllies.x,originAllies.y,originAllies.z,1000,0,100,0xff9ACD32)
 		  end
 		end
 	     end
@@ -358,34 +359,36 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 		    local originEnemies = GetOrigin(enemy)
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
 		    if CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
-			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
-			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
-			DrawText("R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
-			DrawText("Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
-			DrawText("R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
-			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			else
-			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xff00FF99)
+			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
 			end
 		    local maxhp = GetMaxHP(enemy)
 		    local currhp = GetCurrentHP(enemy)
 			local percent = 100*currhp/maxhp
 		    DrawText(string.format("%s HP: %d / %d | Percent HP = %d", GetObjectName(enemy), currhp, maxhp, percent),16,EnmTextPos.x,EnmTextPos.y+23,0xffffffff)
 			local CheckQRDmg = CheckQDmg + CheckRDmg + LudensEcho
-		    if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY then
-			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQRDmg,0xffffffff)
-			elseif CanUseSpell(myHero, _R) == READY then
+		    --if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY then
+			--DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQRDmg,0xffffffff)
+			if CanUseSpell(myHero, _R) == READY then
 			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckRDmg + LudensEcho,0xffffffff)
-			elseif CanUseSpell(myHero, _Q) == READY then
-			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
-			else
-			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),LudensEcho,0xffffffff)
 			end
+			if CanUseSpell(myHero, _Q) == READY then
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
+			end
+			--else
+			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),LudensEcho,0xffffffff)
+			--end
 		 end
 	end
 	for _, myally in pairs(GoS:GetAllyHeroes()) do
@@ -403,8 +406,8 @@ if Sona.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircle
 	    if IsObjectAlive(myHero) then
 		    local myorigin = GetOrigin(myHero)
 		    local mytextPos = WorldToScreen(1,myorigin.x, myorigin.y, myorigin.z)
-			local checkhealW = (GetCastLevel(myHero, _W)*20) + 10 + (0.20*BonusAP)
-			local checkshieldW = (GetCastLevel(myHero, _W)*20) + 15 + (0.20*BonusAP)
+			local checkhealW = (GetCastLevel(myHero, _W)*20) + 10 + 0.20*BonusAP
+			local checkshieldW = (GetCastLevel(myHero, _W)*20) + 15 + 0.20*BonusAP
 			DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", checkhealW, checkshieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
 	    end	
  end
