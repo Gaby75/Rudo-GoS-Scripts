@@ -1,10 +1,10 @@
--- Rx Karthus Version 0.55 by Rudo.
+-- Rx Karthus Version 0.6 by Rudo.
 -- Updated Karthus for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.55 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.6 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
 
@@ -23,12 +23,12 @@ Karthus.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 1)
 Karthus:SubMenu("FreezeLane", "Lane Clear")
 Karthus.FreezeLane:Boolean("QLC", "Use Q LaneClear", true)
 Karthus.FreezeLane:Boolean("ELC", "Use E LaneClear", true)
-Karthus.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 30, 0, 100, 1)
+Karthus.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 20, 0, 100, 1)
 
 ---- Last Hit Menu ----
 Karthus:SubMenu("LHMinion", "Last Hit Minion")
 Karthus.LHMinion:Boolean("QLH", "Use Q Last Hit", true)
-Karthus.LHMinion:Slider("LHMana", "Enable LastHit if %My MP >", 30, 0, 100, 1)
+Karthus.LHMinion:Slider("LHMana", "Enable LastHit if %My MP >", 20, 0, 100, 1)
 
 ---- Jungle Clear Menu ----
 Karthus:SubMenu("JungleClear", "Jungle Clear")
@@ -50,7 +50,7 @@ Karthus.InfoR:Boolean("EninfoR", "Enable Draw Enemy can KS with R", true)
 ---- Drawings Menu ----
 Karthus:SubMenu("Draws", "Drawings")
 Karthus.Draws:Boolean("DrawsEb", "Enable Drawings", true)
-Karthus.Draws:Slider("QualiDraw", "Quality Drawings", 80, 1, 255, 1)
+Karthus.Draws:Slider("QualiDraw", "Quality Drawings", 110, 1, 255, 1)
 Karthus.Draws:Boolean("DrawQ", "Range Q", true)
 Karthus.Draws:Boolean("DrawW", "Range W", true)
 Karthus.Draws:Boolean("DrawE", "Range E", true)
@@ -89,11 +89,12 @@ OnLoop(function(myHero)
     if IOW:Mode() == "Combo" then
 		local target = GetCurrentTarget()
 		
-		if CanUseSpell(myHero,_W) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, 900) and Karthus.cb.WCB:Value() then
-		CastTargetSpell(myHero, _W)
+	   local WPred = GetPredictionForPlayer(GetOrigin(target),target,GetMoveSpeed(target),math.huge,500,GetCastRange(myHero,_W),800,false,true)
+		if CanUseSpell(myHero,_W) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Karthus.cb.WCB:Value() then
+		CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
 		end
 		
-	   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),190,false,true)
+	   local QPred = GetPredictionForPlayer(GetOrigin(target),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),190,false,true)
 	    if CanUseSpell(myHero,_Q) == READY and IsObjectAlive(target) and GoS:ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.cb.QCB:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end		
@@ -231,39 +232,39 @@ end
  	------ Start Auto Level Up _Full Q First then E ------
 function AutoLvlUpQ()
 	if Karthus.Miscset.AutoSkillUpQ:Value() then
- if GetLevel(myHero) >= 1 and GetLevel(myHero) < 2 then
+ if GetLevel(myHero) == 1 then
 	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 2 and GetLevel(myHero) < 3 then
+elseif GetLevel(myHero) == 2 then
 	LevelSpell(_W)
-elseif GetLevel(myHero) >= 3 and GetLevel(myHero) < 4 then
+elseif GetLevel(myHero) == 3 then
 	LevelSpell(_E)
-elseif GetLevel(myHero) >= 4 and GetLevel(myHero) < 5 then
+elseif GetLevel(myHero) == 4 then
         LevelSpell(_Q)
-elseif GetLevel(myHero) >= 5 and GetLevel(myHero) < 6 then
+elseif GetLevel(myHero) == 5 then
         LevelSpell(_Q)
-elseif GetLevel(myHero) >= 6 and GetLevel(myHero) < 7 then
+elseif GetLevel(myHero) == 6 then
 	LevelSpell(_R)
-elseif GetLevel(myHero) >= 7 and GetLevel(myHero) < 8 then
+elseif GetLevel(myHero) == 7 then
 	LevelSpell(_Q)
-elseif GetLevel(myHero) >= 8 and GetLevel(myHero) < 9 then
+elseif GetLevel(myHero) == 8 then
         LevelSpell(_Q)
-elseif GetLevel(myHero) >= 9 and GetLevel(myHero) < 10 then
+elseif GetLevel(myHero) == 9 then
         LevelSpell(_E)
-elseif GetLevel(myHero) >= 10 and GetLevel(myHero) < 11 then
+elseif GetLevel(myHero) == 10 then
         LevelSpell(_E)
-elseif GetLevel(myHero) >= 11 and GetLevel(myHero) < 12 then
+elseif GetLevel(myHero) == 11 then
         LevelSpell(_R)
-elseif GetLevel(myHero) >= 12 and GetLevel(myHero) < 13 then
+elseif GetLevel(myHero) == 12 then
         LevelSpell(_E)
-elseif GetLevel(myHero) >= 13 and GetLevel(myHero) < 14 then
+elseif GetLevel(myHero) == 13 then
         LevelSpell(_E)
-elseif GetLevel(myHero) >= 14 and GetLevel(myHero) < 15 then
+elseif GetLevel(myHero) == 14 then
         LevelSpell(_W)
-elseif GetLevel(myHero) >= 15 and GetLevel(myHero) < 16 then
+elseif GetLevel(myHero) == 15 then
         LevelSpell(_W)
-elseif GetLevel(myHero) >= 16 and GetLevel(myHero) < 17 then
+elseif GetLevel(myHero) == 16 then
         LevelSpell(_R)
-elseif GetLevel(myHero) >= 17 and GetLevel(myHero) < 18 then
+elseif GetLevel(myHero) == 17 then
         LevelSpell(_W)
 elseif GetLevel(myHero) == 18 then
         LevelSpell(_W)
@@ -353,12 +354,12 @@ function RKillableInfo()
                 if not IsVisible(enemy) then
                     info = info.." Not see enemy in map maybe"
                 end
-                info = info.."  Killable\n"
+                info = info.." - R KILL!\n"
             end
             -- info = info..GetObjectName(enemy).."    HP:"..hp.."  dmg: "..realdmg.." "..Killable.."\n"
         end
   end
-  DrawText(info,40,500,0,0xffff0000) 
+  DrawText(info,30,0,110,0xffff0000) 
    end
 end
 	
@@ -366,7 +367,7 @@ end
 function Drawings()
   if Karthus.Draws.DrawsEb:Value() then
 if Karthus.Draws.DrawQ:Value() and CanUseSpell(myHero,_Q) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_Q),1,Karthus.Draws.QualiDraw:Value(),0xff87CEFA) end
-if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),1,Karthus.Draws.QualiDraw:Value(),0xff1C1C1C) end
+if Karthus.Draws.DrawW:Value() and CanUseSpell(myHero,_W) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_W),3,Karthus.Draws.QualiDraw:Value(),0xff1C1C1C) end
 if Karthus.Draws.DrawE:Value() and CanUseSpell(myHero,_E) == READY then DrawCircle(GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z,GetCastRange(myHero,_E),1,Karthus.Draws.QualiDraw:Value(),0xff7D26CD) end
 if Karthus.Draws.DrawText:Value() then
 	for _, enemy in pairs(Gos:GetEnemyHeroes()) do
@@ -382,19 +383,19 @@ if Karthus.Draws.DrawText:Value() then
 		    local originEnemies = GetOrigin(enemy)
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
 		    if CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
-			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
-			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
-			DrawText("R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
-			DrawText("Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q + R = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
-			DrawText("R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < EnbIgnite + GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + CheckRDmg + LudensEcho) then
-			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFF6600)
+			DrawText("Q + R + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			else
-			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xff00FF66)
+			DrawText("Can't Kill this Target!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
 			end
 		    local maxhp = GetMaxHP(enemy)
 		    local currhp = GetCurrentHP(enemy)
@@ -413,5 +414,10 @@ if Karthus.Draws.DrawText:Value() then
 		end
 		 end
 	end
+	    if IsObjectAlive(myHero) and GetLevel(myHero) >= 6 then
+		    local mytextPos = WorldToScreen(1,GoS:myHeroPos().x, GoS:myHeroPos().y, GoS:myHeroPos().z)
+			local checkshieldW = (GetCastLevel(myHero, _W)*20) + 15 + (0.20*BonusAP)
+			DrawText(string.format("Damege R = %d DMG", CheckRDmg),20,mytextPos.x,mytextPos.y,0xffffffff)
+	    end	
   end
 end
