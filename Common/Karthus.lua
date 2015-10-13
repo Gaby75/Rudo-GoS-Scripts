@@ -1,10 +1,10 @@
--- Rx Karthus Version 0.6 by Rudo.
+-- Rx Karthus Version 0.65 by Rudo.
 -- Updated Karthus for Inspired Ver30 and IOW
 -- Go to http://gamingonsteroids.com   To Download more script.
 -- Thanks Deftsu for some Code <3  . Thank Cloud for Karthus Plugin. ^.^
 ----------------------------------------------------
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.6 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.65 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ---- Create a Menu ----
 Karthus = Menu("Rx Karthus", "Karthus")
 
@@ -79,7 +79,7 @@ require('Inspired')
 require('IOW')
 
 local BonusAP = GetBonusAP(myHero)
-local CheckQDmg = (GetCastLevel(myHero, _Q)*20) + 20 + (0.30*BonusAP)
+local CheckQDmg = 2*((GetCastLevel(myHero, _Q)*20) + 20 + (0.30*BonusAP))
 local CheckEDmg = (GetCastLevel(myHero, _E)*20) + 10 + (0.20*BonusAP)
 local CheckRDmg = (GetCastLevel(myHero, _R)*150) + 100 + (0.60*BonusAP)
 
@@ -401,10 +401,10 @@ if Karthus.Draws.DrawText:Value() then
 		    local currhp = GetCurrentHP(enemy)
 			local percent = 100*currhp/maxhp
 		    DrawText(string.format("%s HP: %d / %d | Percent HP = %d", GetObjectName(enemy), currhp, maxhp, percent),16,EnmTextPos.x,EnmTextPos.y+23,0xffffffff)
-			local CheckQRDmg = CheckQDmg + CheckRDmg + LudensEcho
-		    if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY then
-			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQRDmg,0xffffffff)
-			elseif CanUseSpell(myHero, _R) == READY then
+			--local CheckQRDmg = CheckQDmg + CheckRDmg + LudensEcho
+		    --if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _R) == READY then
+			--DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQRDmg,0xffffffff)
+			if CanUseSpell(myHero, _R) == READY then
 			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckRDmg + LudensEcho,0xffffffff)
 			elseif CanUseSpell(myHero, _Q) == READY then
 			DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
