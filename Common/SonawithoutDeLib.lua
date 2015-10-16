@@ -1,4 +1,4 @@
---[[ Rx Sona Without deLibrary Version 1.35 by Rudo.
+--[[ Rx Sona Without deLibrary Version 1.4 by Rudo.
  Updated Sona for Inspired Ver30 and IOW
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
@@ -58,6 +58,7 @@ Sona.Miscset:SubMenu("KS", "Kill Steal")
 Sona.Miscset.KS:Boolean("KSEb", "Enable KillSteal", true)
 Sona.Miscset.KS:Boolean("QKS", "KS with Q", true)
 Sona.Miscset.KS:Boolean("RKS", "KS with R", false)
+Sona.Miscset.KS:Slider("RAround", "Enemy Around to KS with R", 2, 1, 5, 1)
 Sona.Miscset:SubMenu("AntiSkill", "Stop Skill Enemy")
 Sona.Miscset.AntiSkill:Boolean("RAnti", "Stop Skil Enemy with R", true)
 Sona.Miscset:SubMenu("AutoLvlUp", "Auto Level Up")
@@ -85,7 +86,7 @@ PrintChat(textTable[1])
 PrintChat(textTable[2])
 PrintChat(textTable[3])
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.35 without deLibrary Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 1.4 without deLibrary Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 
 ----- End Print -----
 
@@ -265,7 +266,7 @@ for i,enemy in pairs(GoS:GetEnemyHeroes()) do
 
 	if CanUseSpell(myHero, _Q) and GoS:ValidTarget(enemy, 845) and Sona.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
 		CastSpell(_Q)
-    elseif CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(enemy, 950) and Sona.Miscset.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) then
+    elseif CanUseSpell(myHero, _R) == READY and RPred.HitChance == 1 and GoS:ValidTarget(enemy, 950) and Sona.Miscset.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckRDmg + LudensEcho) and GoS:EnemiesAround(GetOrigin(enemy), 150) == Sona.Miscset.KS.RAround:Value() then
         CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
 	end
 end
