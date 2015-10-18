@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.2 by Rudo.
+--[[ Rx Zilean Version 0.22 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.2: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.22: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Zilean = Menu("Rx Zilean", "Zilean")
 
@@ -310,11 +310,11 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
 		    if CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
 			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
-	        elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho) then
+	        elseif CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho) and CanUseSpell(myHero, _W) == READY or GotBuff(enemy, "zileanqenemybomb") > 0 then
 			DrawText("Q-W-Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho + EnbIgnite) then
 			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
-			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho + EnbIgnite) then
+			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho + EnbIgnite) and CanUseSpell(myHero, _W) == READY or GotBuff(enemy, "zileanqenemybomb") > 0 then
 			DrawText("Q-W-Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			else
 			DrawText("Can't Kill this Target!!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
