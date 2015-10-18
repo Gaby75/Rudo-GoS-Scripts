@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.1 by Rudo.
+--[[ Rx Zilean Version 0.15 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.1: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.15: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Zilean = Menu("Rx Zilean", "Zilean")
 
@@ -112,12 +112,15 @@ end
 
 addAntiSkillCallback(function(target, spellType)
   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,300,900,100,false,true)
-  if GoS:IsInDistance(target, 900) and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY then
-  	if CanUseSpell(myHero, _Q) == READY and Zilean.Miscset.AntiSkill.EbAnti:Value() and spellType == CHANELLING_SPELLS then
+  if GoS:IsInDistance(target, 900) and Zilean.Miscset.AntiSkill.EbAnti:Value() then
+  	if CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and spellType == CHANELLING_SPELLS then
     CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
     end
-    if CanUseSpell(myHero, _W) == READY and  CanUseSpell(myHero, _Q) ~= READY and Zilean.Miscset.AntiSkill.EbAnti:Value() and spellType == CHANELLING_SPELLS then
+    if CanUseSpell(myHero, _W) == READY and  CanUseSpell(myHero, _Q) ~= READY and spellType == CHANELLING_SPELLS then
     CastSpell(_W)
+    end
+    if CanUseSpell(myHero, _Q) == READY and GotBuff(target, "zileanqenemybomb") and spellType == CHANELLING_SPELLS then
+    CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
     end
   end
 end)
@@ -343,10 +346,19 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 	end
    end	
             end
-   
+			
+	 for _, enemy in pairs(Gos:GetEnemyHeroes()) do
+		 if GoS:ValidTarget(enemy) then
+		 local currhp = GetCurrentHP(enemy)
+		local LudensEcho = 0
+		if GotBuff(myHero, "itemmagicshankcharge") > 99 then
+		LudensEcho = LudensEcho + 0.1*BonusAP + 100
+	    end   
     if CanUseSpell(myHero, _Q) == READY then
 		  DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
     else
           DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),LudensEcho,0xffffffff)
     end
+		 end
+	 end
 end			
