@@ -28,7 +28,7 @@ Zilean.lc:Boolean("LcQ", "Use Q", true)
 ---- Auto Spell Menu ----
 Zilean:SubMenu("AtSpell", "Auto Spell")
 Zilean.AtSpell:Boolean("ASEb", "Enable Auto Spell", true)
-Zilean.AtSpell:Slider("ASMP", "Auto Spell if %MP >=", 30, 1, 100, 1)
+Zilean.AtSpell:Slider("ASMP", "Auto Spell if %MP >=", 30, 10, 100, 1)
 Zilean.AtSpell:SubMenu("ATSQ", "Auto Spell Q")
 Zilean.AtSpell.ATSQ:Boolean("ASQ", "Use Q", true)
 Zilean.AtSpell.ATSQ:Info("info1", "Auto Q if can stun enemy")
@@ -112,7 +112,7 @@ end
 
 addAntiSkillCallback(function(target, spellType)
   local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,300,900,100,false,true)
-  if GoS:IsInDistance(target, 900) then
+  if GoS:IsInDistance(target, 900) and CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) == READY then
   	if CanUseSpell(myHero, _Q) == READY and Zilean.Miscset.AntiSkill.EbAnti:Value() and spellType == CHANELLING_SPELLS then
     CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
     end
@@ -130,13 +130,13 @@ OnLoop(function(myHero)
 		        local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,300,900,100,false,true)
     	------ Start Combo ------
     if IOW:Mode() == "Combo" then
-        if  CanUseSpell(myHero, _Q) == READY and Zilean.cb.QCB:Value() and GoS:ValidTarget(target, 880) and QPred.HitChance == 1 and IsObjectAlive(target) then
+        if  CanUseSpell(myHero, _Q) == READY and Zilean.cb.QCB:Value() and GoS:ValidTarget(target, 870) and QPred.HitChance == 1 and IsObjectAlive(target) then
         CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
         if CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) ~= READY and Zilean.cb.WCB:Value() and GoS:IsInDistance(target, 900) then
 		CastSpell(_W)
 		end
-		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GoS:GetDistance(myHero, target) >= 980 then
+		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GoS:GetDistance(myHero, target) >= 880 then
 		CastTargetSpell(myHero, _E)
 		end
 	end
