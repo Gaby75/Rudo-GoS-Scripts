@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.15 by Rudo.
+--[[ Rx Zilean Version 0.2 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.15: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.2: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Zilean = Menu("Rx Zilean", "Zilean")
 
@@ -316,37 +316,66 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho + EnbIgnite) then
 			DrawText("Q-W-Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
+			else
+			DrawText("Can't Kill this Target!!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
 			end
 	
 		    local maxhp = GetMaxHP(enemy)
 		    local currhp = GetCurrentHP(enemy)
 			local percent = 100*currhp/maxhp
+			local per = '%'
 			local originEnemies = GetOrigin(enemy)
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
-		    DrawText(string.format("%s HP: %d / %d | Percent HP = %d", GetObjectName(enemy), currhp, maxhp, percent),16,EnmTextPos.x,EnmTextPos.y+23,0xffffffff)
+		    DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(enemy), currhp, maxhp, per, percent, per),16,EnmTextPos.x,EnmTextPos.y+23,0xffffffff)
          end
 	end	
 	
-   if GetLevel(myHero) >= 6 then	
 	for _, myally in pairs(GoS:GetAllyHeroes()) do
 		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
 	    if IsObjectAlive(myally) then
 		    local originAllies = GetOrigin(myally)
-		    local AllyTextPos = WorldToScreen(1,originAllies.x, originAllies.y, originAllies.z)
+		    local alliesPos = WorldToScreen(1,originAllies.x, originAllies.y, originAllies.z)
 		    local maxhpA = GetMaxHP(myally)
 		    local currhpA = GetCurrentHP(myally)
 			local percentA = 100*currhpA/maxhpA
-			local line = 0
-			if percentA < 20 then
-			line = line + 17
-			DrawText(string.format("%s HP: %d | Percent HP < 20", GetObjectName(myally), currhpA),17,AllyTextPos.x,AllyTextPos.y+line,0xffffffff)
-			end
-	    end
-		 end
-	end
-   end	
+			local per = '%'
+			if percentA >= 20 then
+			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),18,alliesPos.x,alliesPos.y,0xffffffff)
+	        elseif percentA < 20 then
+			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y,0xffff0000)
+		    end
+		end
+	end	
             end
-			
+		
+		drawtexts = ""
+    for nID, ally in pairs(GoS:GetAllyHeroes()) do
+	 if IsObjectAlive(ally) then
+	 if GetObjectName(myHero) ~= GetObjectName(ally) then
+		if CanUseSpell(myHero, _R) == READY and GoS:IsInDistance(ally, 2000) then
+		    local maxhpA = GetMaxHP(ally)
+		    local currhpA = GetCurrentHP(ally)
+			local percentA = 100*currhpA/maxhpA
+		if percentA < 20 then
+		drawtexts = GetObjectName(ally).." %HP < 20%. Should Use R"
+		 end
+  DrawText(drawtexts,27,0,110,0xff00ff00)  
+  end
+		end
+	 end
+	end
+	
+	local myTextPos = WorldToScreen(1,GetOrigin(myHero).x, GetOrigin(myHero).y, GetOrigin(myHero).z)
+	local petmh = '%'
+	local percentHPmh = 100*GetCurrentHP(myHero)/GetMaxHP(myHero)
+	if percentHPmh  >= 20 then 
+    DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),18,myTextPos.x,myTextPos.y,0xffffffff)
+	elseif percentHPmh  < 20 then
+    DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),21,myTextPos.x,myTextPos.y,0xffff0000)
+	end
+	
+            end
+	
 	 for _, enemy in pairs(Gos:GetEnemyHeroes()) do
 		 if GoS:ValidTarget(enemy) then
 		 local currhp = GetCurrentHP(enemy)
@@ -361,4 +390,4 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
     end
 		 end
 	 end
-end			
+end	
