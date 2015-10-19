@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.25 by Rudo.
+--[[ Rx Zilean Version 0.3 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.25: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.3: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Zilean = Menu("Rx Zilean", "Zilean")
 
@@ -141,6 +141,9 @@ OnLoop(function(myHero)
 		end
 		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GoS:GetDistance(myHero, target) >= 880 then
 		CastTargetSpell(myHero, _E)
+		end
+		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GoS:EnemiesAround(myHero, 350) or GoS:AlliesAround(myHero, 1050) then
+		CastTargetSpell(GoS:ClosestEnemy(GetMousePos()), _E)
 		end
 	end
 
