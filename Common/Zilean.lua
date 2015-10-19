@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.22 by Rudo.
+--[[ Rx Zilean Version 0.25 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.22: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.25: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Zilean = Menu("Rx Zilean", "Zilean")
 
@@ -232,7 +232,9 @@ for i,enemy in pairs(GoS:GetEnemyHeroes()) do
                   end
         end
 
-	if CanUseSpell(myHero, _Q) and GoS:ValidTarget(enemy, 880) and Zilean.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) and QPred.HitChance == 1 then
+	if CanUseSpell(myHero, _Q) == READY and GoS:ValidTarget(enemy, 880) and Zilean.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) and QPred.HitChance == 1 then
+		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+	elseif CanUseSpell(myHero, _Q) == READY and GotBuff(enemy, "zileanqenemybomb") > 0 and GoS:ValidTarget(enemy, 880) and Zilean.Miscset.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho) and QPred.HitChance == 1 then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 	end
 end
@@ -342,7 +344,7 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 			if percentA >= 20 then
 			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),18,alliesPos.x,alliesPos.y,0xffffffff)
 	        elseif percentA < 20 then
-			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y,0xffff0000)
+			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y+5,0xffff0000)
 		    end
 		end
 	end	
@@ -371,7 +373,7 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 	if percentHPmh  >= 20 then 
     DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),18,myTextPos.x,myTextPos.y,0xffffffff)
 	elseif percentHPmh  < 20 then
-    DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),21,myTextPos.x,myTextPos.y,0xffff0000)
+    DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
 	end
 	
             end
