@@ -28,7 +28,7 @@ Zilean.lc:Boolean("LcQ", "Use Q", true)
 ---- Auto Spell Menu ----
 Zilean:SubMenu("AtSpell", "Auto Spell")
 Zilean.AtSpell:Boolean("ASEb", "Enable Auto Spell", true)
-Zilean.AtSpell:Slider("ASMP", "Auto Spell if %MP >=", 30, 10, 100, 1)
+Zilean.AtSpell:Slider("ASMP", "Auto Spell if %MP >=", 30, 2, 100, 1)
 Zilean.AtSpell:SubMenu("ATSQ", "Auto Spell Q")
 Zilean.AtSpell.ATSQ:Boolean("ASQ", "Use Q", true)
 Zilean.AtSpell.ATSQ:Info("info1", "Auto Q if can stun enemy")
@@ -119,7 +119,7 @@ addAntiSkillCallback(function(target, spellType)
     if CanUseSpell(myHero, _W) == READY and  CanUseSpell(myHero, _Q) ~= READY and spellType == CHANELLING_SPELLS then
     CastSpell(_W)
     end
-    if CanUseSpell(myHero, _Q) == READY and GotBuff(target, "zileanqenemybomb") and spellType == CHANELLING_SPELLS then
+    if CanUseSpell(myHero, _Q) == READY and GotBuff(target, "zileanqenemybomb") >= 1 and spellType == CHANELLING_SPELLS then
     CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
     end
   end
@@ -130,7 +130,7 @@ local CheckQDmg = (GetCastLevel(myHero, _Q)*40) + 35 + (0.90*BonusAP)
 -------------------------------------------
 OnLoop(function(myHero)
 		        local target = GetCurrentTarget()
-		        local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,300,900,100,false,true)
+		        local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true)
     	------ Start Combo ------
     if IOW:Mode() == "Combo" then
         if  CanUseSpell(myHero, _Q) == READY and Zilean.cb.QCB:Value() and GoS:ValidTarget(target, 870) and QPred.HitChance == 1 and IsObjectAlive(target) then
@@ -139,11 +139,8 @@ OnLoop(function(myHero)
         if CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) ~= READY and Zilean.cb.WCB:Value() and GoS:IsInDistance(target, 900) then
 		CastSpell(_W)
 		end
-		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GoS:GetDistance(myHero, target) >= 880 then
+		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GotBuff(myHero, "TimeWarp") <= 0 and GoS:IsInDistance(target, 1300) and not GoS:IsInDistance(target, 880) then
 		CastTargetSpell(myHero, _E)
-		end
-		if CanUseSpell(myHero, _E) == READY and Zilean.cb.ECB:Value() and GoS:EnemiesAround(myHero, 350) or GoS:AlliesAround(myHero, 1050) then
-		CastTargetSpell(GoS:ClosestEnemy(GetMousePos()), _E)
 		end
 	end
 
@@ -162,7 +159,7 @@ OnLoop(function(myHero)
 		 local minionsPos = GetOrigin(minion)
 		 local hpMinions = GetCurrentHP(minion)
 		 local CheckKillMinions = GoS:CalcDamage(myHero, minion, 0, 100 + CheckQDmg*2)
-		 if hpMinions <= CheckKillMinions and CanUseSpell(myHero, _W) == READY then
+		 if hpMinions <= CheckKillMinions and CanUseSpell(myHero, _W) == READY or GotBuff(minion, "zileanqenemybomb") >= 1 then
 		 CastSkillShot(_Q,minionsPos.x, minionsPos.y, minionsPos.z)
 		 elseif CanUseSpell(myHero, _W) ~= READY and CanUseSpell(myHero, _Q) == READY and hpMinions <= CheckKillMinions then
 		 CastSkillShot(_Q,minionsPos.x, minionsPos.y, minionsPos.z)
@@ -255,7 +252,7 @@ end
 function UsePotHP()
 global_ticks = 0
 currentTicks = GetTickCount()
- if Zilean.Items.PotionHP.PotHP:Value() then
+ if Zilean.Items.PotionHP.PotHP:Value() and GotBuff(myHero, "recall") <= 0 then
 local myHero = GetMyHero()
 local target = GetCurrentTarget()
 local myHeroPos = GetOrigin(myHero)
@@ -276,7 +273,7 @@ local myHeroPos = GetOrigin(myHero)
 function UsePotMP()
 global_ticks = 0
 currentTicks = GetTickCount()
- if Zilean.Items.PotionMP.PotMP:Value() then
+ if Zilean.Items.PotionMP.PotMP:Value() and GotBuff(myHero, "recall") <= 0 then
 local myHero = GetMyHero()
 local target = GetCurrentTarget()
 local myHeroPos = GetOrigin(myHero)
@@ -313,13 +310,13 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 	end
 		    local originEnemies = GetOrigin(enemy)
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
-		    if CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
+		    if CanUseSpell(myHero, _Q) == READY and GotBuff(enemy, "zileanqenemybomb") <= 0  and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho) then
 			DrawText("Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
-	        elseif CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho) and CanUseSpell(myHero, _W) == READY or GotBuff(enemy, "zileanqenemybomb") > 0 then
+	        elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho) and GotBuff(enemy, "zileanqenemybomb") >= 1 then
 			DrawText("Q-W-Q = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
-			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho + EnbIgnite) then
+			elseif CanUseSpell(myHero, _Q) == READY and EnbIgnite > 0 and GotBuff(enemy, "zileanqenemybomb") <= 0 and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, CheckQDmg + LudensEcho + EnbIgnite) then
 			DrawText("Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
-			elseif EnbIgnite > 0 and CanUseSpell(myHero, _Q) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho + EnbIgnite) and CanUseSpell(myHero, _W) == READY or GotBuff(enemy, "zileanqenemybomb") > 0 then
+			elseif CanUseSpell(myHero, _Q) == READY and EnbIgnite > 0 and CanUseSpell(myHero, _W) == READY and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < GoS:CalcDamage(myHero, enemy, 0, 2*CheckQDmg + LudensEcho + EnbIgnite) and GotBuff(enemy, "zileanqenemybomb") >= 1 then
 			DrawText("Q-W-Q + Ignite = Killable!",19,EnmTextPos.x,EnmTextPos.y,0xffFFD700)
 			else
 			DrawText("Can't Kill this Target!!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
@@ -373,10 +370,12 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 	local myTextPos = WorldToScreen(1,GetOrigin(myHero).x, GetOrigin(myHero).y, GetOrigin(myHero).z)
 	local petmh = '%'
 	local percentHPmh = 100*GetCurrentHP(myHero)/GetMaxHP(myHero)
+	if IsObjectAlive(myHero) then
 	if percentHPmh  >= 20 then 
-    DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),18,myTextPos.x,myTextPos.y,0xffffffff)
+    DrawText(string.format("%s %sHP = %d%s", GetObjectName(myHero), petmh, percentHPmh, petmh),18,myTextPos.x,myTextPos.y,0xffffffff)
 	elseif percentHPmh  < 20 then
-    DrawText(string.format("%sHP = %d%s", petmh, percentHPmh, petmh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
+    DrawText(string.format("%s %sHP = %d%s", GetObjectName(myHero), petmh, percentHPmh, petmh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
+	end
 	end
 	
             end
@@ -391,7 +390,7 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
     if CanUseSpell(myHero, _Q) == READY then
 		  DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),CheckQDmg + LudensEcho,0xffffffff)
     else
-          DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),LudensEcho,0xffffffff)
+          DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),0,0xffffffff)
     end
 		 end
 	 end
