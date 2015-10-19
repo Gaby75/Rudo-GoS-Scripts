@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.3 by Rudo.
+--[[ Rx Zilean Version 0.33 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.3: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.33: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Zilean = Menu("Rx Zilean", "Zilean")
 
@@ -133,7 +133,7 @@ OnLoop(function(myHero)
 		        local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true)
     	------ Start Combo ------
     if IOW:Mode() == "Combo" then
-        if  CanUseSpell(myHero, _Q) == READY and Zilean.cb.QCB:Value() and GoS:ValidTarget(target, 870) and QPred.HitChance == 1 and IsObjectAlive(target) then
+        if  CanUseSpell(myHero, _Q) == READY and Zilean.cb.QCB:Value() and GoS:ValidTarget(target, 900) and QPred.HitChance == 1 and IsObjectAlive(target) then
         CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
         if CanUseSpell(myHero, _W) == READY and CanUseSpell(myHero, _Q) ~= READY and Zilean.cb.WCB:Value() and GoS:IsInDistance(target, 900) then
@@ -146,7 +146,7 @@ OnLoop(function(myHero)
 
 	if IOW:Mode() == "Harass" then
 	------ Start Harass ------
-        if CanUseSpell(myHero, _Q) == READY and QPred.HitChance == 1 and GoS:ValidTarget(target, 870) and Zilean.cb.QCB:Value() then
+        if CanUseSpell(myHero, _Q) == READY and QPred.HitChance == 1 and GoS:ValidTarget(target, 900) and Zilean.cb.QCB:Value() then
         CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
         end	
 	end
@@ -341,10 +341,10 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 		    local currhpA = GetCurrentHP(myally)
 			local percentA = 100*currhpA/maxhpA
 			local per = '%'
-			if percentA >= 20 then
-			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),18,alliesPos.x,alliesPos.y,0xffffffff)
-	        elseif percentA < 20 then
+	        if percentA < 20 and GetLevel(myHero) >= 6 then
 			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y+5,0xffff0000)
+			elseif percentA >= 20 then
+			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),18,alliesPos.x,alliesPos.y,0xffffffff)
 		    end
 		end
 	end	
@@ -371,10 +371,10 @@ if Zilean.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCirc
 	local petmh = '%'
 	local percentHPmh = 100*GetCurrentHP(myHero)/GetMaxHP(myHero)
 	if IsObjectAlive(myHero) then
-	if percentHPmh  >= 20 then 
-    DrawText(string.format("%s %sHP = %d%s", GetObjectName(myHero), petmh, percentHPmh, petmh),18,myTextPos.x,myTextPos.y,0xffffffff)
-	elseif percentHPmh  < 20 then
+	if percentHPmh  < 20 and GetLevel(myHero) >= 6 then
     DrawText(string.format("%s %sHP = %d%s", GetObjectName(myHero), petmh, percentHPmh, petmh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
+	elseif percentHPmh  >= 20 then 
+    DrawText(string.format("%s %sHP = %d%s", GetObjectName(myHero), petmh, percentHPmh, petmh),18,myTextPos.x,myTextPos.y,0xffffffff)
 	end
 	end
 	
