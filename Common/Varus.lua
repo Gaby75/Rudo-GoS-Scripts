@@ -76,7 +76,7 @@ OnLoop(function(myHero)
 		        local EPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1500,250,925,235,false,true)
 		        local RPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1950,250,1200,100,false,true)
     	------ Start Combo ------
-    if IOW:Mode() == "Combo" then
+    if IOW:Mode() == "Combo" and IsObjectAlive(target) then
 		if CanUseSpell(myHero, _E) == READY and Varus.cb.ECB:Value() and EPred.HitChance == 1 and GoS:ValidTarget(target, GetCastRange(myHero,_E)) then
 		CastSkillShot(_E,EPred.PredPos.x,EPred.PredPos.y,EPred.PredPos.z)
 		end
@@ -94,7 +94,7 @@ OnLoop(function(myHero)
         end 
 	end
 
-	if IOW:Mode() == "Harass" then
+	if IOW:Mode() == "Harass" and IsObjectAlive(target) then
 	------ Start Harass ------
 		if CanUseSpell(myHero, _E) == READY and Varus.hr.HrE:Value() and EPred.HitChance == 1 and GoS:ValidTarget(target, GetCastRange(myHero,_E)) then
 		CastSkillShot(_E,EPred.PredPos.x,EPred.PredPos.y,EPred.PredPos.z)
@@ -237,7 +237,7 @@ if Varus.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircl
 			else
 			DrawText("Can't Kill this Target!!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
 			end
-    local CheckW = 4*GetCastLevel(myHero, _W) + 6
+    local CheckW = 4*GetCastLevel(myHero, _W) + 6 + 0.25*BonusAP
 		if CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY then
 		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQ2 + CheckE2 +CheckR2, 0,0xffffffff)
 		elseif CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _Q) == READY then
@@ -360,7 +360,7 @@ for _,enemy in pairs(GoS:GetEnemyHeroes()) do
                   end
         end
 
-	if CanUseSpell(myHero, _Q) == READY and Varus.Miscset.KS.QKS:Value() and GoS:ValidTarget(target, 1625) then
+	if CanUseSpell(myHero, _Q) == READY and Varus.Miscset.KS.QKS:Value() and IsObjectAlive(enemy) and GoS:ValidTarget(target, 1625) then
 		CastSkillShot(_Q, GetMousePos().x, GetMousePos().y, GetMousePos().z)
       for i=400, 1600, 200 do
         GoS:DelayAction(function()
@@ -372,9 +372,9 @@ for _,enemy in pairs(GoS:GetEnemyHeroes()) do
         end, i)
       end	
 	 end
-	if CanUseSpell(myHero, _E) == READY and GoS:ValidTarget(target, GetCastRange(myHero,_E)) and Varus.Miscset.KS.EKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckE2, 0) and EPred.HitChance == 1 then
+	if CanUseSpell(myHero, _E) == READY and IsObjectAlive(enemy) and GoS:ValidTarget(target, GetCastRange(myHero,_E)) and Varus.Miscset.KS.EKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckE2, 0) and EPred.HitChance == 1 then
 		CastSkillShot(_E,EPred.PredPos.x,EPred.PredPos.y,EPred.PredPos.z)
-	elseif CanUseSpell(myHero, _R) == READY and GoS:ValidTarget(target, 1150) and Varus.Miscset.KS.RKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckR2, 0) and RPred.HitChance == 1 then
+	elseif CanUseSpell(myHero, _R) == READY and IsObjectAlive(enemy) and GoS:ValidTarget(target, 1150) and Varus.Miscset.KS.RKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckR2, 0) and RPred.HitChance == 1 then
 		CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
 	end
 end
