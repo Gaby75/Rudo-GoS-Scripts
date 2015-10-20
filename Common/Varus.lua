@@ -184,25 +184,25 @@ if Varus.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircl
 	local CheckQDmg = 55*GetCastLevel(myHero, _Q) - 40 + 1.6*BonusAD
 	local CheckEDmg = 35*GetCastLevel(myHero, _E) + 30 + 0.6*BonusAD
 	local CheckRDmg = 100*GetCastLevel(myHero, _R) + 50 + 1.0*BonusAP
-	local CheckQ2
-	local CheckE2
-	local CheckR2
+	local CheckQ2 = 0
+	local CheckE2 = 0
+	local CheckR2 = 0
 	if stacksW == 3 then
-	CheckQ2 = CheckQDmg + CheckQDmg*(3*CheckWDmg)
-	CheckE2 = CheckEDmg + CheckEDmg*(3*CheckWDmg)
-	CheckR2 = CheckRDmg + CheckRDmg*(3*CheckWDmg)
+	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(3*CheckWDmg)
+	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(3*CheckWDmg)
+	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(3*CheckWDmg)
 	elseif stacksW == 2 then
-	CheckQ2 = CheckQDmg + CheckQDmg*(2*CheckWDmg)
-	CheckE2 = CheckEDmg + CheckEDmg*(2*CheckWDmg)
-	CheckR2 = CheckRDmg + CheckRDmg*(2*CheckWDmg)
+	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(2*CheckWDmg)
+	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(2*CheckWDmg)
+	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(2*CheckWDmg)
 	elseif stacksW == 1 then
-	CheckQ2 = CheckQDmg + CheckQDmg*CheckWDmg
-	CheckE2 = CheckEDmg + CheckEDmg*CheckWDmg
-	CheckR2 = CheckRDmg + CheckRDmg*CheckWDmg
+	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*CheckWDmg
+	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*CheckWDmg
+	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*CheckWDmg
 	elseif stacksW <= 0 then
-	CheckQ2 = CheckQDmg
-	CheckE2 = CheckEDmg
-	CheckR2 = CheckRDmg
+	CheckQ2 = CheckQ2 + CheckQDmg
+	CheckE2 = CheckE2 + CheckEDmg
+	CheckR2 = CheckR2 + CheckRDmg
 	end
 		    local originEnemies = GetOrigin(enemy)
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
@@ -333,25 +333,25 @@ for _,enemy in pairs(GoS:GetEnemyHeroes()) do
 	local CheckQDmg = 55*GetCastLevel(myHero, _Q) - 40 + 1.6*BonusAD
 	local CheckEDmg = 35*GetCastLevel(myHero, _E) + 30 + 0.6*BonusAD
 	local CheckRDmg = 100*GetCastLevel(myHero, _R) + 50 + 1.0*BonusAP
-	local CheckQ2
-	local CheckE2
-	local CheckR2
+	local CheckQ2 = 0
+	local CheckE2 = 0
+	local CheckR2 = 0
 	if stacksW == 3 then
-	CheckQ2 = CheckQDmg + CheckQDmg*(3*CheckWDmg)
-	CheckE2 = CheckEDmg + CheckEDmg*(3*CheckWDmg)
-	CheckR2 = CheckRDmg + CheckRDmg*(3*CheckWDmg)
+	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(3*CheckWDmg)
+	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(3*CheckWDmg)
+	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(3*CheckWDmg)
 	elseif stacksW == 2 then
-	CheckQ2 = CheckQDmg + CheckQDmg*(2*CheckWDmg)
-	CheckE2 = CheckEDmg + CheckEDmg*(2*CheckWDmg)
-	CheckR2 = CheckRDmg + CheckRDmg*(2*CheckWDmg)
+	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(2*CheckWDmg)
+	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(2*CheckWDmg)
+	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(2*CheckWDmg)
 	elseif stacksW == 1 then
-	CheckQ2 = CheckQDmg + CheckQDmg*CheckWDmg
-	CheckE2 = CheckEDmg + CheckEDmg*CheckWDmg
-	CheckR2 = CheckRDmg + CheckRDmg*CheckWDmg
+	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*CheckWDmg
+	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*CheckWDmg
+	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*CheckWDmg
 	elseif stacksW <= 0 then
-	CheckQ2 = CheckQDmg
-	CheckE2 = CheckEDmg
-	CheckR2 = CheckRDmg
+	CheckQ2 = CheckQ2 + CheckQDmg
+	CheckE2 = CheckE2 + CheckEDmg
+	CheckR2 = CheckR2 + CheckRDmg
 	end
 
 		if Ignite and Varus.Miscset.KS.IgniteKS:Value() then
