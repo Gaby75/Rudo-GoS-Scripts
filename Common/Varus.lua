@@ -1,4 +1,4 @@
---[[ Rx Varus Version 0.1 by Rudo.
+--[[ Rx Varus Version 0.15 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Varus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Varus by Rudo </font><font color='#FFFF00'>Version 0.1: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Varus by Rudo </font><font color='#FFFF00'>Version 0.15: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Varus = Menu("Rx Varus", "Varus")
 
@@ -39,6 +39,8 @@ Varus.Draws:Boolean("DrawQ", "Range Q Max", true)
 Varus.Draws:Boolean("DrawQminE", "Range Q Min and E", true)
 Varus.Draws:Boolean("DrawR", "Range R", true)
 Varus.Draws:Boolean("DrawText", "Draw Text", true)
+Varus.Draws:Slider("PosHitx", "Change Text PoS-X", 76, 1, 110, 1)
+Varus.Draws:Slider("PosHity", "Change Text PoS-Y", 53, 1, 110, 1)
 
 ---- Misc Menu ----
 Varus:SubMenu("Miscset", "Misc")
@@ -177,30 +179,30 @@ if Varus.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircl
 	end
 	local hp1 = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)
 	local hp2 = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy)
-	local stacksW = GotBuff(enemy, "varusWdebuff") 
+	local stacksW = GotBuff(enemy, "varuswdebuff") 
 	local CheckWDmg = (0.75*GetCastLevel(myHero, _W) + 1.25)/100
 	local CheckQDmg = 55*GetCastLevel(myHero, _Q) - 40 + 1.6*BonusAD
 	local CheckEDmg = 35*GetCastLevel(myHero, _E) + 30 + 0.6*BonusAD
 	local CheckRDmg = 100*GetCastLevel(myHero, _R) + 50 + 1.0*BonusAP
-	local CheckQ2 = 0
-	local CheckE2 = 0
-	local CheckR2 = 0
-	if stacksW == 1 then
-	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*CheckWDmg
-	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*CheckWDmg
-	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*CheckWDmg
+	local CheckQ2
+	local CheckE2
+	local CheckR2
+	if stacksW == 3 then
+	CheckQ2 = CheckQDmg + CheckQDmg*(3*CheckWDmg)
+	CheckE2 = CheckEDmg + CheckEDmg*(3*CheckWDmg)
+	CheckR2 = CheckRDmg + CheckRDmg*(3*CheckWDmg)
 	elseif stacksW == 2 then
-	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(2*CheckWDmg)
-	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(2*CheckWDmg)
-	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(2*CheckWDmg)
-	elseif stacksW == 3 then
-	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(3*CheckWDmg)
-	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(3*CheckWDmg)
-	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(3*CheckWDmg)
-	else
-	CheckQ2 = CheckQ2 + CheckQDmg
-	CheckE2 = CheckE2 + CheckEDmg
-	CheckR2 = CheckR2 + CheckRDmg
+	CheckQ2 = CheckQDmg + CheckQDmg*(2*CheckWDmg)
+	CheckE2 = CheckEDmg + CheckEDmg*(2*CheckWDmg)
+	CheckR2 = CheckRDmg + CheckRDmg*(2*CheckWDmg)
+	elseif stacksW == 1 then
+	CheckQ2 = CheckQDmg + CheckQDmg*CheckWDmg
+	CheckE2 = CheckEDmg + CheckEDmg*CheckWDmg
+	CheckR2 = CheckRDmg + CheckRDmg*CheckWDmg
+	elseif stacksW <= 0 then
+	CheckQ2 = CheckQDmg
+	CheckE2 = CheckEDmg
+	CheckR2 = CheckRDmg
 	end
 		    local originEnemies = GetOrigin(enemy)
 		    local EnmTextPos = WorldToScreen(1,originEnemies.x, originEnemies.y, originEnemies.z)
@@ -235,27 +237,33 @@ if Varus.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircl
 			else
 			DrawText("Can't Kill this Target!!",19,EnmTextPos.x,EnmTextPos.y,0xffC0FF3E)
 			end
-		if CanUseSpell(myHero, _Q) == READY then
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQ2,0,0xffffffff)
+    local CheckW = 4*GetCastLevel(myHero, _W) + 6
+		if CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQ2 + CheckE2 +CheckR2, 0,0xffffffff)
+		elseif CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _Q) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQ2 + CheckR2, 0,0xffffffff)
+		elseif CanUseSpell(myHero, _R) == READY and CanUseSpell(myHero, _E) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckR2 + CheckE2, 0,0xffffffff)
+		elseif CanUseSpell(myHero, _Q) == READY and CanUseSpell(myHero, _E) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQ2 + CheckE2, 0,0xffffffff)
+		elseif CanUseSpell(myHero, _R) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckR2, 0,0xffffffff)
+		elseif CanUseSpell(myHero, _Q) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQ2, 0,0xffffffff)
+		elseif CanUseSpell(myHero, _E) == READY then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckE2, 0,0xffffffff)
 		end
-		if CanUseSpell(myHero, _E) == READY then
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckE2,0,0xffffffff)
-		end
-		if CanUseSpell(myHero, _R) == READY then
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckR2,0,0xffffffff)
-		end
-		
-	local CheckW = 4*GetCastLevel(myHero, _W) + 6
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),GetBaseDamage(myHero) + CheckW,0,0xffffffff)	  
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),GetBaseDamage(myHero) + CheckW,0,0xffffffff)	
+		  
 	local checkEnmHp = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)
 	local checkDmg = GetBaseDamage(myHero) + CheckW
-	local hit = 0
+	local hit
 	if checkEnmHp > checkDmg then
-	hit = hit + checkEnmHp/checkDmg
-	elseif checkEnmHp < checkDmg then
+	hit = checkEnmHp/checkDmg
+	elseif checkEnmHp <= checkDmg then
 	hit = 1
 	end
-		DrawText(string.format("%d Hit = Kill", hit),15,EnmTextPos.x-76,EnmTextPos.y-90,0xffffffff)
+		DrawText(string.format("%d Hit = KILL!", hit),16,EnmTextPos.x-Varus.Draws.PosHitx:Value(),EnmTextPos.y-Varus.Draws.PosHity:Value(),0xffffffff)
 		 end
 	end
             end
@@ -320,30 +328,30 @@ for _,enemy in pairs(GoS:GetEnemyHeroes()) do
 	local hp2 = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy)
 	local EPred = GetPredictionForPlayer(GoS:myHeroPos(),enemy,GetMoveSpeed(enemy),1500,250,925,235,false,true)
 	local RPred = GetPredictionForPlayer(GoS:myHeroPos(),enemy,GetMoveSpeed(enemy),1950,250,1200,100,false,true)
-	local stacksW = GotBuff(enemy, "varusWdebuff") 
+	local stacksW = GotBuff(enemy, "varuswdebuff") 
 	local CheckWDmg = (0.75*GetCastLevel(myHero, _W) + 1.25)/100
 	local CheckQDmg = 55*GetCastLevel(myHero, _Q) - 40 + 1.6*BonusAD
 	local CheckEDmg = 35*GetCastLevel(myHero, _E) + 30 + 0.6*BonusAD
 	local CheckRDmg = 100*GetCastLevel(myHero, _R) + 50 + 1.0*BonusAP
-	local CheckQ2 = 0
-	local CheckE2 = 0
-	local CheckR2 = 0
-	if stacksW == 1 then
-	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*CheckWDmg
-	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*CheckWDmg
-	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*CheckWDmg
+	local CheckQ2
+	local CheckE2
+	local CheckR2
+	if stacksW == 3 then
+	CheckQ2 = CheckQDmg + CheckQDmg*(3*CheckWDmg)
+	CheckE2 = CheckEDmg + CheckEDmg*(3*CheckWDmg)
+	CheckR2 = CheckRDmg + CheckRDmg*(3*CheckWDmg)
 	elseif stacksW == 2 then
-	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(2*CheckWDmg)
-	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(2*CheckWDmg)
-	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(2*CheckWDmg)
-	elseif stacksW == 3 then
-	CheckQ2 = CheckQ2 + CheckQDmg + CheckQDmg*(3*CheckWDmg)
-	CheckE2 = CheckE2 + CheckEDmg + CheckEDmg*(3*CheckWDmg)
-	CheckR2 = CheckR2 + CheckRDmg + CheckRDmg*(3*CheckWDmg)
-	else
-	CheckQ2 = CheckQ2 + CheckQDmg
-	CheckE2 = CheckE2 + CheckEDmg
-	CheckR2 = CheckR2 + CheckRDmg
+	CheckQ2 = CheckQDmg + CheckQDmg*(2*CheckWDmg)
+	CheckE2 = CheckEDmg + CheckEDmg*(2*CheckWDmg)
+	CheckR2 = CheckRDmg + CheckRDmg*(2*CheckWDmg)
+	elseif stacksW == 1 then
+	CheckQ2 = CheckQDmg + CheckQDmg*CheckWDmg
+	CheckE2 = CheckEDmg + CheckEDmg*CheckWDmg
+	CheckR2 = CheckRDmg + CheckRDmg*CheckWDmg
+	elseif stacksW <= 0 then
+	CheckQ2 = CheckQDmg
+	CheckE2 = CheckEDmg
+	CheckR2 = CheckRDmg
 	end
 
 		if Ignite and Varus.Miscset.KS.IgniteKS:Value() then
