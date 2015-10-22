@@ -270,6 +270,7 @@ if Varus.Draws.DrawR:Value() and CanUseSpell(myHero, _R) == READY then DrawCircl
             end
 end
 
+
  	------ Start Auto Level Up _Settings Full Q or Full W first ------
 function AutoUpSpell()
   if Varus.Miscset.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First then W
@@ -361,7 +362,7 @@ for _,enemy in pairs(GoS:GetEnemyHeroes()) do
                   end
         end
 
-	if CanUseSpell(myHero, _Q) == READY and Varus.Miscset.KS.QKS:Value() and IsObjectAlive(enemy) and GoS:ValidTarget(target, 1625) then
+	if CanUseSpell(myHero, _Q) == READY and Varus.Miscset.KS.QKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckQ2, 0) and IsObjectAlive(enemy) and GoS:ValidTarget(target, 1625) then
 		CastSkillShot(_Q, GetMousePos().x, GetMousePos().y, GetMousePos().z)
       for i=400, 1600, 200 do
         GoS:DelayAction(function()
@@ -384,6 +385,6 @@ end
 
 ---------------------------------------------------
 if GetObjectName(myHero) ~= "Varus" then
-local namemh = GetObjectName(myHero)
-PrintChat(string.format("<font color='#FF0000'>This Script </font><font color='#FFFF00'>Don't Support for </font><font color='#08F7F3'> %s </font>", namemh)) 
+local nameMyHero = GetObjectName(myHero)
+PrintChat(string.format("<font color='#FF0000'>This Script </font><font color='#FFFF00'>Don't Support for </font><font color='#08F7F3'> %s </font>", nameMyHero)) 
 end
