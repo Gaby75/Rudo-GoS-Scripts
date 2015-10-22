@@ -129,7 +129,7 @@ require('IOW')
 local BonusAP = GetBonusAP(myHero)
 local BonusAD = GetBonusDmg(myHero)
 Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil)) -- Credit to Deftsu
-Cleanse = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerboost") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerboost") and SUMMONER_2 or nil)) -- Credit to Deftsu
+--Cleanse = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerboost") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerboost") and SUMMONER_2 or nil)) -- Credit to Deftsu
 -------------------------------------------
 OnLoop(function(myHero)
 		        local target = GetCurrentTarget()
