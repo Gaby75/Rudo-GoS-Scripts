@@ -1,4 +1,4 @@
---[[ Rx Varus Version 0.2 by Rudo.
+--[[ Rx Varus Version 0.25 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -6,7 +6,7 @@
 require('Inspired')
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Varus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Varus by Rudo </font><font color='#FFFF00'>Version 0.2: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Varus by Rudo </font><font color='#FFFF00'>Version 0.25: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 ----------------------------------------
 Varus = Menu("Rx Varus", "Varus")
 
@@ -62,6 +62,64 @@ Varus.Items.PotionHP:Slider("CheckHP", "Auto Use if %HP <", 50, 5, 80, 1)
 Varus.Items:SubMenu("PotionMP", "Use Potion MP")
 Varus.Items.PotionMP:Boolean("PotMP", "Enable Use Potion MP", true)
 Varus.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
+Varus.Items:SubMenu("Def", "Items Deffensive")
+Varus.Items:SubMenu("Attack", "Items Offensive in Combo")
+
+---------- Items Deffensive ----------
+Varus.Items.Def:Info("info0", "QSS + Mercurial Scimitar + Cleanse = Soon")
+--[[--- QSS -----
+Varus.Items.Def:SubMenu("UseQSS", "Use Quicksilver Sash")
+Varus.Items.Def.UseQSS:Boolean("QSS", "Enable", true)
+Varus.Items.Def.UseQSS:Info("Info1", "Choose Your Bad Status want to Purifiers")
+Varus.Items.Def.UseQSS:Boolean("blind", "Blind", false)
+Varus.Items.Def.UseQSS:Boolean("charm", "Charm", true)
+Varus.Items.Def.UseQSS:Boolean("fear", "Fear", true)
+Varus.Items.Def.UseQSS:Boolean("flee", "Flee", true)
+Varus.Items.Def.UseQSS:Boolean("snare", "Snare", false)
+Varus.Items.Def.UseQSS:Boolean("taunt", "Taunt", true)
+Varus.Items.Def.UseQSS:Boolean("stun", "Stun", true)
+Varus.Items.Def.UseQSS:Boolean("suppression", "Suppression", true)
+Varus.Items.Def.UseQSS:Boolean("silence", "Silence", false)
+Varus.Items.Def.UseQSS:Boolean("exhaust", "Exhaust", true)
+Varus.Items.Def.UseQSS:Boolean("ZedUlt", "Zed Ultimate", true)
+----- MS -----
+Varus.Items.Def:SubMenu("UseMS", "Use Mercurial Scimitar")
+Varus.Items.Def.UseMS:Boolean("MS", "Enable", true)
+Varus.Items.Def.UseMS:Info("Info2", "Choose Your Bad Status want to Purifiers")
+Varus.Items.Def.UseMS:Boolean("blind", "Blind", false)
+Varus.Items.Def.UseMS:Boolean("charm", "Charm", true)
+Varus.Items.Def.UseMS:Boolean("fear", "Fear", true)
+Varus.Items.Def.UseMS:Boolean("flee", "Flee", true)
+Varus.Items.Def.UseMS:Boolean("snare", "Snare", false)
+Varus.Items.Def.UseMS:Boolean("taunt", "Taunt", true)
+Varus.Items.Def.UseMS:Boolean("stun", "Stun", true)
+Varus.Items.Def.UseMS:Boolean("suppression", "Suppression", true)
+Varus.Items.Def.UseMS:Boolean("silence", "Silence", false)
+Varus.Items.Def.UseMS:Boolean("exhaust", "Exhaust", true)
+Varus.Items.Def.UseMS:Boolean("ZedUlt", "Zed Ultimate", true)
+
+----- Cleanse -----
+Varus.Items.Def:SubMenu("UseClse", "Use Cleanse")
+Varus.Items.Def.UseClse:Boolean("Clse", "Enable", true)
+Varus.Items.Def.UseClse:Info("Info3", "Choose Your Bad Status want to Purifiers")
+Varus.Items.Def.UseClse:Boolean("blind", "Blind", false)
+Varus.Items.Def.UseClse:Boolean("charm", "Charm", true)
+Varus.Items.Def.UseClse:Boolean("fear", "Fear", true)
+Varus.Items.Def.UseClse:Boolean("flee", "Flee", true)
+Varus.Items.Def.UseClse:Boolean("snare", "Snare", false)
+Varus.Items.Def.UseClse:Boolean("taunt", "Taunt", true)
+Varus.Items.Def.UseClse:Boolean("stun", "Stun", true)
+Varus.Items.Def.UseClse:Boolean("exhaust", "Exhaust", true)
+Varus.Items.Def.UseClse:Boolean("silence", "Silence", false)
+
+------------------------------------------------------------------------]]
+
+---------- Items Offensive ----------
+Varus.Items.Attack:Boolean("Cutlass", "Use Bilgewater Cutlass", true)
+Varus.Items.Attack:Boolean("BladeORKing", "Use Blade of the Ruined King", true)
+Varus.Items.Attack:Boolean("Youmuu", "Use Youmuu's Ghostblade", true)
+------------------------------------------------------------------------
+
 ---------- End Menu ----------
 
 
@@ -70,6 +128,8 @@ Varus.Items.PotionMP:Slider("CheckMP", "Auto Use if %MP <", 45, 5, 80, 1)
 require('IOW')
 local BonusAP = GetBonusAP(myHero)
 local BonusAD = GetBonusDmg(myHero)
+Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil)) -- Credit to Deftsu
+Cleanse = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerboost") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerboost") and SUMMONER_2 or nil)) -- Credit to Deftsu
 -------------------------------------------
 OnLoop(function(myHero)
 		        local target = GetCurrentTarget()
@@ -156,6 +216,32 @@ if Varus.Items.PotionHP.PotHP:Value() then
 	
 if Varus.Items.PotionMP.PotMP:Value() then	
 	UsePotMP()
+	end
+
+--[[
+if Varus.Items.Def.UseClse.Clse:Value() then
+	Clse()
+	end
+end
+	
+if Varus.Items.Def.UseQSS.QSS:Value() then
+	QSS()
+	end
+	
+if Varus.Items.Def.UseMS.MS:Value() then
+	MS()
+	end]]
+	
+if Varus.Items.Attack.Cutlass:Value() then
+	Cutlass()
+	end
+	
+if Varus.Items.Attack.BladeORKing:Value() then
+	BladeORKing()
+	end
+	
+if Varus.Items.Attack.Youmuu:Value() then
+	Youmuu()
 	end
 end)
 
@@ -284,9 +370,6 @@ function UsePotHP()
 global_ticks = 0
 currentTicks = GetTickCount()
  if Varus.Items.PotionHP.PotHP:Value() and GotBuff(myHero, "recall") <= 0 then
-local myHero = GetMyHero()
-local target = GetCurrentTarget()
-local myHeroPos = GetOrigin(myHero)
 			if (global_ticks + 15000) < currentTicks then
 				local potionslot = GetItemSlot(myHero, 2003)
 					if potionslot > 0 then
@@ -305,9 +388,6 @@ function UsePotMP()
 global_ticks = 0
 currentTicks = GetTickCount()
  if Varus.Items.PotionMP.PotMP:Value() and GotBuff(myHero, "recall") <= 0 then
-local myHero = GetMyHero()
-local target = GetCurrentTarget()
-local myHeroPos = GetOrigin(myHero)
 			if (global_ticks + 15000) < currentTicks then
 				local potionslot = GetItemSlot(myHero, 2004)
 					if potionslot > 0 then
@@ -320,7 +400,154 @@ local myHeroPos = GetOrigin(myHero)
 			end
 			
   end			
- 
+
+ 	------ Start Use Items Deffensive ------
+
+        --[[- Cleanse ---
+
+function Clse()
+if Cleanse and CanUseSpell(myHero, Cleanse) == READY then
+		if Varus.Items.Def.UseClse.blind:Value() and GotBuff(myHero, "blind") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.charm:Value() and GotBuff(myHero, "charm") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.fear:Value() and GotBuff(myHero, "fear") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.flee:Value() and GotBuff(myHero, "flee") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.snare:Value() and GotBuff(myHero, "snare") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.taunt:Value() and GotBuff(myHero, "taunt") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.stun:Value() and GotBuff(myHero, "stun") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseMS.suppression:Value() and GotBuff(myHero, "suppression") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.silence:Value() and GotBuff(myHero, "silence") > 0 then
+			CastSpell(Cleanse)
+		elseif Varus.Items.Def.UseClse.exhaust:Value() and GotBuff(myHero, "summonerexhaust") > 0 then
+			CastSpell(Cleanse)
+		end
+	end		
+end
+	
+        --- QSS ---
+function QSS()
+local QSilverS = GetItemSlot(myHero, 3140)
+	if QSilverS > 0 and CanUseSpell(myHero, GetItemSlot(myHero, 3140)) == READY and GotBuff(myHero, "recall") <= 0 then
+		if Varus.Items.Def.UseQSS.blind:Value() and GotBuff(myHero, "blind") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.charm:Value() and GotBuff(myHero, "charm") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.fear:Value() and GotBuff(myHero, "fear") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.flee:Value() and GotBuff(myHero, "flee") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.snare:Value() and GotBuff(myHero, "snare") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.taunt:Value() and GotBuff(myHero, "taunt") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.stun:Value() and GotBuff(myHero, "stun") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.suppression:Value() and GotBuff(myHero, "suppression") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.silence:Value() and GotBuff(myHero, "silence") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.exhaust:Value() and GotBuff(myHero, "summonerexhaust") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+		if Varus.Items.Def.UseQSS.ZedUlt:Value() and GotBuff(myHero, "zedultexecute") > 0 then
+			CastSpell(GetItemSlot(myHero, 3140))
+		end
+	end
+end
+
+        --- MS ---
+function MS()
+local MercurialS = GetItemSlot(myHero, 3139)
+	if MercurialS > 0 and CanUseSpell(myHero, GetItemSlot(myHero, 3139)) == READY and GotBuff(myHero, "recall") <= 0 then
+		if Varus.Items.Def.UseMS.blind:Value() and GotBuff(myHero, "blind") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.charm:Value() and GotBuff(myHero, "charm") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.fear:Value() and GotBuff(myHero, "fear") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.flee:Value() and GotBuff(myHero, "flee") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.snare:Value() and GotBuff(myHero, "snare") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.taunt:Value() and GotBuff(myHero, "taunt") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.stun:Value() and GotBuff(myHero, "stun") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.suppression:Value() and GotBuff(myHero, "suppression") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.silence:Value() and GotBuff(myHero, "silence") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.exhaust:Value() and GotBuff(myHero, "summonerexhaust") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+		if Varus.Items.Def.UseMS.ZedUlt:Value() and GotBuff(myHero, "zedultexecute") > 0 then
+			CastSpell(GetItemSlot(myHero, 3139))
+		end
+	end
+end ]]
+
+ 	------ Start Use Items Offensive ------
+
+        --- Bilgewater Cutlass ---
+function Cutlass()
+local BC = GetItemSlot(myHero, 3144)
+local target = GetCurrentTarget()
+	if IOW:Mode() == "Combo" then
+		if BC > 0 and CanUseSpell(myHero, GetItemSlot(myHero, 3144)) == READY and GoS:ValidTarget(target, 550) and GotBuff(myHero, "recall") <= 0 then
+			CastTargetSpell(target, GetItemSlot(myHero, 3144))
+		end
+	end
+end
+
+        --- Youmuu's Ghostblade ---
+		
+function Youmuu()
+local YoumuuGhost = GetItemSlot(myHero, 3142)
+local target = GetCurrentTarget()
+	if IOW:Mode() == "Combo" then
+		if YoumuuGhost > 0 and CanUseSpell(myHero, GetItemSlot(myHero, 3142)) == READY and GoS:ValidTarget(target, 1300) and GotBuff(myHero, "recall") <= 0 then
+			CastSpell(GetItemSlot(myHero, 3142))
+		end
+	end
+end
+
+        --- Blade of the Ruined King ---
+		
+function BladeORKing()
+local BORKing = GetItemSlot(myHero, 3153)
+local target = GetCurrentTarget()
+	if IOW:Mode() == "Combo" then
+		if BORKing > 0 and CanUseSpell(myHero, GetItemSlot(myHero, 3153)) == READY and GoS:ValidTarget(target, 550) and GotBuff(myHero, "recall") <= 0 then
+			CastTargetSpell(target, GetItemSlot(myHero, 3153))
+		end
+	end
+end
+		
  	------ Start Kill Steal ------
 function KillSteal()
 for _,enemy in pairs(GoS:GetEnemyHeroes()) do
@@ -362,21 +589,23 @@ for _,enemy in pairs(GoS:GetEnemyHeroes()) do
                   end
         end
 
-	if CanUseSpell(myHero, _Q) == READY and Varus.Miscset.KS.QKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckQ2, 0) and IsObjectAlive(enemy) and GoS:ValidTarget(target, 1625) then
+	if CanUseSpell(myHero, _Q) == READY and Varus.Miscset.KS.QKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckQ2, 0) and IsObjectAlive(enemy) and GoS:ValidTarget(enemy, 1625) then
 		CastSkillShot(_Q, GetMousePos().x, GetMousePos().y, GetMousePos().z)
       for i=400, 1600, 200 do
         GoS:DelayAction(function()
+               if hp1 < GoS:CalcDamage(myHero, enemy, CheckQ2, 0) then
               local _Qrange = 825 + math.min(800, i/2)
-              local QPred = GetPredictionForPlayer(GoS:myHeroPos(),target,GetMoveSpeed(target),1850,0,_Qrange,70,false,true)
-              if QPred.HitChance == 1 and hp1 < GoS:CalcDamage(myHero, enemy, CheckQ2, 0) then
+              local QPred = GetPredictionForPlayer(GoS:myHeroPos(),enemy,GetMoveSpeed(enemy),1850,0,_Qrange,70,false,true)
+              if QPred.HitChance == 1 then
                 CastSkillShot2(_Q, QPred.PredPos.x, QPred.PredPos.y, QPred.PredPos.z)
               end
+			   end
         end, i)
       end	
 	 end
-	if CanUseSpell(myHero, _E) == READY and IsObjectAlive(enemy) and GoS:ValidTarget(target, GetCastRange(myHero,_E)) and Varus.Miscset.KS.EKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckE2, 0) and EPred.HitChance == 1 then
+	if CanUseSpell(myHero, _E) == READY and IsObjectAlive(enemy) and GoS:ValidTarget(enemy, GetCastRange(myHero,_E)) and Varus.Miscset.KS.EKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckE2, 0) and EPred.HitChance == 1 then
 		CastSkillShot(_E,EPred.PredPos.x,EPred.PredPos.y,EPred.PredPos.z)
-	elseif CanUseSpell(myHero, _R) == READY and IsObjectAlive(enemy) and GoS:ValidTarget(target, 1150) and Varus.Miscset.KS.RKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckR2, 0) and RPred.HitChance == 1 then
+	elseif CanUseSpell(myHero, _R) == READY and IsObjectAlive(enemy) and GoS:ValidTarget(enemy, 1150) and Varus.Miscset.KS.RKS:Value() and hp1 < GoS:CalcDamage(myHero, enemy, CheckR2, 0) and RPred.HitChance == 1 then
 		CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
 	end
 end
