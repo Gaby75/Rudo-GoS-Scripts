@@ -117,6 +117,7 @@ OnTick(function(myHero)
 	------ Start Lane Clear ------
     if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
 	for _,creeps in pairs(minionManager.objects) do
+	if GetTeam(creeps) == MINION_ENEMY then
 		if IsReady(_Q) and Karthus.FreezeLane.QLC:Value() then
 		 local BestPos, BestHit = GetFarmPosition(875, 145)
 		 if BestPos and BestHit > 0 then 
@@ -132,10 +133,12 @@ OnTick(function(myHero)
 		end 
 	end
 	end
+	end
 	
 	------ Start Jungle Clear ------
     if Karthus.JungleClear.JEb:Value() and IOW:Mode() == "LaneClear" then
     for _,mobs in pairs(minionManager.objects) do
+	if GetTeam(mobs) == MINION_JUNGLE then
 		if IsInDistance(mobs, 875) and IsReady(_Q) and Karthus.JungleClear.QJC:Value() then
 		 local BestPos, BestHit = GetJFarmPosition(875, 145)
 		 if BestPos and BestHit > 0 then 
@@ -151,10 +154,12 @@ OnTick(function(myHero)
 		end	 
 	end
 	end
+	end
 	
 	------ Start Last Hit ------
 	if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
 	for _,minions in pairs(minionManager.objects) do
+	if GetTeam(minions) == MINION_ENEMY then
 	 if IsInDistance(minions, 875) then
 		if IsReady(_Q) then
 		 local hpMinions = GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions)
@@ -173,7 +178,6 @@ OnTick(function(myHero)
 
 	------ Start Kill Steal ------
 	if Karthus.KS.KSEb:Value() then
-function KillSteal()
  for i,enemy in pairs(GetEnemyHeroes()) do	
 		if Ignite and Karthus.KS.IgniteKS:Value() then
                   if IsReady(Ignite) and 20*GetLevel(myHero)+50 > GetCurrentHP(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
@@ -190,12 +194,10 @@ function KillSteal()
 	end
    end
  end
-end
 	end
 
-	------ Start Auto Lvl Up ------	
+	------ Start Auto Lvl Up ------ --- Full Q First then E, last is W	
 	if Karthus.Miscset.AutoSkillUpQ:Value() then
-function AutoLvlUp() --- Full Q First then E, last is W
  if GetLevel(myHero) == 1 then
 	LevelSpell(_Q)
 elseif GetLevel(myHero) == 2 then
@@ -233,7 +235,6 @@ elseif GetLevel(myHero) == 17 then
 elseif GetLevel(myHero) == 18 then
         LevelSpell(_W)
  end
-end
     end	
 end)
 
