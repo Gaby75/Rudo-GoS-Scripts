@@ -10,7 +10,6 @@ PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font c
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'> and </font><font color='#00FFCC'> Deftsu </font>"))
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
-Karthus:TargetSelector("ts", "Target Selector", TARGET_LOW_HP, 875, DAMAGE_MAGIC)
 
 ---- Combo ----
 Karthus:Menu("cb", "Karthus Combo")
@@ -75,7 +74,7 @@ Karthus.Miscset:Boolean("AutoSkillUpQ", "Auto Lvl Up Q-E-W", true)
 Karthus:Info("info1", "Use PActivator for Auto Use Items")
 
 ---------- End Menu ----------
--- karthusfallenonecastsound --
+
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('Deftlib')
 require('IOW')
@@ -102,13 +101,13 @@ OnTick(function(myHero)
 		CastSpell(_E)
 	    end
 
-		if Karthus.cb.ECB:Value() and IsObjectAlive(target) and not IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") > 0 then
+		if Karthus.cb.ECB:Value() and IsObjectAlive(target) and not IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
 		CastSpell(_E)
 		end
 	end
 	
 	------ Start Harass ------
-    if IOW:Mode() == "Harass" and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) >= Karthus.hr.HrMana:Value() then
+    if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),145,false,true)
 		if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
@@ -116,10 +115,9 @@ OnTick(function(myHero)
 	end
 	
 	------ Start Lane Clear ------
-    if IOW:Mode() == "LaneClear" and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) >= Karthus.FreezeLane.LCMana:Value() then
-	local creeps = IOW:GetLaneClear()
-	if creeps then
-		if IsInDistance(creeps, 875) and IsReady(_Q) and Karthus.FreezeLane.QLC:Value() then
+    if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
+	for _,creeps in pairs(minionManager.objects) do
+		if IsReady(_Q) and Karthus.FreezeLane.QLC:Value() then
 		 local BestPos, BestHit = GetFarmPosition(875, 145)
 		 if BestPos and BestHit > 0 then 
 				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
@@ -129,7 +127,7 @@ OnTick(function(myHero)
 		if IsReady(_E) and IsInDistance(creeps, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.FreezeLane.ELC:Value() then
 				CastSpell(_E)	
 	    end
-		if Karthus.FreezeLane.ELC:Value() and not IsInDistance(creeps, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") > 0 then
+		if Karthus.FreezeLane.ELC:Value() and not IsInDistance(creeps, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
         		CastSpell(_E)	
 		end 
 	end
@@ -155,9 +153,8 @@ OnTick(function(myHero)
 	end
 	
 	------ Start Last Hit ------
-	if IOW:Mode() == "LastHit" and 100*GetCurrentMana(myHero)/GetMaxMana(myHero) >= Karthus.LHMinion.LHMana:Value() then
-	local minions = IOW:GetLastHit()
-	if minions then
+	if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
+	for _,minions in pairs(minionManager.objects) do
 	 if IsInDistance(minions, 875) then
 		if IsReady(_Q) then
 		 local hpMinions = GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions)
@@ -170,6 +167,7 @@ OnTick(function(myHero)
 		end
 	    end
 	 end
+	end
 	end
 	end
 
@@ -237,14 +235,6 @@ elseif GetLevel(myHero) == 18 then
  end
 end
     end	
--------------------------------------
-if GotBuff(myHero, "karthusfallenonecastsound") >= 1 then
-IOW.attacksEnabled = false
-IOW.movementEnabled = false
-else
-IOW.attacksEnabled = true
-IOW.movementEnabled = true
-end
 end)
 
 ------------------------------------------------------
