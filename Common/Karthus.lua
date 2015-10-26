@@ -85,8 +85,8 @@ local CheckEDmg = (GetCastLevel(myHero, _E)*20) + 10 + (0.20*BonusAP)
 local CheckRDmg = (GetCastLevel(myHero, _R)*150) + 100 + (0.60*BonusAP)
 OnTick(function(myHero)
 	------ Start Combo ------
-local target = tslowhp:GetTarget()
     if IOW:Mode() == "Combo" then
+local target = tslowhp:GetTarget()
 	if target then
  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
  local WPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,500,GetCastRange(myHero,_W),800,false,true)
@@ -110,6 +110,7 @@ local target = tslowhp:GetTarget()
 	
 	------ Start Harass ------
     if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
+local target = tslowhp:GetTarget()
 	if target then
  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
 		if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
