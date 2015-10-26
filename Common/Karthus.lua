@@ -1,15 +1,16 @@
--- Rx Karthus Version 0.7 by Rudo.
--- Updated Karthus for Inspired Ver30 and IOW V2
--- Go to http://gamingonsteroids.com   To Download more script.
--- Thanks Deftsu for some Code and DeftLib  . Thank Cloud for Karthus Plugin. ^.^
-----------------------------------------------------
-require('MenuConfig')
+--[[Rx Karthus Version 0.8 by Rudo.
+    Updated Karthus for new Inspired
+    Go to http://gamingonsteroids.com To Download more script.
+    Thanks Deftsu for some Code and DeftLib. Thank Cloud for Karthus Plugin. Thank Inspired for help me in shoul
+----------------------------------------------------]]
 require('Inspired')
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.7 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
-PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'> and </font><font color='#00FFCC'> Deftsu </font>"))
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.8 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
+tslowhp = TargetSelector(875, 1, DAMAGE_MAGIC) -- 1 = TARGET_LESS_CAST
+Karthus:TargetSelector("ts", "Target Selector", tslowhp)
 
 ---- Combo ----
 Karthus:Menu("cb", "Karthus Combo")
@@ -77,19 +78,19 @@ Karthus:Info("info1", "Use PActivator for Auto Use Items")
 
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('Deftlib')
-require('IOW')
 
 local BonusAP = GetBonusAP(myHero)
 local CheckQDmg = 2*((GetCastLevel(myHero, _Q)*20) + 20 + (0.30*BonusAP))
 local CheckEDmg = (GetCastLevel(myHero, _E)*20) + 10 + (0.20*BonusAP)
 local CheckRDmg = (GetCastLevel(myHero, _R)*150) + 100 + (0.60*BonusAP)
-local target = GetCurrentTarget()
 OnTick(function(myHero)
 	------ Start Combo ------
+local target = tslowhp:GetTarget()
     if IOW:Mode() == "Combo" then
- local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),145,false,true)
+	if target then
+ local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
  local WPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,500,GetCastRange(myHero,_W),800,false,true)
-		if IsReady(_W) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Karthus.cb.WCB:Value() then
+		if IsReady(_W) and GetCurrentMana(myHero) >= 130 and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Karthus.cb.WCB:Value() then
 		CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
 		end
 		
@@ -105,21 +106,25 @@ OnTick(function(myHero)
 		CastSpell(_E)
 		end
 	end
+	end
 	
 	------ Start Harass ------
     if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
- local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),145,false,true)
+	if target then
+ local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
 		if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 	end
+	end
 	
 	------ Start Lane Clear ------
-    if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
-	for _,creeps in pairs(minionManager.objects) do
-	if GetTeam(creeps) == MINION_ENEMY then
+if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
+ for _,creeps in pairs(minionManager.objects) do
+  if GetTeam(creeps) == MINION_ENEMY then
+	if IsObjectAlive(creeps) then
 		if IsReady(_Q) and Karthus.FreezeLane.QLC:Value() then
-		 local BestPos, BestHit = GetFarmPosition(875, 145)
+		 local BestPos, BestHit = GetFarmPosition(875, 150)
 		 if BestPos and BestHit > 0 then 
 				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
 		 end
@@ -132,15 +137,16 @@ OnTick(function(myHero)
         		CastSpell(_E)	
 		end 
 	end
-	end
-	end
+  end
+ end
+end
 	
 	------ Start Jungle Clear ------
     if Karthus.JungleClear.JEb:Value() and IOW:Mode() == "LaneClear" then
     for _,mobs in pairs(minionManager.objects) do
 	if GetTeam(mobs) == MINION_JUNGLE then
 		if IsInDistance(mobs, 875) and IsReady(_Q) and Karthus.JungleClear.QJC:Value() then
-		 local BestPos, BestHit = GetJFarmPosition(875, 145)
+		 local BestPos, BestHit = GetJFarmPosition(875, 150)
 		 if BestPos and BestHit > 0 then 
 				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
 		 end
@@ -160,7 +166,7 @@ OnTick(function(myHero)
 	if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
 	for _,minions in pairs(minionManager.objects) do
 	if GetTeam(minions) == MINION_ENEMY then
-	 if IsInDistance(minions, 875) then
+	 if IsInDistance(minions, 875) and IsObjectAlive(minions) then
 		if IsReady(_Q) then
 		 local hpMinions = GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions)
 		 local CheckKillMinions = CalcDamage(myHero, minions, 0, CheckQDmg + Ludens()) 
@@ -187,7 +193,7 @@ OnTick(function(myHero)
 	
    if IsReady(_Q) and IsInDistance(enemy, 875) and IsObjectAlive(enemy) and Karthus.KS.QKS:Value() then
 	if GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) then
-	  local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,900,GetCastRange(myHero,_Q),145,false,true)
+	  local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
 	 if QPred.HitChance == 1 and ValidTarget(enemy, GetCastRange(myHero, _Q)) then 
 	   CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z) 
 	 end
