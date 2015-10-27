@@ -9,7 +9,7 @@ PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font c
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
-tslowhp = TargetSelector(875, 1, DAMAGE_MAGIC) -- 1 = TARGET_LESS_CAST
+tslowhp = TargetSelector(875, 8, DAMAGE_MAGIC) -- 8 = TARGET_LOW_HP
 Karthus:TargetSelector("ts", "Target Selector", tslowhp)
 
 ---- Combo ----
@@ -102,7 +102,7 @@ local target = tslowhp:GetTarget()
 		CastSpell(_E)
 	    end
 
-		if Karthus.cb.ECB:Value() and IsObjectAlive(target) and not IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
+		if Karthus.cb.ECB:Value() and not IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
 		CastSpell(_E)
 		end
 	end
@@ -123,7 +123,6 @@ local target = tslowhp:GetTarget()
 if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
  for _,creeps in pairs(minionManager.objects) do
   if GetTeam(creeps) == MINION_ENEMY then
-	if IsObjectAlive(creeps) then
 		if IsReady(_Q) and Karthus.FreezeLane.QLC:Value() then
 		 local BestPos, BestHit = GetFarmPosition(875, 150)
 		 if BestPos and BestHit > 0 then 
@@ -131,13 +130,12 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 		 end
 		end
 		
-		if IsReady(_E) and IsInDistance(creeps, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.FreezeLane.ELC:Value() then
+		--[[if IsReady(_E) and IsInDistance(creeps, GetCastRange(myHero,_E)) and IsObjectAlive(creeps) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.FreezeLane.ELC:Value() then
 				CastSpell(_E)	
 	    end
 		if Karthus.FreezeLane.ELC:Value() and not IsInDistance(creeps, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
         		CastSpell(_E)	
-		end 
-	end
+		end ]]
   end
  end
 end
@@ -153,12 +151,12 @@ end
 		 end
 		end
 		
-		if IsReady(_E) and IsInDistance(mobs, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.JungleClear.EJC:Value() then
+		--[[if IsReady(_E) and IsInDistance(mobs, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.JungleClear.EJC:Value() then
 				CastSpell(_E)	
 	    end
 		if Karthus.JungleClear.EJC:Value() and not IsInDistance(mobs, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") > 0 then
-        		CastSpell(_E)	
-		end	 
+        		CastSpell(_E) 
+		end	]]
 	end
 	end
 	end
@@ -308,11 +306,11 @@ end
 		 if ValidTarget(enemy) then
 	local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
 		if IsReady(_Q) and IsReady(_R) then
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckRDmg + Ludens() - Check, 0,0xffffffff)
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0, CheckRDmg + Ludens() - Check,0xffffffff)
 		elseif IsReady(_R) and not IsReady(_Q) then
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckRDmg + Ludens() - Check, 0,0xffffffff)
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0, CheckRDmg + Ludens() - Check,0xffffffff)
 		elseif IsReady(_Q) and not IsReady(_R) then
-		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),CheckQDmg + Ludens() - Check, 0,0xffffffff)
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0, CheckQDmg + Ludens() - Check,0xffffffff)
 		else
 		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),GetBaseDamage(myHero) - Check, 0,0xffffffff)
 		end
