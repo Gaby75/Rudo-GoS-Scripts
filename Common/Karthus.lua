@@ -1,12 +1,11 @@
---[[Rx Karthus Version 0.9 by Rudo.
-    Version 0.9: Improve LaneClear and LastHit.
-	DrawDmgR when Lv6: You must F6x2 to Reload script if your Ap have a change.
+--[[Rx Karthus Version 0.95 by Rudo.
+    Version 0.95: Improve LaneClear, LastHit and Edit somethings
+    DrawDmgR when Lv6: You must F6x2 to Reload script if your Ap have a change.
     Go to http://gamingonsteroids.com To Download more script.
     Thanks Deftsu for some Code and DeftLib. Thank Cloud for Karthus Plugin. Thank Inspired for help me in shoul
 ----------------------------------------------------]]
 require('Inspired')
 if GetObjectName(myHero) ~= "Karthus" then return end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.9 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
@@ -28,6 +27,7 @@ Karthus.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 1)
 Karthus:Menu("FreezeLane", "Lane Clear")
 Karthus.FreezeLane:Boolean("QLC", "Use Q LaneClear", true)
 Karthus.FreezeLane:Boolean("ELC", "Use E LaneClear", true)
+Karthus.FreezeLane:Slider("CELC", "Use E if Minions Around >=", 4, 1, 10, 1)
 Karthus.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 20, 0, 100, 1)
 
 ---- Last Hit Menu ----
@@ -99,7 +99,7 @@ local target = tslowhp:GetTarget()
 		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
 		end
 		
-		if IsReady(_E) and IsObjectAlive(target) and IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
+		if IsReady(_E) and IsObjectAlive(target) and IsInDistance(target, 15 - GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
 		CastSpell(_E)
 	    end
 
@@ -135,7 +135,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 		  else 
 			 CheckQArm = CheckQArm + CheckQDmg
 		  end
-		  if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckQArm + Ludens()) then
+		  if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, math.max(10, 1.8*GetLevel(myHero)) + CheckQArm + Ludens()) then
 				CastSkillShot(_Q, originMnos.x, originMnos.y, originMnos.z)
 		  end
 		 end
@@ -145,7 +145,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 		 end
 		end
 		
-		if IsReady(_E) and IsInDistance(creeps, GetCastRange(myHero,_E)) and IsObjectAlive(creeps) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.FreezeLane.ELC:Value() then
+		if IsReady(_E) and Karthus.FreezeLane.ELC:Value() and IsObjectAlive(creeps) and MinionsAround(GetOrigin(myHero), GetCastRange(myHero,_E), MINION_ENEMY) >= Karthus.FreezeLane.CELC:Value() and GotBuff(myHero, "KarthusDefile") <= 0 then
 				CastSpell(_E)	
 	    end
 		if Karthus.FreezeLane.ELC:Value() and not IsInDistance(creeps, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
@@ -167,7 +167,7 @@ end
 		 end
 		end
 		
-		if IsReady(_E) and IsInDistance(mobs, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.JungleClear.EJC:Value() then
+		if IsReady(_E) and IsInDistance(mobs, 5-GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.JungleClear.EJC:Value() then
 				CastSpell(_E)	
 	    end
 		if Karthus.JungleClear.EJC:Value() and not IsInDistance(mobs, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") > 0 then
@@ -195,7 +195,7 @@ if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:V
 		  else 
 			 CheckQLH = CheckQLH + CheckQDmg
 		  end
-		  if GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) <= CalcDamage(myHero, minions, 0, CheckQLH + Ludens()) then
+		  if GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) <= CalcDamage(myHero, minions, 0, math.max(10, 1.8*GetLevel(myHero)) + CheckQLH + Ludens()) then
 				CastSkillShot(_Q, originMLH.x, originMLH.y, originMLH.z)
 		  end
 		end
@@ -275,7 +275,8 @@ end)
 OnDraw(function(myHero)
 	------ Start Info R ------
 if Karthus.InfoR.EninfoR:Value() then
-   if GetLevel(myHero) >= 6 then
+ if IsObjectAlive(myHero) or not IsDead(myHero) then
+  if GetLevel(myHero) >= 6 then
    
     info = ""
     for nID, enemy in pairs(GetEnemyHeroes()) do
@@ -293,7 +294,8 @@ if Karthus.InfoR.EninfoR:Value() then
         end
   end
   DrawText(info,30,0,110,0xffff0000) 
-   end
+  end
+ end
 end
 
 	------ Start Drawings ------
@@ -347,3 +349,6 @@ end
 	end
 end
 end)
+
+if GetLevel(myHero) >= 6 then PrintChat(string.format("<font color='#FFFFFF'>DrawDmgR when Level >= 6: You must F6x2 to Reload script if your Ap have a change. </font>")) end 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.95 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
