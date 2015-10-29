@@ -140,26 +140,26 @@ OnTick(function(myHero)
 	------ Start LaneClear ------
 	for _,minion in pairs(minionManager.objects) do
 	 if GetTeam(minion) == MINION_ENEMY then
-		  if IsInDistance(minion, 950) then
-		 local minionsPos = GetOrigin(minion)
-		if IsReady(_E) and Varus.lc.LcE:Value() then
-		CastSkillShot(_E, minionsPos.x, minionsPos.y, minionsPos.z)
-		end
-		  end
-	 end	  
+	 local BestPos, BestHit = GetFarmPosition(925, 235)
+	  if IsObjectAlive(minion) and IsReady(_E) and Varus.lc.LcE:Value() then
+	   if BestPos and BestHit > 0 then
+		CastSkillShot(_E, BestPos.x, BestPos.y, BestPos.z)
+	   end
+	  end	  
+	 end
 	end
 		end
 		
 		if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Varus.jc.checkJMP:Value() then
 	------ Start JungClear ------
-	for _,mob in pairs(minionManager.objects) do
-	 if GetTeam(mob) == MINION_JUNGLE then
-		  if IsInDistance(mob, 950) then
-		 local mobPos = GetOrigin(mob)
-		if IsReady(_E) and Varus.jc.JcE:Value() then
-		CastSkillShot(_E, mobPos.x, mobPos.y, mobPos.z)
-		end
-		  end
+	for _,mobs in pairs(minionManager.objects) do
+	 if GetTeam(mobs) == MINION_JUNGLE then
+	 local BestPos, BestHit = GetJFarmPosition(925, 235)
+	  if IsObjectAlive(mobs) and IsReady(_E) and Varus.lc.LcE:Value() then
+	   if BestPos and BestHit > 0 then
+		CastSkillShot(_E, BestPos.x, BestPos.y, BestPos.z)
+	   end
+	  end	  
 	 end
 	end
 		end
