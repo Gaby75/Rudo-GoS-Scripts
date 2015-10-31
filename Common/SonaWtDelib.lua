@@ -83,7 +83,6 @@ Sona.AutoLvlUp:DropDown("AutoSkillUp", "Settings", 1, {"Q-W-E", "W-Q-E"})
 
 Sona:Info("info3", "Use PActivator for Auto Items")
    
-local InterruptMenu = MenuConfig("Stop Spell Enemy with R", "Interrupt")
 ---------- End Menu ----------
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
@@ -121,6 +120,7 @@ DelayAction(function()
   for i, spell in pairs(ANTI_SPELLS) do
     for _,k in pairs(GetEnemyHeroes()) do
         if spell["Name"] == GetObjectName(k) then
+		local InterruptMenu = MenuConfig("Stop Spell Enemy with R", "Interrupt")
         InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
         end
     end
@@ -150,7 +150,7 @@ OnTick(function(myHero)
 	------ Start Combo ------
     if IOW:Mode() == "Combo" then
 	
-		if IsReady(_Q) and ValidTarget(target, GetCastRange(myHero,_Q)-10) and Sona.cb.QCB:Value() then
+		if IsReady(_Q) and ValidTarget(target, 845) and Sona.cb.QCB:Value() then
 		CastSpell(_Q)
         end
 					
@@ -174,7 +174,7 @@ OnTick(function(myHero)
 					
 	if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Sona.hr.HrMana:Value() then
 	------ Start Harass ------
-        if IsReady(_Q) and ValidTarget(target, GetCastRange(myHero,_Q)-10) and Sona.hr.HrQ:Value() then
+        if IsReady(_Q) and ValidTarget(target, 845) and Sona.hr.HrQ:Value() then
 		CastSpell(_Q)
         end	
 	end
@@ -182,7 +182,7 @@ OnTick(function(myHero)
 if Sona.AtSpell.ASEb:Value() and GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Value() then
 		------ Start Auto Spell ------
              for i,enemy in pairs(GetEnemyHeroes()) do				  
-    if IsReady(_Q) and ValidTarget(enemy, GetCastRange(myHero,_Q)-10) and Sona.AtSpell.ASQ:Value() then
+    if IsReady(_Q) and ValidTarget(enemy, 842) and Sona.AtSpell.ASQ:Value() then
 	  CastSpell(_Q)
     end
 
