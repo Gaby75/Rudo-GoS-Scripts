@@ -28,6 +28,7 @@ Sona.cb:Boolean("WCB", "Use W", true)
 Sona.cb:Boolean("ECB", "Use E", true)
 Sona.cb:Boolean("RCB", "Use R", false)
 Sona.cb:Info("infoR", "R Combo will Cast R to Enemy lowestHP (R TargetSelector)")
+PermaShow(Sona.cb.RCB)
 
 ---- Harass Menu ----
 Sona:Menu("hr", "Harass")
@@ -95,6 +96,7 @@ PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#5
 
 
 require('DeftLib')
+-- Deftsu CHANELLING_SPELLS but no stop Varus Q and Fidd W
 ANTI_SPELLS = {
     ["CaitlynAceintheHole"]         = {Name = "Caitlyn",      Spellslot = _R},
     ["KatarinaR"]                   = {Name = "Katarina",     Spellslot = _R},
