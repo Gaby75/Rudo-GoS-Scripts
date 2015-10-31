@@ -16,7 +16,7 @@
 
 require('Inspired')
 ---- Create a Menu ----
---if GetObjectName(myHero) ~= "Sona" then return end
+if GetObjectName(myHero) ~= "Sona" then return end
 local Sona = MenuConfig("Rx Sona", "Sona")
 tslowhp = TargetSelector(GetCastRange(myHero, _R), 8, DAMAGE_MAGIC)
 Sona:TargetSelector("ts", "Selector Target for R", tslowhp)
@@ -191,12 +191,12 @@ if Sona.AtSpell.ASEb:Value() and GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Val
     end
             for _, ally in pairs(GetAllyHeroes()) do
 		if IsInDistance(enemy, 1250) then	   
-    if IsReady(_W) and ValidTarget(ally, 1000) and GetPercentHP(ally) <= 70 and Sona.AtSpell.ASW:Value() then
+    if IsReady(_W) and ValidTarget(ally, 1000) and 100*GetCurrentHP(ally)/GetMaxHP(ally) <= 70 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
     end
 
        elseif GetDistance(myHero, enemy) > 1250 then
-    if IsReady(_W) and ValidTarget(ally, 1000) and GetPercentHP(ally) <= 50 and Sona.AtSpell.ASW:Value() then
+    if IsReady(_W) and ValidTarget(ally, 1000) and 100*GetCurrentHP(ally)/GetMaxHP(ally) <= 50 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
     end
        end
@@ -216,7 +216,7 @@ if Sona.KS.KSEb:Value() then
                   end
         end
 
-	if IsReady(_Q) and ValidTarget(enemy, 845) and Sona.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) then
+	if IsReady(_Q) and ValidTarget(enemy, 840) and Sona.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) then
 		CastSpell(_Q) 
     elseif IsReady(_R) and ValidTarget(enemy, 950) and Sona.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckRDmg + Ludens()) then 
 	  if EnemiesAround(GetOrigin(enemy), 150) >= Sona.KS.RAround:Value() then
