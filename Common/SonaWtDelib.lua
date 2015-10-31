@@ -26,7 +26,7 @@ Sona:Menu("cb", "Sona Combo")
 Sona.cb:Boolean("QCB", "Use Q", true)
 Sona.cb:Boolean("WCB", "Use W", true)
 Sona.cb:Boolean("ECB", "Use E", true)
-Sona.cb:Boolean("RCB", "Use R", false)
+Sona.cb:Boolean("RCB", "R Combo", false)
 Sona.cb:Info("infoR", "R Combo will Cast R to Enemy lowestHP (R TargetSelector)")
 PermaShow(Sona.cb.RCB)
 
