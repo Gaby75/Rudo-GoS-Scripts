@@ -294,7 +294,7 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
 			local HealW = WDmg + (WDmg*CheckW)/100
 			local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
 			local CurrentW = math.min(HealW, WMax)
-			DrawText(string.format("%s HP: %d | %sHP = %s%d", GetObjectName(myally), currhpA, perc, perc, percentA),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
+			DrawText(string.format("%s HP: %d | %sHP = %d%s", GetObjectName(myally), currhpA, perc, percentA, perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
 			DrawText(string.format("Heal of W = %d HP", CurrentW),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff)
 	    end
 		 end
