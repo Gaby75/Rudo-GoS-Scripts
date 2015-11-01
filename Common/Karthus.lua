@@ -81,9 +81,9 @@ Karthus:Info("info1", "Use PActivator for Auto Use Items")
 require('Deftlib')
 
 local BonusAP = GetBonusAP(myHero)
-local CheckQDmg = 2*((GetCastLevel(myHero, _Q)*20) + 20 + (0.30*BonusAP))
-local CheckEDmg = (GetCastLevel(myHero, _E)*20) + 10 + (0.20*BonusAP)
-local CheckRDmg = (GetCastLevel(myHero, _R)*150) + 100 + (0.60*BonusAP)
+local CheckQDmg = 2*(GetCastLevel(myHero, _Q)*20 + 20 + 0.30*BonusAP)
+local CheckEDmg = GetCastLevel(myHero, _E)*20 + 10 + 0.20*BonusAP
+local CheckRDmg = GetCastLevel(myHero, _R)*150 + 100 + 0.60*BonusAP
 OnTick(function(myHero)
 	------ Start Combo ------
     if IOW:Mode() == "Combo" then
