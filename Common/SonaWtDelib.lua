@@ -16,7 +16,7 @@
 
 require('Inspired')
 ---- Create a Menu ----
-if GetObjectName(myHero) ~= "Sona" then return end
+--if GetObjectName(myHero) ~= "Sona" then return end
 local Sona = MenuConfig("Rx Sona", "Sona")
 tslowhp = TargetSelector(GetCastRange(myHero, _R), 8, DAMAGE_MAGIC)
 Sona:TargetSelector("ts", "Selector Target for R", tslowhp)
@@ -43,7 +43,7 @@ Sona.AtSpell:Boolean("ASW", "Auto W", true)
 Sona.AtSpell:Slider("myHrHP", "Auto W if %My HP  =<", 55, 1, 100, 1)
 Sona.AtSpell:Info("info1", "If no Enemy Heroes in 1250 range then Auto E if %HP Allies <= 50%")
 Sona.AtSpell:Info("info2", "If Enemy Heroes in 1250 range then Auto E if %HP Allies <= 70%")
-Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >=", 10, 0, 80, 1)
+Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >=", 10, 0, 90, 1)
 PermaShow(Sona.AtSpell.ASQ)
 PermaShow(Sona.AtSpell.ASW)
 
@@ -150,7 +150,7 @@ OnTick(function(myHero)
 	------ Start Combo ------
     if IOW:Mode() == "Combo" then
 	
-		if IsReady(_Q) and ValidTarget(target, 845) and Sona.cb.QCB:Value() then
+		if IsReady(_Q) and ValidTarget(target, 845) and IsObjectAlive(target) and Sona.cb.QCB:Value() then
 		CastSpell(_Q)
         end
 					
@@ -163,23 +163,25 @@ OnTick(function(myHero)
 		end
 		
 		local tglowhp = tslowhp:GetTarget()
-        if tglowhp and IsReady(_R) and ValidTarget(tglowhp, 950) and Sona.cb.RCB:Value() then
+        if tglowhp and IsReady(_R) then
+		 if ValidTarget(tglowhp, 950) and Sona.cb.RCB:Value() then
 		local RPred = GetPredictionForPlayer(myHeroPos(),tglowhp,GetMoveSpeed(tglowhp),2400,300,1000,150,false,true)
-		if RPred.HitChance == 1 then
+		  if RPred.HitChance == 1 then
         CastSkillShot(_R,RPred.PredPos.x,RPred.PredPos.y,RPred.PredPos.z)
-        end
+          end
+		 end
 		end
 	end
 		
 					
 	if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Sona.hr.HrMana:Value() then
 	------ Start Harass ------
-        if IsReady(_Q) and ValidTarget(target, 845) and Sona.hr.HrQ:Value() then
+        if IsReady(_Q) and ValidTarget(target, 845) and IsObjectAlive(target) and Sona.hr.HrQ:Value() then
 		CastSpell(_Q)
         end	
 	end
 	
-if Sona.AtSpell.ASEb:Value() and GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Value() then
+if Sona.AtSpell.ASEb:Value() and GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Value() and GotBuff(myHero, "recall") <= 0 then
 		------ Start Auto Spell ------
              for i,enemy in pairs(GetEnemyHeroes()) do				  
     if IsReady(_Q) and ValidTarget(enemy, 842) and Sona.AtSpell.ASQ:Value() then
@@ -189,24 +191,24 @@ if Sona.AtSpell.ASEb:Value() and GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Val
     if IsReady(_W) and GetPercentHP(myHero) <= Sona.AtSpell.myHrHP:Value() and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
     end
-            for _, ally in pairs(GetAllyHeroes()) do
-		if IsInDistance(enemy, 1250) then	   
+            for _,ally in pairs(GetAllyHeroes()) do
+		if GetDistance(myHero, enemy) <= 1250 then	   
     if IsReady(_W) and ValidTarget(ally, 1000) and 100*GetCurrentHP(ally)/GetMaxHP(ally) <= 70 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
     end
 
-       elseif GetDistance(myHero, enemy) > 1250 then
+		elseif GetDistance(myHero, enemy) > 1250 then
     if IsReady(_W) and ValidTarget(ally, 1000) and 100*GetCurrentHP(ally)/GetMaxHP(ally) <= 50 and Sona.AtSpell.ASW:Value() then
     CastSpell(_W)
     end
-       end
+		end
             end 
              end
 end
 	
 if Sona.KS.KSEb:Value() then
 	 	------ Start Kill Steal ------
- for i,enemy in pairs(GetEnemyHeroes()) do
+ for _,enemy in pairs(GetEnemyHeroes()) do
 
         -- Kill Steal --
 
@@ -216,7 +218,7 @@ if Sona.KS.KSEb:Value() then
                   end
         end
 
-	if IsReady(_Q) and ValidTarget(enemy, 840) and Sona.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) then
+	if IsReady(_Q) and ValidTarget(enemy, 840) and Sona.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) and IsObjectAlive(enemy) then
 		CastSpell(_Q) 
     elseif IsReady(_R) and ValidTarget(enemy, 950) and Sona.KS.RKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckRDmg + Ludens()) then 
 	  if EnemiesAround(GetOrigin(enemy), 150) >= Sona.KS.RAround:Value() then
@@ -294,7 +296,7 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
 			local HealW = WDmg + (WDmg*CheckW)/100
 			local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
 			local CurrentW = math.min(HealW, WMax)
-			DrawText(string.format("%s HP: %d | %sHP = %d%s", GetObjectName(myally), currhpA, perc, percentA, perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
+			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, perc, percentA, perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
 			DrawText(string.format("Heal of W = %d HP", CurrentW),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff)
 	    end
 		 end
