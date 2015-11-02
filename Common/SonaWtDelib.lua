@@ -16,7 +16,7 @@
 
 require('Inspired')
 ---- Create a Menu ----
---if GetObjectName(myHero) ~= "Sona" then return end
+if GetObjectName(myHero) ~= "Sona" then return end
 local Sona = MenuConfig("Rx Sona", "Sona")
 tslowhp = TargetSelector(GetCastRange(myHero, _R), 8, DAMAGE_MAGIC)
 Sona:TargetSelector("ts", "Selector Target for R", tslowhp)
