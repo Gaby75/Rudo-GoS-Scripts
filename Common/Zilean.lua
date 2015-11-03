@@ -44,7 +44,7 @@ Zilean.AtSpell.ATSQ:Boolean("ASQ", "Auto Q", true)
 Zilean.AtSpell.ATSQ:Info("info1", "Auto Q if can stun enemy")
 Zilean.AtSpell.ATSQ:Info("info2", "Q to enemy have a bomb")
 Zilean.AtSpell:SubMenu("ATSE", "Auto Spell E")
-Zilean.AtSpell.ATSE:Boolean("ASE", "Auto E", true)
+Zilean.AtSpell.ATSE:Boolean("ASE", "Auto E for Run", true)
 Zilean.AtSpell.ATSE:Key("KeyE", "Press 'T' to RUN!", string.byte("T"))
 Zilean.AtSpell.ATSE:Info("info3", "This is a Mode 'RUNNING!'")
 PermaShow(Zilean.AtSpell.ATSE.ASE)
@@ -61,6 +61,8 @@ Zilean.Draws:ColorPick("Ecol", "Setting E Color", {255, 155, 48, 255})
 Zilean.Draws:Boolean("DrawR", "Range R", true)
 Zilean.Draws:ColorPick("Rcol", "Setting R Color", {255, 244, 245, 120})
 Zilean.Draws:Boolean("DrawText", "Draw Text", true)
+Zilean.Draws:Info("infoR", "Draw Text If Allies in 2500 Range and %HP Allies <= 20%")
+PermaShow(Zilean.Draws.DrawText)
 
 ---- Kill Steal Menu ----
 Zilean:Menu("KS", "Kill Steal")
@@ -275,10 +277,9 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 
             if Zilean.Draws.DrawText:Value() then
 	
-	for _, myally in pairs(GetAllyHeroes()) do
+	for _,myally in pairs(GetAllyHeroes()) do
 		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
 	    if IsObjectAlive(myally) then
-		    --local originAllies = GetOrigin(myally)
 		    local alliesPos = WorldToScreen(1,GetOrigin(myally))
 		    local maxhpA = GetMaxHP(myally)
 		    local currhpA = GetCurrentHP(myally)
@@ -287,7 +288,7 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 	        if GetLevel(myHero) >= 6 then
 			 if percentA <= 20 then
 			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y+5,0xffff0000)
-			else
+			 else
 			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),18,alliesPos.x,alliesPos.y,0xffffffff)
 		     end
 			end
@@ -299,11 +300,11 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
     for nID, ally in pairs(GetAllyHeroes()) do
 	 if IsObjectAlive(ally) then
 	  if GetObjectName(myHero) ~= GetObjectName(ally) then
-		if IsReady(_R) and IsInDistance(ally, 2000) then
+		if IsReady(_R) and IsInDistance(ally, 2500) then
 		    local maxhpA = GetMaxHP(ally)
 		    local currhpA = GetCurrentHP(ally)
 			local percentA = 100*currhpA/maxhpA
-		 if percentA < 20 then
+		 if percentA <= 20 then
 		drawtexts = drawtexts..GetObjectName(ally)
 		drawtexts = drawtexts.." %HP < 20%. Should Use R\n"
 		 end
