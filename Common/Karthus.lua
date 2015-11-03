@@ -126,7 +126,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
   if GetTeam(creeps) == MINION_ENEMY then
 		if IsReady(_Q) and IsInDistance(creeps, 875) and Karthus.FreezeLane.QLC:Value() then
 			local BestPos, BestHit = GetFarmPosition(875, 145)
-		 if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, 50*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
+		 if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, 30*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
 			local CheckQArm = 0
 			IOW.attacksEnabled = false
 			local CheckLC = math.max(10, 1.8*GetLevel(myHero))
@@ -138,7 +138,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 		  if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckLC + CheckQArm + Ludens()) then
 				CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
 		  end
-		 elseif GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) > CalcDamage(myHero, creeps, 0, 50*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) then
+		 elseif GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) > CalcDamage(myHero, creeps, 0, 30*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) then
 				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
 				IOW.attacksEnabled = true
 				--CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
