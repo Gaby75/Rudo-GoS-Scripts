@@ -67,12 +67,6 @@ Zilean.KS:Boolean("IgniteKS", "KS with IgniteKS", true)
 PermaShow(Zilean.KS.IgniteKS)
 PermaShow(Zilean.KS.QKS)
 
----- Stop Spell Enemy Menu ----
-Zilean:Menu("AntiSkill", "Stop Skill Enemy")
-Zilean.AntiSkill:Boolean("EbAnti", "Q Stop Spell Enemy", true)
-Zilean.AntiSkill:Info("info4", "Q-Q to Stun enemy")
-PermaShow(Zilean.AntiSkill.EbAnti)
-
 ---- Auto Level Up Skills Menu ----
 Zilean:Menu("AutoLvlUp", "Auto Level Up")
 Zilean.AutoLvlUp:Boolean("UpSpellEb", "Enable Auto Lvl Up", true)
@@ -109,7 +103,7 @@ DelayAction(function()
   for i, spell in pairs(ANTI_SPELLS) do
     for _,k in pairs(GetEnemyHeroes()) do
         if spell["Name"] == GetObjectName(k) then
-		local InterruptMenu = MenuConfig("Stop Spell Enemy with R", "Interrupt")
+		local InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
         InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
         end
     end
@@ -117,7 +111,7 @@ DelayAction(function()
 end, 1)
 
 OnProcessSpell(function(unit, spell)
-    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_Q) and IsReady(_E) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) and Zilean.AntiSkill.EbAnti:Value() then
+    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_Q) and IsReady(_E) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
       if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
