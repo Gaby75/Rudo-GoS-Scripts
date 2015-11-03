@@ -17,6 +17,9 @@ Zilean:Menu("cb", "Zilean Combo")
 Zilean.cb:Boolean("QCB", "Use Q", true)
 Zilean.cb:Boolean("WCB", "Use W", true)
 Zilean.cb:Boolean("ECB", "Use E", true)
+Zilean.cb:Info("infoE", "If MyTeam >= EnemyTeam then E target lowest HP")
+Zilean.cb:Info("infoE", "If MyTeam < EnemyTeam then E ally or myHero near mouse, move your mouse >3")
+Zilean.cb:Info("infoE", "If not AllyAround my Hero then Use E in myHero")
 
 ---- Harass Menu ----
 Zilean:Menu("hr", "Harass")
