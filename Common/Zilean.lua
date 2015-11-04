@@ -1,4 +1,4 @@
---[[ Rx Zilean Version 0.1 by Rudo.
+--[[ Rx Zilean Version 0.15 by Rudo.
  Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -116,12 +116,15 @@ DelayAction(function()
 end, 1)
 
 OnProcessSpell(function(unit, spell)
-    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_Q) and IsReady(_E) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
+    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_Q) and IsReady(_W) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
       if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
 		 if QPred.HitChance == 1 then
 		 CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+		  if not IsReady(_Q) then
+		  CastSpell(_W)
+		  end
          end
 		end
       end
@@ -337,4 +340,4 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 	end
  end
 end)	
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.1: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.15: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
