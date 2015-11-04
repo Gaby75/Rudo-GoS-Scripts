@@ -126,7 +126,13 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
   if GetTeam(creeps) == MINION_ENEMY then
 		if IsReady(_Q) and IsInDistance(creeps, 875) and Karthus.FreezeLane.QLC:Value() then
 			local BestPos, BestHit = GetFarmPosition(875, 145)
-		 if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, 30*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
+			local CheckQLCT = 0
+		 if GetLevel(myHero) <= 7 then
+		    CheckQLCT = CheckQLCT + 30*(GetCastLevel(myHero, _Q)) 
+		 else
+		    CheckQLCT = CheckQLCT + 50*(GetCastLevel(myHero, _Q)) 
+		 end 	
+		 if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
 			local CheckQArm = 0
 			IOW.attacksEnabled = false
 			local CheckLC = math.max(10, 1.8*GetLevel(myHero))
@@ -138,7 +144,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 		  if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckLC + CheckQArm + Ludens()) then
 				CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
 		  end
-		 elseif GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) > CalcDamage(myHero, creeps, 0, 30*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) then
+		 elseif GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) > CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) then
 				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
 				IOW.attacksEnabled = true
 				--CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
@@ -186,8 +192,14 @@ elseif GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
  for _,minions in pairs(minionManager.objects) do
   if GetTeam(minions) == MINION_ENEMY then
 	 if IsInDistance(minions, 875) and IsObjectAlive(minions) then
+		local CheckQLHT = 0
+		 if GetLevel(myHero) <= 7 then
+		    CheckQLHT = CheckQLHT + 30*(GetCastLevel(myHero, _Q)) 
+		 else
+		    CheckQLHT = CheckQLHT + 50*(GetCastLevel(myHero, _Q)) 
+		 end 	
 		if IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
-		 local CheckKillMinions = CalcDamage(myHero, minions, 0, 50*(GetCastLevel(myHero, _Q)) + CheckQDmg + Ludens()) 
+		 local CheckKillMinions = CalcDamage(myHero, minions, 0, CheckQLHT + CheckQDmg + Ludens()) 
 		if GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) <= CheckKillMinions then
 			local CheckQLH = 0
 			IOW.attacksEnabled = false
