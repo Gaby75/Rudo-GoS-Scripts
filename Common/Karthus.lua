@@ -1,5 +1,5 @@
---[[Rx Karthus Version 0.96 by Rudo.
-    Version 0.96: Improve LaneClear, LastHit again
+--[[Rx Karthus Version 0.97 by Rudo.
+    Version 0.97: Improve LaneClear, LastHit again
     DrawDmgR when Lv6: You must F6x2 to Reload script if your Ap have a change.
     Go to http://gamingonsteroids.com To Download more script.
     Thanks Deftsu for some Code and DeftLib. Thank Cloud for Karthus Plugin. Thank Inspired for help me in shoul
@@ -33,7 +33,7 @@ Karthus.FreezeLane:Slider("LCMana", "Enable LaneClear if My %MP >", 20, 0, 100, 
 ---- Last Hit Menu ----
 Karthus:Menu("LHMinion", "Last Hit Minion")
 Karthus.LHMinion:Boolean("QLH", "Use Q Last Hit", true)
-Karthus.LHMinion:Slider("LHMana", "Enable LastHit if %My MP >", 20, 0, 100, 1)
+Karthus.LHMinion:Slider("LHMana", "Enable LastHit if %My MP >", 10, 0, 100, 1)
 PermaShow(Karthus.LHMinion.QLH)
 
 ---- Jungle Clear Menu ----
@@ -123,11 +123,13 @@ local target = tslowhp:GetTarget()
 	------ Start Lane Clear ------
 if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
  for _,creeps in pairs(minionManager.objects) do
+local checkMnos = MinionsAround(GetOrigin(creeps), 190, MINION_ENEMY)
   if GetTeam(creeps) == MINION_ENEMY then
+local checkMnal = MinionsAround(GetOrigin(creeps), 850, MINION_ALLY)
 		if IsReady(_Q) and IsInDistance(creeps, 875) and Karthus.FreezeLane.QLC:Value() then
-			local BestPos, BestHit = GetFarmPosition(875, 145)
+			--local BestPos, BestHit = GetFarmPosition(875, 145)
 			local CheckQLCT = 0
-		 if GetLevel(myHero) <= 7 then
+		 if GetLevel(myHero) <= 8 then
 		    CheckQLCT = CheckQLCT + 30*(GetCastLevel(myHero, _Q)) 
 		 else
 		    CheckQLCT = CheckQLCT + 50*(GetCastLevel(myHero, _Q)) 
@@ -135,8 +137,13 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 		 if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
 			local CheckQArm = 0
 			IOW.attacksEnabled = false
-			local CheckLC = math.max(10, 1.8*GetLevel(myHero))
-		  if MinionsAround(GetOrigin(creeps), 190, MINION_ENEMY) >= 2 or EnemiesAround(GetOrigin(creeps), 190) >= 1 then
+			local CheckLC
+		  if checkMnal >= 1 then
+		     CheckLC = math.max(10, 1.8*GetLevel(myHero))
+		  else
+		     CheckLC = 0
+		  end
+		  if checkMnos >= 2 or EnemiesAround(GetOrigin(creeps), 190) >= 1 then
 			 CheckQArm = CheckQArm + CheckQDmg/2
 		  else 
 			 CheckQArm = CheckQArm + CheckQDmg
@@ -145,9 +152,9 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 				CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
 		  end
 		 elseif GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) > CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) then
-				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
-				IOW.attacksEnabled = true
-				--CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
+				--CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
+				IOW.attacksEnabled = false
+				CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
 		 end
 		end
 		
@@ -190,10 +197,12 @@ if GetPercentMP(myHero) < Karthus.LHMinion.LHMana:Value() then
 IOW.attacksEnabled = true
 elseif GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
  for _,minions in pairs(minionManager.objects) do
+local Checkmnos = MinionsAround(GetOrigin(minions), 190, MINION_ENEMY)
   if GetTeam(minions) == MINION_ENEMY then
+local Checkmnal = MinionsAround(GetOrigin(minions), 850, MINION_ALLY)
 	 if IsInDistance(minions, 875) and IsObjectAlive(minions) then
 		local CheckQLHT = 0
-		 if GetLevel(myHero) <= 7 then
+		 if GetLevel(myHero) <= 8 then
 		    CheckQLHT = CheckQLHT + 30*(GetCastLevel(myHero, _Q)) 
 		 else
 		    CheckQLHT = CheckQLHT + 50*(GetCastLevel(myHero, _Q)) 
@@ -203,8 +212,13 @@ elseif GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
 		if GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) <= CheckKillMinions then
 			local CheckQLH = 0
 			IOW.attacksEnabled = false
-			local CheckLH = math.max(10, 1.8*GetLevel(myHero))
-		  if MinionsAround(GetOrigin(minions), 190, MINION_ENEMY) >= 2 or EnemiesAround(GetOrigin(minions), 190) >= 1 then
+			local CheckLH
+		  if Checkmnal >= 1 then
+		     CheckLH = math.max(10, 1.8*GetLevel(myHero))
+		  else
+		     CheckLH = 0
+		  end
+		  if Checkmnos >= 2 or EnemiesAround(GetOrigin(minions), 190) >= 1 then
 			 CheckQLH = CheckQLH + CheckQDmg/2
 		  else 
 			 CheckQLH = CheckQLH + CheckQDmg
@@ -365,4 +379,4 @@ end
 end)
 
 if GetLevel(myHero) >= 6 then PrintChat(string.format("<font color='#FFFFFF'>DrawDmgR when Level >= 6: You must F6x2 to Reload script if your Ap have a change. </font>")) end 
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.96 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.97 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
