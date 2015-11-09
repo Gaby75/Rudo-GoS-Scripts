@@ -151,7 +151,7 @@ OnTick(function(myHero)
 		 end
 		end
 		
-        if IsReady(_W) and not IsReady(_Q) and GetCurrentMana(myHero) >= 110 + 5*GetCastLevel(myHero, _Q) and Zilean.cb.WCB:Value() and IsInDistance(target, 900) then
+        if IsReady(_W) and GetCurrentMana(myHero) >= 110 + 5*GetCastLevel(myHero, _Q) and Zilean.cb.WCB:Value() and IsInDistance(target, 900) and not IsReady(_Q) then
 		CastSpell(_W)
 		end
 		
@@ -326,7 +326,7 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 	local permh = '%'
 	if IsObjectAlive(myHero) then
 	 if GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6 then
-    DrawText(string.format("%sHP = %d%s CAREFUL!", permh, GetPercentHP(myHero), permh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
+    DrawText(string.format("%sHP = %d%s BE CAREFUL!", permh, GetPercentHP(myHero), permh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
 	 end
 	end
             end
