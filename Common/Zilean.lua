@@ -117,21 +117,21 @@ end, 1)
 
 OnProcessSpell(function(unit, spell)
     if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
-	 if IsReady(_Q) or GotBuff(unit, "zileanqenemybomb") >= 1 then
-	  if IsReady(_W) or GotBuff(unit, "zileanqenemybomb") >= 1 then
+     if IsReady(_Q) or GotBuff(unit, "zileanqenemybomb") >= 1 then
+      if IsReady(_W) or GotBuff(unit, "zileanqenemybomb") >= 1 then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
-		 if QPred.HitChance >= 1 then
-		 CastSkillShot(_Q,QPred.PredPos)
-		  if IsReady(_W) and not IsReady(_Q) then
-		  CastSpell(_W)
-		  end
+         if QPred.HitChance >= 1 then
+         CastSkillShot(_Q,QPred.PredPos)
+          if IsReady(_W) and not IsReady(_Q) then
+          CastSpell(_W)
+          end
          end
-		end
-	   end
+        end
+       end
       end
-	 end
+     end
     end
 end)
 
