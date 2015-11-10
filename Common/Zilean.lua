@@ -1,5 +1,5 @@
 --[[ Rx Zilean Version 0.3 by Rudo.
-     Ver 0.3: Edit somethings and need require DamageLib to it working.
+     Ver 0.3: Edit somethings and need DamageLib to it working.
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
