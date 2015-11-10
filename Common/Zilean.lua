@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.2 by Rudo.
-     Ver 0.2: Fixed Interrupt again.
+--[[ Rx Zilean Version 0.22 by Rudo.
+     Ver 0.22: Fixed Interrupt again.
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -166,9 +166,9 @@ OnTick(function(myHero)
 		  elseif Al < Enm then
 		   if ally ~= myHero then
 		    if IsInDistance(ally, GetCastRange(myHero, _E)) then
-		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 250 and GotBuff(ClosestAlly(GetMousePos()), "TimeWarp") <= 0 then
+		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 160 and GotBuff(ClosestAlly(GetMousePos()), "TimeWarp") <= 0 then
 		  CastTargetSpell(ClosestAlly(GetMousePos()), _E)
-		     elseif GetDistance(myHeroPos(), GetMousePos()) <= 250 and GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) > 250 and GotBuff(myHero, "TimeWarp") <= 0 then
+		     elseif GetDistance(myHeroPos(), GetMousePos()) <= 160 and GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) > 160 and GotBuff(myHero, "TimeWarp") <= 0 then
 		  CastTargetSpell(myHero, _E)
 		     end
 		    end
@@ -326,7 +326,7 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 	local permh = '%'
 	if IsObjectAlive(myHero) then
 	 if GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6 then
-    DrawText(string.format("%sHP = %d%s BE CAREFUL!", permh, GetPercentHP(myHero), permh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
+    DrawText(string.format("%sHP = %d%s CAREFUL!", permh, GetPercentHP(myHero), permh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
 	 end
 	end
             end
@@ -337,12 +337,12 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 		local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
 		local currhp = math.max(CheckQ, GetCurrentHP(enemy))
     if IsReady(_Q) then
-		  DrawDmgOverHpBar(enemy,currhp,0,CheckQ + Ludens(),0xffffffff)
+		  DrawDmgOverHpBar(enemy,currhp,0,CheckQ + Ludens() - Check,0xffffffff)
     else
-          DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero),0,0xffffffff)
+          DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero) - Check,0,0xffffffff)
     end
 		end
 	end
  end
 end)	
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.2: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.22: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
