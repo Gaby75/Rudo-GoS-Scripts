@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.22 by Rudo.
-     Ver 0.22: Edit somethings. REDOWNLOAD
+--[[ Rx Zilean Version 0.3 by Rudo.
+     Ver 0.3: Edit somethings and need require DamageLib to it working.
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -55,12 +55,10 @@ PermaShow(Zilean.AtSpell.ATSE.KeyE)
 Zilean:Menu("Draws", "Drawings")
 Zilean.Draws:Boolean("DrawsEb", "Enable Drawings", true)
 Zilean.Draws:Slider("QualiDraw", "Quality Drawings", 110, 1, 255, 1)
-Zilean.Draws:Boolean("DrawQ", "Range Q", true)
-Zilean.Draws:ColorPick("Qcol", "Setting Q Color", {255, 30, 144, 255})
+Zilean.Draws:Boolean("DrawQR", "Range Q + R", true)
+Zilean.Draws:ColorPick("QRcol", "Setting Q + R Color", {255, 244, 245, 120})
 Zilean.Draws:Boolean("DrawE", "Range E", true)
 Zilean.Draws:ColorPick("Ecol", "Setting E Color", {255, 155, 48, 255})
-Zilean.Draws:Boolean("DrawR", "Range R", true)
-Zilean.Draws:ColorPick("Rcol", "Setting R Color", {255, 244, 245, 120})
 Zilean.Draws:Boolean("DrawText", "Draw Text", true)
 Zilean.Draws:Info("infoR", "Draw Text If Allies in 2500 Range and %HP Allies <= 20%")
 PermaShow(Zilean.Draws.DrawText)
@@ -84,6 +82,7 @@ Zilean.AutoLvlUp:DropDown("AutoSkillUp", "Settings", 1, {"Q-W-E", "Q-E-W"})
 -------------------------------------------------------Starting--------------------------------------------------------------
 
 require('DeftLib')
+require('DamageLib')
 -- Deftsu CHANELLING_SPELLS but no stop Varus Q and Fidd W
 ANTI_SPELLS = {
     ["CaitlynAceintheHole"]         = {Name = "Caitlyn",      Spellslot = _R},
@@ -123,8 +122,8 @@ OnProcessSpell(function(unit, spell)
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
-		 if QPred.HitChance == 1 then
-		 CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+		 if QPred.HitChance >= 1 then
+		 CastSkillShot(_Q,QPred.PredPos)
 		  if IsReady(_W) and not IsReady(_Q) then
 		  CastSpell(_W)
 		  end
@@ -136,18 +135,16 @@ OnProcessSpell(function(unit, spell)
     end
 end)
 
-local BonusAP = GetBonusAP(myHero)
-local CheckQDmg = (GetCastLevel(myHero, _Q)*40) + 35 + (0.90*BonusAP)
 -------------------------------------------
 OnTick(function(myHero)
 		        local target = tslowhp:GetTarget()
-			if target then
+   if target then
     	------ Start Combo ------
     if IOW:Mode() == "Combo" then
         if IsReady(_Q) and Zilean.cb.QCB:Value() and ValidTarget(target, 900) and IsObjectAlive(target) then
 		        local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true)		
-		 if QPred.HitChance == 1 then
-        CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+		 if QPred.HitChance >= 1 then
+        CastSkillShot(_Q, QPred.PredPos)
 		 end
 		end
 		
@@ -161,9 +158,9 @@ OnTick(function(myHero)
 		 for _,ally in pairs(GetAllyHeroes()) do
 		local Al = AlliesAround(myHeroPos(), GetCastRange(myHero, _E))
 		local Enm = EnemiesAround(myHeroPos(), GetCastRange(myHero, _E))
-		  if Al >= 1 and 1 + Al >= Enm then
+		  if Al >= 1 and 1 + Al >= Enm and GotBuff(target, "Stun") <= 0 then
 		  CastTargetSpell(target, _E)
-		  elseif Al < Enm then
+		  elseif Al >= 1 and Al < Enm then
 		   if ally ~= myHero then
 		    if IsInDistance(ally, GetCastRange(myHero, _E)) then
 		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 160 and GotBuff(ClosestAlly(GetMousePos()), "TimeWarp") <= 0 then
@@ -173,7 +170,7 @@ OnTick(function(myHero)
 		     end
 		    end
 		   end
-		  elseif Al <= 0 and IsInDistance(target, 1200) and not IsInDistance(target, 880) then
+		  elseif Al <= 0 and IsInDistance(target, 1300) and GotBuff(myHero, "TimeWarp") <= 0 and not IsInDistance(target, 880)  then
 		  CastTargetSpell(myHero, _E)
 		  end
 		 end
@@ -185,25 +182,25 @@ OnTick(function(myHero)
 	------ Start Harass ------
         if IsReady(_Q) and ValidTarget(target, 900) and Zilean.cb.QCB:Value() and IsObjectAlive(target) then
 		local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true) 
-		 if QPred.HitChance == 1 then
-        CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+		 if QPred.HitChance >= 1 then
+        CastSkillShot(_Q, QPred.PredPos)
          end
         end		 
 	end
-			end
+   end
 	
 	if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Zilean.lc.checkMP:Value() then	 
 	------ Start Lane Clear ------	
 	 for _,minion in pairs(minionManager.objects) do
 	  if GetTeam(minion) == MINION_ENEMY then
-		if IsInDistance(minion, 900) then
-		 if IsReady(_Q) and Zilean.lc.LcQ:Value() then
+	   if IsInDistance(minion, 900) then
+	    if IsReady(_Q) and Zilean.lc.LcQ:Value() then
 		 local BestPos, BestHit = GetFarmPosition(900, 300)
 		  if BestPos and BestHit > 0 then
-		  CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
+		  CastSkillShot(_Q, BestPos)
 		  end
-		 end
-		end
+	    end
+	   end
 	  end
 	 end
 	end
@@ -216,7 +213,7 @@ OnTick(function(myHero)
 		 if IsReady(_Q) and Zilean.jc.JcQ:Value() then
 		 local BestPos, BestHit = GetJFarmPosition(900, 300)
 		  if BestPos and BestHit > 0 then
-		  CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
+		  CastSkillShot(_Q, BestPos)
 		  end
 		 end
 		end
@@ -234,12 +231,12 @@ if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilea
    CastTargetSpell(myHero, _E)
 end
 
-if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(GetMousePos().x, GetMousePos().y, GetMousePos().z) end
+if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(mousePos()) end
 
-if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and GotBuff(enemy, "zileanqenemybomb") > 0 then
+if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and GotBuff(enemy, "zileanqenemybomb") >= 1 then
 local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,300,900,100,false,true)
-if QPred.HitChance == 1 then
-  CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+if QPred.HitChance >= 1 then
+  CastSkillShot(_Q, QPred.PredPos)
 end
 end
   end
@@ -247,19 +244,19 @@ end
 
  	------ Start Kill Steal ------
 if Zilean.KS.KSEb:Value() then
- for i,enemy in pairs(GetEnemyHeroes()) do
+ for i, enemy in pairs(GetEnemyHeroes()) do
         -- Kill Steal --
 
 		if Ignite and Zilean.KS.IgniteKS:Value() then
-                  if CanUseSpell(myHero, Ignite) == READY and 20*GetLevel(myHero)+50 > GetCurrentHP(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
+                  if CanUseSpell(myHero, Ignite) == READY and 20*GetLevel(myHero)+50 > GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
                   CastTargetSpell(enemy, Ignite)
                   end
         end
 
-	if IsReady(_Q) and ValidTarget(enemy, 880) and Zilean.KS.QKS:Value() and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) then
+	if IsReady(_Q) and ValidTarget(enemy, 880) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) then
 	 	local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,300,900,100,false,true)
-	 if QPred.HitChance == 1 then
-		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
+	 if QPred.HitChance >= 1 then
+		CastSkillShot(_Q,QPred.PredPos)
 	 end
 	end
  end
@@ -279,13 +276,13 @@ end)
 	------ Start Drawings ------
 OnDraw(function(myHero)
  if Zilean.Draws.DrawsEb:Value() then
-if Zilean.Draws.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Zilean.Draws.QualiDraw:Value(),Zilean.Draws.Qcol:Value()) end
+if IsReady(_Q) or IsReady(_R) then
+if Zilean.Draws.DrawQR:Value() then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Zilean.Draws.QualiDraw:Value(),Zilean.Draws.QRcol:Value()) end
+end
 if Zilean.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),1,Zilean.Draws.QualiDraw:Value(),Zilean.Draws.Ecol:Value()) end
-if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastRange(myHero,_R),1,Zilean.Draws.QualiDraw:Value(),Zilean.Draws.Rcol:Value()) end
 
             if Zilean.Draws.DrawText:Value() then
-	
-	for _,myally in pairs(GetAllyHeroes()) do
+	for _, myally in pairs(GetAllyHeroes()) do
 		 if GetObjectName(myHero) ~= GetObjectName(myally) then	
 	    if IsObjectAlive(myally) then
 		    local alliesPos = WorldToScreen(1,GetOrigin(myally))
@@ -294,10 +291,10 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 			local percentA = 100*currhpA/maxhpA
 			local per = '%'
 	        if GetLevel(myHero) >= 6 then
-			 if percentA <= 20 then
-			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y+5,0xffff0000)
-			 else
+			 if percentA > 20 then
 			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),18,alliesPos.x,alliesPos.y,0xffffffff)
+			 else
+			DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, percentA, per),21,alliesPos.x,alliesPos.y,0xffff0000)
 		     end
 			end
 		end
@@ -309,10 +306,7 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
 	 if IsObjectAlive(ally) then
 	  if GetObjectName(myHero) ~= GetObjectName(ally) then
 		if IsReady(_R) and IsInDistance(ally, 2500) then
-		    local maxhpA = GetMaxHP(ally)
-		    local currhpA = GetCurrentHP(ally)
-			local percentA = 100*currhpA/maxhpA
-		 if percentA <= 20 then
+		 if GetPercentHP(ally) <= 20 then
 		drawtexts = drawtexts..GetObjectName(ally)
 		drawtexts = drawtexts.." %HP < 20%. Should Use R\n"
 		 end
@@ -323,26 +317,24 @@ if Zilean.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCas
     end
 	
 	local myTextPos = WorldToScreen(1,myHeroPos())
-	local permh = '%'
+	local pmh = '%'
 	if IsObjectAlive(myHero) then
 	 if GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6 then
-    DrawText(string.format("%sHP = %d%s CAREFUL!", permh, GetPercentHP(myHero), permh),21,myTextPos.x,myTextPos.y+5,0xffff0000)
+    DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, GetPercentHP(myHero), pmh),21,myTextPos.x,myTextPos.y,0xffff0000)
 	 end
 	end
             end
 	
-	for i,enemy in pairs(GetEnemyHeroes()) do
+	for i, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(enemy) then
-		local CheckQ = CalcDamage(myHero, enemy, 0, CheckQDmg)
 		local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
-		local currhp = math.max(CheckQ, GetCurrentHP(enemy))
-    if IsReady(_Q) then
-		  DrawDmgOverHpBar(enemy,currhp,0,CheckQ + Ludens() - Check,0xffffffff)
+    if IsReady(_Q) or GotBuff(enemy, "zileanqenemybomb") >= 1 then
+		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,getdmg("Q",enemy) - Check,0xffffffff)
     else
-          DrawDmgOverHpBar(enemy,currhp,GetBaseDamage(myHero) - Check,0,0xffffffff)
+          DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),GetBaseDamage(myHero) - Check,0,0xffffffff)
     end
 		end
 	end
  end
 end)	
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.22: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.3: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
