@@ -1,5 +1,5 @@
 --[[ Rx Zilean Version 0.22 by Rudo.
-     Ver 0.22: Fixed Interrupt again.
+     Ver 0.22: Edit somethings. REDOWNLOAD
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
