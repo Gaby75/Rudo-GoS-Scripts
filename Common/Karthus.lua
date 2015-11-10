@@ -1,5 +1,5 @@
---[[Rx Karthus Version 0.97 by Rudo.
-    Version 0.97: Improve LaneClear, LastHit again
+--[[Rx Karthus Version 0.98 by Rudo.
+    Version 0.98: Edit somethings and need DamageLib to it working.
     DrawDmgR when Lv6: You must F6x2 to Reload script if your Ap have a change.
     Go to http://gamingonsteroids.com To Download more script.
     Thanks Deftsu for some Code and DeftLib. Thank Cloud for Karthus Plugin. Thank Inspired for help me in shoul
@@ -79,53 +79,49 @@ Karthus:Info("info1", "Use PActivator for Auto Use Items")
 
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('Deftlib')
+require('DamageLib')
 
 local BonusAP = GetBonusAP(myHero)
 local CheckQDmg = 2*(GetCastLevel(myHero, _Q)*20 + 20 + 0.30*BonusAP)
-local CheckEDmg = GetCastLevel(myHero, _E)*20 + 10 + 0.20*BonusAP
 local CheckRDmg = GetCastLevel(myHero, _R)*150 + 100 + 0.60*BonusAP
 OnTick(function(myHero)
 	------ Start Combo ------
-    if IOW:Mode() == "Combo" then
 local target = tslowhp:GetTarget()
-	if target then
+ if target then
+  if IOW:Mode() == "Combo" then
  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
  local WPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,500,GetCastRange(myHero,_W),800,false,true)
-		if IsReady(_W) and GetCurrentMana(myHero) >= 130 and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Karthus.cb.WCB:Value() then
-		CastSkillShot(_W,WPred.PredPos.x,WPred.PredPos.y,WPred.PredPos.z)
-		end
+   if IsReady(_W) and GetCurrentMana(myHero) >= 130 and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance == 1 and Karthus.cb.WCB:Value() then
+		CastSkillShot(_W, WPred.PredPos)
+   end
 		
-		if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.cb.QCB:Value() then
-		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
-		end
+   if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance >= 1 and Karthus.cb.QCB:Value() then
+		CastSkillShot(_Q, QPred.PredPos)
+   end
 		
-		if IsReady(_E) and IsObjectAlive(target) and IsInDistance(target, 15 - GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
+   if IsReady(_E) and IsObjectAlive(target) and IsInDistance(target, 15 - GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
 		CastSpell(_E)
-	    end
+   end
 
-		if Karthus.cb.ECB:Value() and not IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
+   if Karthus.cb.ECB:Value() and not IsInDistance(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") >= 1 then
 		CastSpell(_E)
-		end
-	end
+   end
 	end
 	
 	------ Start Harass ------
-    if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
-local target = tslowhp:GetTarget()
-	if target then
+  if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
-		if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance == 1 and Karthus.hr.HrQ:Value() then
-		CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z)
-		end
-	end
-	end
+   if IsReady(_Q) and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_Q)) and QPred.HitChance >= 1 and Karthus.hr.HrQ:Value() then
+	CastSkillShot(_Q, QPred.PredPos)
+   end
+  end
+ end
 	
 	------ Start Lane Clear ------
 if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMana:Value() then
- for _,creeps in pairs(minionManager.objects) do
+ for _, creeps in pairs(minionManager.objects) do
 local checkMnos = MinionsAround(GetOrigin(creeps), 190, MINION_ENEMY)
   if GetTeam(creeps) == MINION_ENEMY then
-local checkMnal = MinionsAround(GetOrigin(creeps), 850, MINION_ALLY)
 		if IsReady(_Q) and IsInDistance(creeps, 875) and Karthus.FreezeLane.QLC:Value() then
 			--local BestPos, BestHit = GetFarmPosition(875, 145)
 			local CheckQLCT = 0
@@ -134,27 +130,22 @@ local checkMnal = MinionsAround(GetOrigin(creeps), 850, MINION_ALLY)
 		 else
 		    CheckQLCT = CheckQLCT + 50*(GetCastLevel(myHero, _Q)) 
 		 end 	
-		 if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
+		 if GetHP2(creeps) <= CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) and IsObjectAlive(creeps) then
 			local CheckQArm = 0
 			IOW.attacksEnabled = false
-			local CheckLC
-		  if checkMnal >= 1 then
-		     CheckLC = math.max(10, 1.8*GetLevel(myHero))
-		  else
-		     CheckLC = 0
-		  end
+			local CheckLC = math.max(10, 1.8*GetLevel(myHero))
 		  if checkMnos >= 2 or EnemiesAround(GetOrigin(creeps), 190) >= 1 then
 			 CheckQArm = CheckQArm + CheckQDmg/2
 		  else 
 			 CheckQArm = CheckQArm + CheckQDmg
 		  end
-		  if GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) <= CalcDamage(myHero, creeps, 0, CheckLC + CheckQArm + Ludens()) then
-				CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
+		  if GetHP2(creeps) <= CalcDamage(myHero, creeps, 0, CheckLC + CheckQArm + Ludens()) then
+				CastSkillShot(_Q, GetOrigin(creeps))
 		  end
-		 elseif GetCurrentHP(creeps)+GetMagicShield(creeps)+GetDmgShield(creeps) > CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) then
-				--CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
+		 elseif GetHP2(creeps) > CalcDamage(myHero, creeps, 0, CheckQLCT + CheckQDmg + Ludens()) then
+				--CastSkillShot(_Q, BestPos)
 				IOW.attacksEnabled = false
-				CastSkillShot(_Q, GetOrigin(creeps).x, GetOrigin(creeps).y, GetOrigin(creeps).z)
+				CastSkillShot(_Q, GetOrigin(creeps))
 		 end
 		end
 		
@@ -170,13 +161,13 @@ end
 	
 	------ Start Jungle Clear ------
     if Karthus.JungleClear.JEb:Value() and IOW:Mode() == "LaneClear" then
-    for _,mobs in pairs(minionManager.objects) do
+    for _, mobs in pairs(minionManager.objects) do
 	if GetTeam(mobs) == MINION_JUNGLE then
 	 if IsObjectAlive(mobs) then
 		if IsInDistance(mobs, 875) and IsReady(_Q) and Karthus.JungleClear.QJC:Value() then
 		 local BestPos, BestHit = GetJFarmPosition(875, 145)
 		 if BestPos and BestHit > 0 then 
-				CastSkillShot(_Q, BestPos.x, BestPos.y, BestPos.z)
+				CastSkillShot(_Q, BestPos)
 		 end
 		end
 		
@@ -196,10 +187,9 @@ if IOW:Mode() == "LastHit" then
 if GetPercentMP(myHero) < Karthus.LHMinion.LHMana:Value() then
 IOW.attacksEnabled = true
 elseif GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
- for _,minions in pairs(minionManager.objects) do
+ for _, minions in pairs(minionManager.objects) do
 local Checkmnos = MinionsAround(GetOrigin(minions), 190, MINION_ENEMY)
   if GetTeam(minions) == MINION_ENEMY then
-local Checkmnal = MinionsAround(GetOrigin(minions), 850, MINION_ALLY)
 	 if IsInDistance(minions, 875) and IsObjectAlive(minions) then
 		local CheckQLHT = 0
 		 if GetLevel(myHero) <= 8 then
@@ -209,24 +199,19 @@ local Checkmnal = MinionsAround(GetOrigin(minions), 850, MINION_ALLY)
 		 end 	
 		if IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
 		 local CheckKillMinions = CalcDamage(myHero, minions, 0, CheckQLHT + CheckQDmg + Ludens()) 
-		if GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) <= CheckKillMinions then
+		if GetHP2(minions) <= CheckKillMinions then
 			local CheckQLH = 0
 			IOW.attacksEnabled = false
-			local CheckLH
-		  if Checkmnal >= 1 then
-		     CheckLH = math.max(10, 1.8*GetLevel(myHero))
-		  else
-		     CheckLH = 0
-		  end
+			local CheckLH = math.max(10, 1.8*GetLevel(myHero))
 		  if Checkmnos >= 2 or EnemiesAround(GetOrigin(minions), 190) >= 1 then
 			 CheckQLH = CheckQLH + CheckQDmg/2
 		  else 
 			 CheckQLH = CheckQLH + CheckQDmg
 		  end
-		  if GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) <= CalcDamage(myHero, minions, 0,CheckLH + CheckQLH + Ludens()) then
-				CastSkillShot(_Q, GetOrigin(minions).x, GetOrigin(minions).y, GetOrigin(minions).z)
+		  if GetHP2(minions) <= CalcDamage(myHero, minions, 0,CheckLH + CheckQLH + Ludens()) then
+				CastSkillShot(_Q, GetOrigin(minions))
 		  end
-		elseif GetCurrentHP(minions)+GetMagicShield(minions)+GetDmgShield(minions) > CheckKillMinions then
+		elseif GetHP2(minions) > CheckKillMinions then
 		IOW.attacksEnabled = false
 		end
 	    end
@@ -238,18 +223,18 @@ end
 
 	------ Start Kill Steal ------
 	if Karthus.KS.KSEb:Value() then
- for i,enemy in pairs(GetEnemyHeroes()) do	
+ for i, enemy in pairs(GetEnemyHeroes()) do	
 		if Ignite and Karthus.KS.IgniteKS:Value() then
-                  if IsReady(Ignite) and 20*GetLevel(myHero)+50 > GetCurrentHP(enemy)+GetDmgShield(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
+                  if IsReady(Ignite) and 20*GetLevel(myHero)+50 > GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
                   CastTargetSpell(enemy, Ignite)
                   end
         end
 	
    if IsReady(_Q) and IsInDistance(enemy, 875) and IsObjectAlive(enemy) and Karthus.KS.QKS:Value() then
-	if GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens()) then
+	if GetHP2(enemy) <= getdmg("Q",enemy) then
 	  local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,900,GetCastRange(myHero,_Q),150,false,true)
 	 if QPred.HitChance == 1 and ValidTarget(enemy, GetCastRange(myHero, _Q)) then 
-	   CastSkillShot(_Q,QPred.PredPos.x,QPred.PredPos.y,QPred.PredPos.z) 
+	   CastSkillShot(_Q, QPred.PredPos) 
 	 end
 	end
    end
@@ -309,16 +294,13 @@ if Karthus.InfoR.EninfoR:Value() then
     info = ""
     for nID, enemy in pairs(GetEnemyHeroes()) do
         if IsObjectAlive(enemy) then
-            realdmg = CalcDamage(myHero, enemy, 0, CheckRDmg + Ludens())
-            hp = GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy)
-            if realdmg > hp then
+            if getdmg("R",enemy) > GetHP2(enemy) then
                 info = info..GetObjectName(enemy)
                 if not IsVisible(enemy) then
                     info = info.." Not see enemy in map maybe"
                 end
                 info = info.." R KILL!\n"
             end
-            -- info = info..GetObjectName(enemy).."    HP:"..hp.."  dmg: "..realdmg.." "..Killable.."\n"
         end
   end
   DrawText(info,30,0,110,0xffff0000) 
@@ -332,11 +314,10 @@ if Karthus.Draws.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCa
 if Karthus.Draws.DrawW:Value() and IsReady(_W) then DrawCircle(myHeroPos(),GetCastRange(myHero,_W),3,Karthus.Draws.QualiDraw:Value(),Karthus.Draws.Wcol:Value()) end
 if Karthus.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),1,Karthus.Draws.QualiDraw:Value(),Karthus.Draws.Ecol:Value()) end
 if Karthus.Draws.DrawTexts:Value() then
-	for _, enemy in pairs(GetEnemyHeroes()) do
+	for i, enemy in pairs(GetEnemyHeroes()) do
 		 if ValidTarget(enemy) then
-		    local originEnm = GetOrigin(enemy)
-		    local EnmTextPos = WorldToScreen(1,originEnm.x, originEnm.y, originEnm.z)
-			if IsReady(_R) and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckRDmg + Ludens()) then
+		    local EnmTextPos = WorldToScreen(1,GetOrigin(enemy))
+			if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) then
 			DrawText("Enemy R = KILL",20,EnmTextPos.x,EnmTextPos.y+23,0xffff0000)
 			end
 			
@@ -348,10 +329,10 @@ if Karthus.Draws.DrawTexts:Value() then
 		 end
 			
 			if GetLevel(myHero) >= 6 and IsObjectAlive(myHero) then
-			local myTextPos = WorldToScreen(1,myHeroPos().x, myHeroPos().y, myHeroPos().z)
+			local myTextPos = WorldToScreen(1,myHeroPos())
 			local RDmg = CheckRDmg + Ludens()
 			DrawText(string.format("Damage R = %d Dmg", RDmg),16,myTextPos.x,myTextPos.y,0xffffffff) 
-			if IsReady(_R) and GetCurrentHP(enemy)+GetMagicShield(enemy)+GetDmgShield(enemy) < CalcDamage(myHero, enemy, 0, CheckRDmg + Ludens()) then
+			if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) then
 			if ValidTarget(enemy) then
 			DrawText(string.format("R = Kill Enemy"),20,myTextPos.x,myTextPos.y+23,0xffff0000) 
 			end
@@ -359,11 +340,11 @@ if Karthus.Draws.DrawTexts:Value() then
 			end
 	end
 end
-	for _, enemy in pairs(GetEnemyHeroes()) do
+	for i, enemy in pairs(GetEnemyHeroes()) do
 		 if ValidTarget(enemy) then
 	local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
-	local CheckQ = CalcDamage(myHero, enemy, 0, CheckQDmg + Ludens())
-	local CheckR = CalcDamage(myHero, enemy, 0, CheckRDmg + Ludens())
+	local CheckQ = getdmg("Q",enemy)
+	local CheckR = getdmg("R",enemy)
 		if IsReady(_Q) and IsReady(_R) then
 		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,CheckR - Check,0xffffffff)
 		elseif IsReady(_R) and not IsReady(_Q) then
@@ -379,4 +360,4 @@ end
 end)
 
 if GetLevel(myHero) >= 6 then PrintChat(string.format("<font color='#FFFFFF'>DrawDmgR when Level >= 6: You must F6x2 to Reload script if your Ap have a change. </font>")) end 
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.97 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.98 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
