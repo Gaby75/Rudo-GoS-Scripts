@@ -153,9 +153,9 @@ OnTick(function(myHero)
 		end
 		
 		
-	   for i,enemy in pairs(GetEnemyHeroes()) do
+	   for i, enemy in pairs(GetEnemyHeroes()) do
 		if IsReady(_E) and Zilean.cb.ECB:Value() and IsInDistance(enemy, 1200) then 
-		 for _,ally in pairs(GetAllyHeroes()) do
+		 for _, ally in pairs(GetAllyHeroes()) do
 		local Al = AlliesAround(myHeroPos(), GetCastRange(myHero, _E))
 		local Enm = EnemiesAround(myHeroPos(), GetCastRange(myHero, _E))
 		  if Al >= 1 and 1 + Al >= Enm and GotBuff(target, "Stun") <= 0 then
@@ -191,7 +191,7 @@ OnTick(function(myHero)
 	
 	if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Zilean.lc.checkMP:Value() then	 
 	------ Start Lane Clear ------	
-	 for _,minion in pairs(minionManager.objects) do
+	 for _, minion in pairs(minionManager.objects) do
 	  if GetTeam(minion) == MINION_ENEMY then
 	   if IsInDistance(minion, 900) then
 	    if IsReady(_Q) and Zilean.lc.LcQ:Value() then
@@ -207,7 +207,7 @@ OnTick(function(myHero)
 
 	if IOW:Mode() == "LaneClear" then	 
 	------ Start Jungle Clear ------	
-	 for _,mobs in pairs(minionManager.objects) do
+	 for _, mobs in pairs(minionManager.objects) do
 	  if GetTeam(mobs) == MINION_JUNGLE then
 		if IsInDistance(mobs, 900) then
 		 if IsReady(_Q) and Zilean.jc.JcQ:Value() then
