@@ -262,7 +262,7 @@ if Zilean.KS.KSEb:Value() then
  end
 end
 
- 	------ Start Auto Level Up _Settings Full Q or Full W first ------	
+ 	------ Start Auto Level Up _Settings Full W or Full E first ------	
 if Zilean.AutoLvlUp.UpSpellEb:Value() then
   if Zilean.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First then W
   elseif Zilean.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _E , _E, _R, _E, _E, _W, _W, _R, _W, _W} -- Full Q First then E
