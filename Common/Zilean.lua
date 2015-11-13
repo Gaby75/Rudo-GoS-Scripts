@@ -1,5 +1,5 @@
 --[[ Rx Zilean Version 0.33 by Rudo.
-     Ver 0.33: Change somethings
+     Ver 0.33: Edit a little
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
