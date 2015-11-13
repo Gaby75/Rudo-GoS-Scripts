@@ -117,8 +117,8 @@ end, 1)
 
 OnProcessSpell(function(unit, spell)
     if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
-     if IsReady(_Q) or CheckQ(unit) >= 1 then
-      if IsReady(_W) or CheckQ(unit) >= 1 then
+     if IsReady(_Q) or CheckQ(unit) then
+      if IsReady(_W) or CheckQ(unit) then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
@@ -163,14 +163,14 @@ OnTick(function(myHero)
 		  elseif Al >= 1 and Al < Enm then
 		   if ally ~= myHero then
 		    if IsInDistance(ally, GetCastRange(myHero, _E)) then
-		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 160 and CheckE(ClosestAlly(GetMousePos())) <= 0 then
+		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 160 and CheckE(ClosestAlly(GetMousePos())) then
 		  CastTargetSpell(ClosestAlly(GetMousePos()), _E)
-		     elseif GetDistance(myHeroPos(), GetMousePos()) <= 160 and GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) > 160 and CheckE(myHero) <= 0 then
+		     elseif GetDistance(myHeroPos(), GetMousePos()) <= 160 and GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) > 160 and CheckE(myHero) then
 		  CastTargetSpell(myHero, _E)
 		     end
 		    end
 		   end
-		  elseif Al <= 0 and IsInDistance(target, 1300) and CheckE(myHero) <= 0 and not IsInDistance(target, 880)  then
+		  elseif Al <= 0 and IsInDistance(target, 1300) and CheckE(myHero) and not IsInDistance(target, 880)  then
 		  CastTargetSpell(myHero, _E)
 		  end
 		 end
@@ -227,13 +227,13 @@ OnTick(function(myHero)
 if Zilean.AtSpell.ASEb:Value() then
   for i, enemy in pairs(GetEnemyHeroes()) do
  
-if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") <= 0 and CheckE(myHero) <= 0 then
+if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") <= 0 and CheckE(myHero) then
    CastTargetSpell(myHero, _E)
 end
 
 if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(mousePos()) end
 
-if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and CheckQ(enemy) >= 1 then
+if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and CheckQ(enemy) then
 local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,300,900,100,false,true)
 if QPred.HitChance >= 1 then
   CastSkillShot(_Q, QPred.PredPos)
@@ -328,7 +328,7 @@ if Zilean.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCas
 	for i, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(enemy) then
 		local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
-    if IsReady(_Q) or CheckQ(enemy) >= 1 then
+    if IsReady(_Q) or CheckQ(enemy) then
 		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,getdmg("Q",enemy) - Check,0xffffffff)
     else
           DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),GetBaseDamage(myHero) - Check,0,0xffffffff)
@@ -339,11 +339,11 @@ if Zilean.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCas
 end)	
 
 function CheckE(who)
-  return GotBuff(who, "TimeWarp")
+  return GotBuff(who, "TimeWarp") <= 0
 end
 
 function CheckQ(who)
-  return GotBuff(who, "zileanqenemybomb")
+  return GotBuff(who, "zileanqenemybomb") >= 1
 end
 
 PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.33: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
