@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.3 by Rudo.
-     Ver 0.3: Edit somethings and need DamageLib to it working.
+--[[ Rx Zilean Version 0.33 by Rudo.
+     Ver 0.33: Change somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -117,8 +117,8 @@ end, 1)
 
 OnProcessSpell(function(unit, spell)
     if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
-     if IsReady(_Q) or GotBuff(unit, "zileanqenemybomb") >= 1 then
-      if IsReady(_W) or GotBuff(unit, "zileanqenemybomb") >= 1 then
+     if IsReady(_Q) or CheckQ(unit) >= 1 then
+      if IsReady(_W) or CheckQ(unit) >= 1 then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
@@ -163,14 +163,14 @@ OnTick(function(myHero)
 		  elseif Al >= 1 and Al < Enm then
 		   if ally ~= myHero then
 		    if IsInDistance(ally, GetCastRange(myHero, _E)) then
-		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 160 and GotBuff(ClosestAlly(GetMousePos()), "TimeWarp") <= 0 then
+		     if GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) <= 160 and CheckE(ClosestAlly(GetMousePos())) <= 0 then
 		  CastTargetSpell(ClosestAlly(GetMousePos()), _E)
-		     elseif GetDistance(myHeroPos(), GetMousePos()) <= 160 and GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) > 160 and GotBuff(myHero, "TimeWarp") <= 0 then
+		     elseif GetDistance(myHeroPos(), GetMousePos()) <= 160 and GetDistance(ClosestAlly(GetMousePos()), GetMousePos()) > 160 and CheckE(myHero) <= 0 then
 		  CastTargetSpell(myHero, _E)
 		     end
 		    end
 		   end
-		  elseif Al <= 0 and IsInDistance(target, 1300) and GotBuff(myHero, "TimeWarp") <= 0 and not IsInDistance(target, 880)  then
+		  elseif Al <= 0 and IsInDistance(target, 1300) and CheckE(myHero) <= 0 and not IsInDistance(target, 880)  then
 		  CastTargetSpell(myHero, _E)
 		  end
 		 end
@@ -227,13 +227,13 @@ OnTick(function(myHero)
 if Zilean.AtSpell.ASEb:Value() then
   for i, enemy in pairs(GetEnemyHeroes()) do
  
-if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") <= 0 and GotBuff(myHero, "TimeWarp") <= 0 then
+if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") <= 0 and CheckE(myHero) <= 0 then
    CastTargetSpell(myHero, _E)
 end
 
 if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(mousePos()) end
 
-if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and GotBuff(enemy, "zileanqenemybomb") >= 1 then
+if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and CheckQ(enemy) >= 1 then
 local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,300,900,100,false,true)
 if QPred.HitChance >= 1 then
   CastSkillShot(_Q, QPred.PredPos)
@@ -262,7 +262,7 @@ if Zilean.KS.KSEb:Value() then
  end
 end
 
- 	------ Start Auto Level Up _Settings Full W or Full E first ------	
+ 	------ Start Auto Level Up _Settings Full Q or Full W first ------	
 if Zilean.AutoLvlUp.UpSpellEb:Value() then
   if Zilean.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First then W
   elseif Zilean.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _E , _E, _R, _E, _E, _W, _W, _R, _W, _W} -- Full Q First then E
@@ -328,7 +328,7 @@ if Zilean.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCas
 	for i, enemy in pairs(GetEnemyHeroes()) do
 		if ValidTarget(enemy) then
 		local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
-    if IsReady(_Q) or GotBuff(enemy, "zileanqenemybomb") >= 1 then
+    if IsReady(_Q) or CheckQ(enemy) >= 1 then
 		  DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,getdmg("Q",enemy) - Check,0xffffffff)
     else
           DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),GetBaseDamage(myHero) - Check,0,0xffffffff)
@@ -337,4 +337,13 @@ if Zilean.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCas
 	end
  end
 end)	
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.3: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+
+function CheckE(who)
+  return GotBuff(who, "TimeWarp")
+end
+
+function CheckQ(who)
+  return GotBuff(who, "zileanqenemybomb")
+end
+
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.33: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
