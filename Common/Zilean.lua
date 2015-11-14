@@ -281,7 +281,15 @@ function Zilean:KillSteal()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if Ignite and Zilean.KS.IgniteKS:Value() then
    if CanUseSpell(myHero, Ignite) == READY and 20*GetLevel(myHero)+50 > GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
-    if GotBuff(enemy, "zileanqenemybomb") <= 0 or getdmg("Q", enemy) < GetHP2(enemy) then CastTargetSpell(enemy, Ignite) end
+    local DmgCheck
+     if CheckQ(enemy) and getdmg("Q",enemy) >= GetHP2(enemy) then
+      DmgCheck = getdmg("Q",enemy)
+     elseif CheckQ(enemy) and getdmg("Q",enemy) < GetHP2(enemy) then
+      DmgCheck = 0
+     elseif getdmg("Q",enemy) >= GetHP2(enemy) and not CheckQ(enemy) then
+      DmgCheck = 0
+     end
+	  if DmgCheck < GetHP2(enemy) then CastTargetSpell(enemy, Ignite) end
    end
   end
 
