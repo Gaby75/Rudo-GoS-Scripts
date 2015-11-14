@@ -37,7 +37,7 @@ DelayAction(function()
   for i, spell in pairs(ANTI_SPELLS) do
     for _,k in pairs(GetEnemyHeroes()) do
         if spell["Name"] == GetObjectName(k) then
-		InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
+        InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
         InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
         end
     end
