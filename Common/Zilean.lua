@@ -27,7 +27,7 @@ ANTI_SPELLS = {
     ["Pantheon_GrandSkyfall_Jump"]  = {Name = "Pantheon",     Spellslot = _R},
     ["InfiniteDuress"]              = {Name = "Warwick",      Spellslot = _R}, 
     ["EzrealTrueshotBarrage"]       = {Name = "Ezreal",       Spellslot = _R}, 
-	["TahmKenchR"]                  = {Name = "Tahm Kench",   Spellslot = _R}, 
+    ["TahmKenchR"]                  = {Name = "Tahm Kench",   Spellslot = _R}, 
     ["VelKozR"]                     = {Name = "VelKoz",       Spellslot = _R}, 
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
