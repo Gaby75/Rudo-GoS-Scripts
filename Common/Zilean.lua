@@ -1,10 +1,24 @@
---[[ Rx Zilean Version 0.45 by Rudo.
-     Ver 0.4: Fixed some function
+--[[ Rx Zilean Version 0.5 by Rudo.
+     Ver 0.5: Fixed some function
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
-
+---- Script Update ----
 require('Inspired')
+local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
+local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
+local ScriptUpdate = "Zilean.lua"
+local CheckVersion
+local OldVersion = 0.45
+if OldVersion < tonumber(WebVersion) then
+CheckVersion = OldVersion
+end
+if CheckVersion < tonumber(WebVersion) then
+AutoUpdate(WebLuaFile,WebVersion,ScriptUpdate,CheckVersion)
+CheckVersion = 0.5 -- Newest Version
+OldVersion = OldVersion + 0.05
+end
+
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
@@ -37,7 +51,7 @@ DelayAction(function()
   for i, spell in pairs(ANTI_SPELLS) do
     for _,k in pairs(GetEnemyHeroes()) do
         if spell["Name"] == GetObjectName(k) then
-        InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
+		InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
         InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
         end
     end
