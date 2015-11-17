@@ -5,7 +5,7 @@
 
 ---- Script Update ----
 require('Inspired')
-local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
+--[[local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local CheckVersionFile = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000)))
 local ScriptUpdate = "Zilean.lua"
@@ -18,13 +18,13 @@ if CheckVersion < tonumber(CheckVersionFile) then
 AutoUpdate(WebLuaFile,WebVersion,ScriptUpdate,CheckVersion)
 CheckVersion = 0.5 -- Newest Version
 OldVersion = OldVersion + 0.05
-end
+end]]
 
---[[local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
+local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local LocalLua = "Zilean.lua"
 local LocalVersion = 0.45
-AutoUpdate(WebLuaFile,WebVersion,LocalLua,LocalVersion)]]
+AutoUpdate(WebLuaFile,WebVersion,LocalLua,LocalVersion)
 
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
