@@ -11,7 +11,7 @@ local ScriptName = "Zilean.lua"
 local OldVersion = 0.45 -- Must < WebVersion
 AutoUpdate(WebLuaFile,WebVersion,ScriptName,OldVersion)
 
----- Create a Menu ----
+---------------------------
 if GetObjectName(myHero) ~= "Zilean" then return end
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
@@ -43,6 +43,8 @@ class "Zilean"
 function Zilean:__init()
   OnTick(function(myHero) self:Fight(myHero) end)
   OnDraw(function(myHero) self:Draws(myHero) end)
+  
+---------- Create a Menu ----------
 Zilean = MenuConfig("Rx Zilean", "Zilean")
 tslowhp = TargetSelector(900, 8, DAMAGE_MAGIC) -- 8 = TARGET_LOW_HP
 Zilean:TargetSelector("ts", "Target Selector", tslowhp)
@@ -113,7 +115,7 @@ end
 ---------- End Menu ----------
 
 
--------------------------------------------------------Starting--------------------------------------------------------------
+-------------------------------------------------------Starting Funciton--------------------------------------------------------------
 
 function Zilean:Fight(myHero)
 	  
@@ -142,7 +144,7 @@ end
 function Zilean:CastQ(target)
 local target = tslowhp:GetTarget()
  if target and ValidTarget(target, 900) and IsObjectAlive(target) then
-  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true)
+  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,100,900,100,false,true)
    if QPred.HitChance >= 1 then
     CastSkillShot(_Q, QPred.PredPos)
    end
@@ -216,7 +218,7 @@ function Zilean:KillSteal()
   end
 
   if IsReady(_Q) and ValidTarget(enemy, 880) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) then
-    local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,300,900,100,false,true)
+    local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,100,900,100,false,true)
    if QPred.HitChance >= 1 then
     CastSkillShot(_Q,QPred.PredPos)
    end
@@ -227,7 +229,7 @@ end
 function Zilean:AutoQ(enemy)
  for i,enemy in pairs(GetEnemyHeroes()) do
   if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and CheckQ(enemy) then
-   local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,300,900,100,false,true)
+   local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,100,900,100,false,true)
     if QPred.HitChance >= 1 then
      CastSkillShot(_Q, QPred.PredPos)
     end
@@ -414,7 +416,7 @@ OnProcessSpell(function(unit, spell)
       if IsReady(_W) or CheckQ(unit) then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
+        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,100,900,100,false,true)
          if QPred.HitChance >= 1 then
          CastSkillShot(_Q, QPred.PredPos)
           if IsReady(_W) and not IsReady(_Q) then
