@@ -1,14 +1,14 @@
---[[ Rx Zilean Version 0.5 by Rudo.
-     Ver 0.5: Add AutoUpdate, Edit somethings.
+--[[ Rx Zilean Version 0.51 by Rudo.
+     Ver 0.51: Add AutoUpdate, fix and edit somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
 ---- Script Update ----
 require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
-local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version" -- Newest Version: 0.5
+local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version" -- Newest Version: 0.51
 local ScriptName = "Zilean.lua"
-local OldVersion = 0.45 -- < WebVersion
+local OldVersion = 0.5 -- < WebVersion
 AutoUpdate(WebLuaFile,WebVersion,ScriptName,OldVersion)
 
 ---------------------------
@@ -405,6 +405,8 @@ DelayAction(function()
     for _,k in pairs(GetEnemyHeroes()) do
         if spell["Name"] == GetObjectName(k) then
         InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
+		elseif spell["Name"] ~= GetObjectName(k) then
+		InterruptMenu:Info("InfoQ", "No enemy can Interrupt")
 		end
     end
   end
@@ -430,4 +432,4 @@ OnProcessSpell(function(unit, spell)
     end
 end)
 
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.5: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.51: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
