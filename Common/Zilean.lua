@@ -38,38 +38,6 @@ ANTI_SPELLS = {
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
 
-DelayAction(function()
-  local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
-  for i, spell in pairs(ANTI_SPELLS) do
-    for _,k in pairs(GetEnemyHeroes()) do
-        if spell["Name"] == GetObjectName(k) then
-		InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
-        InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
-        end
-    end
-  end
-end, 1)
-
-OnProcessSpell(function(unit, spell)
-    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
-     if IsReady(_Q) or CheckQ(unit) then
-      if IsReady(_W) or CheckQ(unit) then
-       if ANTI_SPELLS[spell.name] then
-        if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
-         if QPred.HitChance >= 1 then
-         CastSkillShot(_Q, QPred.PredPos)
-          if IsReady(_W) and not IsReady(_Q) then
-          CastSpell(_W)
-          end
-         end
-        end
-       end
-      end
-     end
-    end
-end)
-
 ----------------------------------------
 class "Zilean"
 function Zilean:__init()
@@ -205,6 +173,7 @@ end
 
 function Zilean:CastECb()
 local target = tslowhp:GetTarget()
+local unit = GetCurrentTarget()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if IsInDistance(enemy, 1300) then 
    for l, ally in pairs(GetAllyHeroes()) do
@@ -222,7 +191,7 @@ local target = tslowhp:GetTarget()
        end
       end
      end
-    elseif Al <= 0 and IsInDistance(enemy, 1300) and CheckE(myHero) and not IsInDistance(enemy, 880) then
+    elseif Al <= 0 and IsInDistance(unit, 1300) and CheckE(myHero) and not IsInDistance(unit, 880) then
       CastTargetSpell(myHero, _E)
     end
    end
@@ -362,7 +331,7 @@ function Zilean:DrawHP()
        else
         DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, minhp, per),21,alliesPos.x,alliesPos.y,0xffff0000)
        end
-       if NameCheck(enemy,Karthus) and GotBuff(myally, "karthusfallenonetarget") >= 1 and getdmg("Q",myally,NameCheck(enemy,Karthus)) >= GetHP2(myally) then
+       if GotBuff(myally, "karthusfallenonetarget") >= 1 and (GetCastLevel(myHero, _R)*150 + 100 + 0.60*BonusAP) >= GetHP2(myally) then
         DrawText("This Unit can die with Karthus R",22,alliesPos.x,alliesPos.y+12,0xffff0000)
        end
       end
@@ -377,7 +346,7 @@ function Zilean:DrawHP()
    if GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6 then
     DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh),21,myTextPos.x,myTextPos.y,0xffff0000)
    end
-   if NameCheck(enemy,Karthus) and GotBuff(myHero, "karthusfallenonetarget") >= 1 and getdmg("Q",myHero,NameCheck(enemy,Karthus)) >= GetHP2(myHero) then
+   if GotBuff(myHero, "karthusfallenonetarget") >= 1 and (GetCastLevel(myHero, _R)*150 + 100 + 0.60*BonusAP) >= GetHP2(myHero) then
     DrawText("Karthus R can 'KILL!' You",22,myTextPos.x,myTextPos.y+12,0xffff0000)
    end
   end
@@ -422,12 +391,41 @@ function CheckQ(who)
   return GotBuff(who, "zileanqenemybomb") >= 1
 end
 
-function NameCheck(target,name)
-  return GetObjectName(target) == "name"
-end
-
 if _G[GetObjectName(myHero)] then
   _G[GetObjectName(myHero)]()
 end
+--------------------------------------------------------------------------
+	InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
+	
+DelayAction(function()
+  local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
+  for i, spell in pairs(ANTI_SPELLS) do
+    for _,k in pairs(GetEnemyHeroes()) do
+        if spell["Name"] == GetObjectName(k) then
+        InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
+		end
+    end
+  end
+end, 1)
 
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.45: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+OnProcessSpell(function(unit, spell)
+    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and GetCurrentMana(myHero) >= 165 + 5*GetCastLevel(myHero, _Q) then
+     if IsReady(_Q) or CheckQ(unit) then
+      if IsReady(_W) or CheckQ(unit) then
+       if ANTI_SPELLS[spell.name] then
+        if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
+        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
+         if QPred.HitChance >= 1 then
+         CastSkillShot(_Q, QPred.PredPos)
+          if IsReady(_W) and not IsReady(_Q) then
+          CastSpell(_W)
+          end
+         end
+        end
+       end
+      end
+     end
+    end
+end)
+
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.5: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
