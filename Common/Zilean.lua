@@ -1,15 +1,15 @@
 --[[ Rx Zilean Version 0.5 by Rudo.
-     Ver 0.5: Fixed some function
+     Ver 0.5: Add AutoUpdate, Edit somethings.
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
 ---- Script Update ----
 require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
-local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
-local LocalLua = "Zilean.lua"
-local LocalVersion = 0.45
-AutoUpdate(WebLuaFile,WebVersion,LocalLua,LocalVersion)
+local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version" -- Newest Version: 0.5
+local ScriptName = "Zilean.lua"
+local OldVersion = 0.45 -- Must < WebVersion
+AutoUpdate(WebLuaFile,WebVersion,ScriptName,OldVersion)
 
 ---- Create a Menu ----
 if GetObjectName(myHero) ~= "Zilean" then return end
@@ -346,25 +346,29 @@ function Zilean:Range()
 end
 
 function Zilean:DrawHP()
- for l, myally in pairs(GetAllyHeroes()) do
-  if GetObjectName(myHero) ~= GetObjectName(myally) then	
-   if IsObjectAlive(myally) then
-    local alliesPos = WorldToScreen(1,GetOrigin(myally))
-    local maxhpA = GetMaxHP(myally)
-    local currhpA = GetCurrentHP(myally)
-    local percentA = 100*currhpA/maxhpA
-    local per = '%'
-	local minhp = math.max(1,percentA)
-     if GetLevel(myHero) >= 6 then
-      if percentA > 20 then
-       DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, minhp, per),18,alliesPos.x,alliesPos.y,0xffffffff)
-      else
-       DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, minhp, per),21,alliesPos.x,alliesPos.y,0xffff0000)
+ for i, enemy in pairs(GetEnemyHeroes()) do
+  for l, myally in pairs(GetAllyHeroes()) do
+   if GetObjectName(myHero) ~= GetObjectName(myally) then	
+    if IsObjectAlive(myally) then
+     local alliesPos = WorldToScreen(1,GetOrigin(myally))
+     local maxhpA = GetMaxHP(myally)
+     local currhpA = GetCurrentHP(myally)
+     local percentA = 100*currhpA/maxhpA
+     local per = '%'
+	 local minhp = math.max(1,percentA)
+      if GetLevel(myHero) >= 6 then
+       if percentA > 20 then
+        DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, minhp, per),18,alliesPos.x,alliesPos.y,0xffffffff)
+       else
+        DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, minhp, per),21,alliesPos.x,alliesPos.y,0xffff0000)
+       end
+       if GotBuff(myally, "karthusfallenonetarget") >= 1 and getdmg("Q",myally,(GetObjectName(enemy) == "Karthus")) >= GetHP2(myally) then
+        DrawText("This Unit can die with Karthus R",22,alliesPos.x,alliesPos.y+12,0xffff0000)
+       end
       end
      end
-    end
-   end	
-  end
+    end	
+   end
 
  local myTextPos = WorldToScreen(1,myHeroPos())
  local pmh = '%'
@@ -373,7 +377,11 @@ function Zilean:DrawHP()
    if GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6 then
     DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh),21,myTextPos.x,myTextPos.y,0xffff0000)
    end
-  end  
+   if GotBuff(myHero, "karthusfallenonetarget") >= 1 and getdmg("Q",myHero,(GetObjectName(enemy) == "Karthus")) >= GetHP2(myHero) then
+    DrawText("Karthus R can 'KILL!' You",22,myTextPos.x,myTextPos.y+12,0xffff0000)
+   end
+  end
+ end  
 end
 
 function Zilean:InfoR()
