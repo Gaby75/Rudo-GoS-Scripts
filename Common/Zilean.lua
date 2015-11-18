@@ -362,7 +362,7 @@ function Zilean:DrawHP()
        else
         DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), currhpA, maxhpA, per, minhp, per),21,alliesPos.x,alliesPos.y,0xffff0000)
        end
-       if GotBuff(myally, "karthusfallenonetarget") >= 1 and getdmg("Q",myally,(GetObjectName(enemy) == "Karthus")) >= GetHP2(myally) then
+       if NameCheck(enemy,Karthus) and GotBuff(myally, "karthusfallenonetarget") >= 1 and getdmg("Q",myally,NameCheck(enemy,Karthus)) >= GetHP2(myally) then
         DrawText("This Unit can die with Karthus R",22,alliesPos.x,alliesPos.y+12,0xffff0000)
        end
       end
@@ -377,7 +377,7 @@ function Zilean:DrawHP()
    if GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6 then
     DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh),21,myTextPos.x,myTextPos.y,0xffff0000)
    end
-   if GotBuff(myHero, "karthusfallenonetarget") >= 1 and getdmg("Q",myHero,(GetObjectName(enemy) == "Karthus")) >= GetHP2(myHero) then
+   if NameCheck(enemy,Karthus) and GotBuff(myHero, "karthusfallenonetarget") >= 1 and getdmg("Q",myHero,NameCheck(enemy,Karthus)) >= GetHP2(myHero) then
     DrawText("Karthus R can 'KILL!' You",22,myTextPos.x,myTextPos.y+12,0xffff0000)
    end
   end
@@ -420,6 +420,10 @@ end
 
 function CheckQ(who)
   return GotBuff(who, "zileanqenemybomb") >= 1
+end
+
+function NameCheck(target,name)
+  return GetObjectName(target) == "name"
 end
 
 if _G[GetObjectName(myHero)] then
