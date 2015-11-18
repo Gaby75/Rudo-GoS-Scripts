@@ -8,7 +8,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version" -- Newest Version: 0.5
 local ScriptName = "Zilean.lua"
-local OldVersion = 0.45 -- Must < WebVersion
+local OldVersion = 0.45 -- < WebVersion
 AutoUpdate(WebLuaFile,WebVersion,ScriptName,OldVersion)
 
 ---------------------------
