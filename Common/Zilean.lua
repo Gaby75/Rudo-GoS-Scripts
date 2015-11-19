@@ -1,10 +1,13 @@
 --[[ Rx Zilean Version 0.52 by Rudo.
-     Ver 0.52: Add AutoUpdate, fix and edit somethings
+     Ver 0.52: Fixed AutoUpdate and edit somethings.
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
----- Script Update ----
+---------------------------
+if GetObjectName(myHero) ~= "Zilean" then return end
 require('Inspired')
+
+---- Script Update ----
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
@@ -18,8 +21,6 @@ PrintChat(string.format("<font color='#FFFF26'>You are using newest Version. Don
 end
 PrintChat(string.format("<font color='#C926FF'>Script Current Version: %d | Newest Version: %d</font>", ScriptVersion, tonumber(CheckWebVer))) 
 
----------------------------
-if GetObjectName(myHero) ~= "Zilean" then return end
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
 ----------------------------------------
