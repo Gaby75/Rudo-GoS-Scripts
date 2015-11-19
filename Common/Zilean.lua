@@ -10,7 +10,7 @@ require('Inspired')
 ---- Script Update ----
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
-local ScriptName = "Zilean.lua" and "Common\\Zilean.lua"
+local ScriptName = "Zilean.lua"
 local ScriptVersion = 0.52 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
@@ -19,7 +19,7 @@ AutoUpdate(WebLuaFile,WebVersion,ScriptName,ScriptVersion)
 else
 PrintChat(string.format("<font color='#FFFF26'>You are using newest Version. Don't need to update</font>")) 
 end
-PrintChat(string.format("<font color='#C926FF'>Script Current Version: %s | Newest Version: %s</font>", ScriptVersion, tonumber(CheckWebVer))) 
+PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer))) 
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
