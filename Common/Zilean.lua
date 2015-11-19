@@ -1,15 +1,22 @@
---[[ Rx Zilean Version 0.51 by Rudo.
-     Ver 0.51: Add AutoUpdate, fix and edit somethings
+--[[ Rx Zilean Version 0.52 by Rudo.
+     Ver 0.52: Add AutoUpdate, fix and edit somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
 ---- Script Update ----
 require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
-local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version" -- Newest Version: 0.51
+local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local OldVersion = 0.5 -- It < WebVersion
-AutoUpdate(WebLuaFile,WebVersion,ScriptName,OldVersion)
+local ScriptVersion = 0.52 -- Newest Version
+local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Inspired >3
+if ScriptVersion < tonumber(CheckWebVer) then
+PrintChat(string.format("<font color='#FFFFFF'>Script need update.</font><font color='#99FFCC'> Waiting to AutoUpdate.</font>")) 
+AutoUpdate(WebLuaFile,WebVersion,ScriptName,ScriptVersion)
+else
+PrintChat(string.format("<font color='#FFFF26'>You are using newest Version. Don't need to update</font>")) 
+end
+PrintChat(string.format("<font color='#C926FF'>Script Current Version: %d | Newest Version: %d</font>", ScriptVersion, tonumber(CheckWebVer))) 
 
 ---------------------------
 if GetObjectName(myHero) ~= "Zilean" then return end
@@ -432,4 +439,4 @@ OnProcessSpell(function(unit, spell)
     end
 end)
 
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.51: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.52: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
