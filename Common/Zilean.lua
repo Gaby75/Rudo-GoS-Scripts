@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.533 by Rudo.
-     Ver 0.533: Edit some functions
+--[[ Rx Zilean Version 0.54 by Rudo.
+     Ver 0.54: Edit some things
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -11,7 +11,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local ScriptVersion = 0.533 -- Newest Version
+local ScriptVersion = 0.54 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting to AutoUpdate.</font>")) 
@@ -149,20 +149,20 @@ function Zilean:Fight(myHero)
 	  if Zilean.AutoLvlUp.UpSpellEb:Value() then self:LevelUp() end
 end
 
-function Zilean:CastQ(target)
-local target = tslowhp:GetTarget()
- if target and ValidTarget(target, 900) and IsObjectAlive(target) then
-  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,250,900,100,false,true)
-   if QPred.HitChance >= 1 then
-    CastSkillShot(_Q, QPred.PredPos)
-   end
- end
-end
-
 function Zilean:CastW()
 local target = tslowhp:GetTarget()
  if target and IsInDistance(target, 900) and not IsReady(_Q) then
  CastSpell(_W)
+ end
+end
+
+function Zilean:CastQ(target)
+local target = tslowhp:GetTarget()
+ if target and ValidTarget(target, 900) and IsObjectAlive(target) then
+  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true)
+   if QPred.HitChance >= 1 then
+    CastSkillShot(_Q, QPred.PredPos)
+   end
  end
 end
 
@@ -226,7 +226,7 @@ function Zilean:KillSteal()
   end
 
   if IsReady(_Q) and ValidTarget(enemy, 880) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) then
-    local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,250,900,100,false,true)
+    local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,200,900,100,false,true)
    if QPred.HitChance >= 1 then
     CastSkillShot(_Q,QPred.PredPos)
    end
@@ -237,7 +237,7 @@ end
 function Zilean:AutoQ(enemy)
  for i,enemy in pairs(GetEnemyHeroes()) do
   if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and CheckQ(enemy) then
-   local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,250,900,100,false,true)
+   local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,200,900,100,false,true)
     if QPred.HitChance >= 1 then
      CastSkillShot(_Q, QPred.PredPos)
     end
@@ -406,7 +406,7 @@ if _G[GetObjectName(myHero)] then
 end
 --------------------------------------------------------------------------
 	InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
-	InterruptMenu:Info("InfoQ", "If you don't see any ON/OFF = No enemy can Interrupt.")
+	InterruptMenu:Info("InfoQ", "If you don't see any ON/OFF => No enemy can Interrupt.")
 	
 DelayAction(function()
   local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
@@ -425,7 +425,7 @@ OnProcessSpell(function(unit, spell)
       if IsReady(_W) or CheckQ(unit) then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,250,900,100,false,true)
+        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
          if QPred.HitChance >= 1 then
          CastSkillShot(_Q, QPred.PredPos)
           if IsReady(_W) and not IsReady(_Q) then
@@ -439,4 +439,4 @@ OnProcessSpell(function(unit, spell)
     end
 end)
 
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.533: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version %s: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>", ScriptVersion)) 
