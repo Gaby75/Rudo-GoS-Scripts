@@ -1,5 +1,5 @@
 --[[ Rx AntiGank | MinimapHack
-     Ver 0.1: Released
+     Ver 0.2: Add test Jungle Gank
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -9,7 +9,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/MinimapHack.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/MinimapHack.version"
 local ScriptName = "MinimapHack.lua"
-local ScriptVersion = 0.1 -- Newest Version
+local ScriptVersion = 0.2 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting AutoUpdate.</font>")) 
