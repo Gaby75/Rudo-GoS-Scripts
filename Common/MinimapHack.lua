@@ -19,7 +19,7 @@ PrintChat(string.format("<font color='#FFFF26'>You are using newest Version. Don
 end
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 
-PrintChat("Credits to Deftsu for MapHack, Inspired for AutoUpdate and Feretofix for Draw Minimap") 
+PrintChat("Credits to Deftsu for MapHack, Inspired for AutoUpdate and Feretorix for Draw Minimap") 
 ---------------------------------------------------------------------
 local speed = 0
 local checktime = {}
@@ -53,7 +53,7 @@ OnDrawMinimap(function()
         if IsVisible(enemy) == false and IsDead(enemy) == false and check[i] ~= -1 and checktime ~= 0 then
           speed = GetMoveSpeed(enemy) * checktime[i]
            if speed >= MinimapHack.min:Value() and speed <= MinimapHack.max:Value() then
-          if MinimapHack.circle:Value() then DrawCircleMinimap(GetOrigin(enemy), speed, 0, 80, MinimapHack.col:Value()) end
+          if MinimapHack.circle:Value() then DrawCircleMinimap(GetOrigin(enemy), speed, 0, MinimapHack.QualiDraw:Value(), MinimapHack.col:Value()) end
 		   end
         end
     end
