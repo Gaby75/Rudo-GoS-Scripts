@@ -33,6 +33,7 @@ MinimapHack:ColorPick("col", "Setting Circle Color", {255, 153, 229, 255})
 MinimapHack:Slider("QualiDraw", "Circle Quality", 80, 1, 255, 1)
 MinimapHack:Slider("min", "Circle minium range", 300, 50, 1000, 10)
 MinimapHack:Slider("max", "Circle maximum range", 5400, 4500, 6500, 10)
+MinimapHack:Boolean("text", "Draw Text if found enemy have Smite", true)
 
 ------ Starting -------
 OnTick(function(myHero)
@@ -65,7 +66,7 @@ OnTick(function(myHero)
   for i, enemy in pairs(enemies) do
    if IsObjectAlive(enemy) and IsInDistance(enemy, 2000) then
     if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
-	 DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626)
+	 if MinimapHack.text:Value() then DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626) end
 	end
    end
   end
