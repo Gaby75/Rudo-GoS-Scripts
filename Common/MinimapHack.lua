@@ -26,6 +26,7 @@ local checktime = {}
 local check = {}
 local enemies = {}
 
+---- Create Menu -----
 MinimapHack = MenuConfig("Rx Minimap Hack", "MinimapHack")
 MinimapHack:Boolean("circle", "Enable Draw Circle", true)
 MinimapHack:ColorPick("col", "Setting Circle Color", {255, 153, 229, 255})
@@ -33,6 +34,7 @@ MinimapHack:Slider("QualiDraw", "Circle Quality", 80, 1, 255, 1)
 MinimapHack:Slider("min", "Circle minium range", 300, 50, 1000, 10)
 MinimapHack:Slider("max", "Circle maximum range", 5400, 4500, 6500, 10)
 
+------ Starting -------
 OnTick(function(myHero)
 enemies = GetEnemyHeroes()
   for i, enemy in pairs(enemies) do
@@ -59,4 +61,13 @@ OnDrawMinimap(function()
     end
 end)
 
+OnTick(function(myHero)
+  for i, enemy in pairs(enemies) do
+   if IsObjectAlive(enemy) and IsInDistance(enemy, 2000) then
+    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
+	 DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626)
+	end
+   end
+  end
+end)
 PrintChat(string.format("<font color='#FF0000'>Rx AntiGank | GoS MinimapHack </font><font color='#FFFF00'>Version %s: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>", ScriptVersion)) 
