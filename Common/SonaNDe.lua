@@ -27,7 +27,7 @@ Sona.cb:Boolean("QCB", "Use Q", true)
 Sona.cb:Boolean("WCB", "Use W", true)
 Sona.cb:Boolean("ECB", "Use E", true)
 tslowhp = TargetSelector(GetCastRange(myHero, _R), TARGET_LOW_HP, DAMAGE_MAGIC)
-Sona.cb:DropDown("RCB", "Choose your mode", 1, {"Can Hit x enemy", "Target Selection"})
+Sona.cb:DropDown("RCB", "Choose your R mode", 1, {"Can Hit x enemy", "Target Selection"})
 
 ---- Harass Menu ----
 Sona:Menu("hr", "Harass")
