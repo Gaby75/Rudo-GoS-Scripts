@@ -1,17 +1,15 @@
---[[ Rx Zilean Version 0.54 by Rudo.
-     Ver 0.54: Edit some things
+--[[ Rx Zilean Version 0.55 by Rudo.
+     Ver 0.55: Edit some things and now need IPrediction
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
+if GetObjectName(GetMyHero()) ~= "Zilean" then return end
 
----------------------------
-if GetObjectName(myHero) ~= "Zilean" then return end
 require('Inspired')
-
 ---- Script Update ----
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local ScriptVersion = 0.54 -- Newest Version
+local ScriptVersion = 0.55 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting to AutoUpdate.</font>")) 
@@ -24,6 +22,11 @@ PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><fo
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
 ----------------------------------------
+require('IPrediction')
+local QPred = { name = "ZileanQ", speed = 2000, delay = 0.25, range = 900, width = 100, collision = false, aoe = true, type = "circular"}
+QPrediction = IPrediction.Prediction(QPred)
+
+-----------------------
 require('DeftLib')
 require('DamageLib')
 -- Deftsu CHANELLING_SPELLS but no stop Varus Q and Fidd W
@@ -151,18 +154,18 @@ end
 
 function Zilean:CastW()
 local target = tslowhp:GetTarget()
- if target and IsInDistance(target, 900) and not IsReady(_Q) then
- CastSpell(_W)
+ if target and ValidTarget(target, 900) and IsInDistance(target, 900) and IsObjectAlive(target) then
+  CastSpell(_W)
  end
 end
 
 function Zilean:CastQ(target)
 local target = tslowhp:GetTarget()
  if target and ValidTarget(target, 900) and IsObjectAlive(target) then
-  local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),2000,200,900,100,false,true)
-   if QPred.HitChance >= 1 then
-    CastSkillShot(_Q, QPred.PredPos)
-   end
+ local hitchance, pos = QPrediction:Predict(target)
+  if hitchance > 2 then
+   CastSkillShot(_Q, pos)
+  end
  end
 end
 
@@ -170,8 +173,8 @@ function Zilean:Combo()
  if IsReady(_Q) and Zilean.cb.QCB:Value() then
     self:CastQ()
  end
-
- if IsReady(_W) and GetCurrentMana(myHero) >= 110 + 5*GetCastLevel(myHero, _Q) and Zilean.cb.WCB:Value() then
+ 
+ if IsReady(_W) and Zilean.cb.WCB:Value() and GetCurrentMana(myHero) >= 110 + 5*GetCastLevel(myHero, _Q) and not IsReady(_Q) then
     self:CastW()
  end
  
@@ -212,23 +215,23 @@ end
 function Zilean:KillSteal()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if Ignite and Zilean.KS.IgniteKS:Value() then
-   if CanUseSpell(myHero, Ignite) == READY and 20*GetLevel(myHero)+50 > GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
-    local DmgCheck
+   if IsReady(Ignite) and 20*GetLevel(myHero)+50 >= GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
+    local DmgCheck = 0
      if CheckQ(enemy) and getdmg("Q",enemy) >= GetHP2(enemy) then
-      DmgCheck = getdmg("Q",enemy)
+      DmgCheck = DmgCheck + getdmg("Q",enemy)
      elseif CheckQ(enemy) and getdmg("Q",enemy) < GetHP2(enemy) then
-      DmgCheck = 0
+      DmgCheck = DmgCheck + 0
      elseif getdmg("Q",enemy) >= GetHP2(enemy) and not CheckQ(enemy) then
-      DmgCheck = 0
+      DmgCheck = DmgCheck + 0
      end
 	  if DmgCheck < GetHP2(enemy) then CastTargetSpell(enemy, Ignite) end
    end
   end
 
-  if IsReady(_Q) and ValidTarget(enemy, 880) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) then
-    local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,200,900,100,false,true)
-   if QPred.HitChance >= 1 then
-    CastSkillShot(_Q,QPred.PredPos)
+  if IsReady(_Q) and ValidTarget(enemy, 900) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) then
+    local hitchance, pos = QPrediction:Predict(enemy)
+   if hitchance > 2 then
+   CastSkillShot(_Q, pos)
    end
   end
  end
@@ -236,11 +239,11 @@ end
 
 function Zilean:AutoQ(enemy)
  for i,enemy in pairs(GetEnemyHeroes()) do
-  if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 880) and CheckQ(enemy) then
-   local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),2000,200,900,100,false,true)
-    if QPred.HitChance >= 1 then
-     CastSkillShot(_Q, QPred.PredPos)
-    end
+  if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") <= 0 and ValidTarget(enemy, 900) and CheckQ(enemy) then
+  local hitchance, pos = QPrediction:Predict(enemy)
+   if hitchance > 2 then
+   CastSkillShot(_Q, pos)
+   end
   end
  end
 end
@@ -393,18 +396,10 @@ function Zilean:DmgHPBar()
  end
 end
 
-function CheckE(who)
-  return GotBuff(who, "TimeWarp") <= 0
-end
-
-function CheckQ(who)
-  return GotBuff(who, "zileanqenemybomb") >= 1
-end
-
 if _G[GetObjectName(myHero)] then
   _G[GetObjectName(myHero)]()
 end
---------------------------------------------------------------------------
+--------
 	InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
 	InterruptMenu:Info("InfoQ", "If you don't see any ON/OFF => No enemy can Interrupt.")
 	
@@ -425,9 +420,9 @@ OnProcessSpell(function(unit, spell)
       if IsReady(_W) or CheckQ(unit) then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-        local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),2000,200,900,100,false,true)
-         if QPred.HitChance >= 1 then
-         CastSkillShot(_Q, QPred.PredPos)
+        local hitchance, pos = QPrediction:Predict(unit)
+         if hitchance > 2 then
+         CastSkillShot(_Q, pos)
           if IsReady(_W) and not IsReady(_Q) then
           CastSpell(_W)
           end
@@ -438,5 +433,13 @@ OnProcessSpell(function(unit, spell)
      end
     end
 end)
+--------------------------------------------------------------------------
+function CheckE(who)
+  return GotBuff(who, "TimeWarp") <= 0
+end
+
+function CheckQ(who)
+  return GotBuff(who, "zileanqenemybomb") >= 1
+end
 
 PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version %s: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>", ScriptVersion)) 
