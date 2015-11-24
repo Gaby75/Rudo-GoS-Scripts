@@ -1,6 +1,6 @@
 --[[ Rx Sona Without deLibrary Version 0.1 by Rudo.
      0.1: Released
-	 Note: You will get error when start game and error will remove, that error function will working!
+     Note: You will get error when start game and error will remove, that error function will working!
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
