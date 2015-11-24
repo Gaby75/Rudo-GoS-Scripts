@@ -322,7 +322,7 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
     local Ally = AlliesAround(GetOrigin(myHero), 2100)
     local mytextPos = WorldToScreen(1, GetOrigin(myHero))
     DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
-    if Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",22,mytextPos.x,mytextPos.y+22,0xffff0000) end
+    if Sona.misc.checkteam:Value() and Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",22,mytextPos.x,mytextPos.y+22,0xffff0000) end
    end
    
    for i, enemy in pairs(GetEnemyHeroes()) do
