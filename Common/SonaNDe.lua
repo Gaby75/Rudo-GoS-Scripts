@@ -328,7 +328,7 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
    end
    
    for i, enemy in pairs(GetEnemyHeroes()) do
-    if ValidTarget(enemy, 2000) and IsVisible(enemy) then
+    if ValidTarget(enemy, 2500) and IsVisible(enemy) then
      if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
       if Sona.misc.smite:Value() then DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626) end
      end
