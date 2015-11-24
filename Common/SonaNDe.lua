@@ -1,5 +1,6 @@
 --[[ Rx Sona Without deLibrary Version 0.1 by Rudo.
      0.1: Released
+	 Note: You will get error when start game and error will remove, that function error will working!
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -18,6 +19,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 
 require('Inspired')
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version","SonaNDe.lua",0.1)
+PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired. </font>"))
 ---- Create a Menu ----
 Sona = MenuConfig("Rx Sona", "Sona")
 
