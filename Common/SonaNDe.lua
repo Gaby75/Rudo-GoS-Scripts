@@ -240,15 +240,15 @@ end
   for i, enemy in pairs(GetEnemyHeroes()) do
    if Ignite and Sona.KS.IgniteKS:Value() then
     if IsReady(Ignite) and 20*GetLevel(myHero)+50 >= GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
-     if GetObjectName(enemy) == GetObjectName(ClosestEnemy(GetOrigin(myHero))) then
       CastTargetSpell(enemy, Ignite)
-     end
     end
    end
   end
 
   if IsReady(_Q) and ValidTarget(enemy, 845) and Sona.KS.QKS:Value() and IsObjectAlive(enemy) and GetHP2(enemy) < getdmg("Q",enemy) then
-   if GetObjectName(enemy) == GetObjectName(ClosestEnemy(GetOrigin(myHero))) then
+  local name1 = ClosestEnemy(GetOrigin(myHero))
+  local name2 = ClosestEnemy(name1)
+   if GetObjectName(enemy) == GetObjectName(name1) or GetObjectName(enemy) == GetObjectName(name2) then
     CastSpell(_Q)
    end
   end
