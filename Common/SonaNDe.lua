@@ -60,7 +60,6 @@ Sona.KS:Boolean("KSEb", "Enable KillSteal", true)
 Sona.KS:Boolean("IgniteKS", "KS with Ignite", true)
 Sona.KS:Boolean("QKS", "KS with Q", true)
 PermaShow(Sona.KS.IgniteKS)
-PermaShow(Sona.KS.QKS)
 
 ---- Auto Level Up Menu ----
 Sona:Menu("AutoLvlUp", "Auto Level Up")
@@ -85,6 +84,14 @@ Sona.Draws:Slider("HPAllies", "Draw if %HP Ally <= x%", 40, 6, 70, 2)
 Sona.Draws:ColorPick("Alcol", "Circle Around Ally Color", {255, 173, 255, 47})
 PermaShow(Sona.Draws.DrawText)
 PermaShow(Sona.Draws.DrawCircleAlly)
+
+---- Misc Menu ----
+Sona:Menu("misc", "Misc")
+Sona.misc:Boolean("smite", "Check enemy have Smite", true)
+Sona.misc:Info("infoS", "It will draw text if find enemy have Smite in 2500 Range")
+Sona.misc:Boolean("checkteam", "Enable check ENEMY GANKING", true)
+Sona.misc:Info("infoteam", "This function will check human around you")
+Sona.misc:Info("infocteam", "If enemy team > your team then draw text 'GANKED!!'")
 
 Sona:Info("info3", "Use PActivator for Auto Items")
    
@@ -311,9 +318,20 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
    end 
    
    if IsObjectAlive(myHero) then
+    local Enm = EnemiesAround(GetOrigin(myHero), 4200)
+    local Ally = AlliesAround(GetOrigin(myHero), 2100)
     local mytextPos = WorldToScreen(1, GetOrigin(myHero))
     DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
-   end	
+    if Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",22,mytextPos.x,mytextPos.y+22,0xffff0000) end
+   end
+   
+   for i, enemy in pairs(GetEnemyHeroes()) do
+    if ValidTarget(enemy, 2000) and IsVisible(enemy) then
+     if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
+      if Sona.misc.smite:Value() then DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626) end
+     end
+    end
+   end
   end
   
   for i, enemy in pairs(GetEnemyHeroes()) do
