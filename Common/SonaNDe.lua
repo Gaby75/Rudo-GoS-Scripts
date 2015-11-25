@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.1 by Rudo.
-     0.1: Released
+--[[ Rx Sona Without deLibrary Version 0.2 by Rudo.
+     0.2: Edit some things.
      Note: You will get error when start game and error will remove, that error function will working!
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
@@ -18,8 +18,12 @@
 if GetObjectName(GetMyHero()) ~= "Sona" then return end
 
 require('Inspired')
-AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version","SonaNDe.lua",0.1)
-PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired. </font>"))
+local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
+local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
+local ScriptVersion = 0.2 -- Newest Version
+AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
+PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
+PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
 ---- Create a Menu ----
 Sona = MenuConfig("Rx Sona", "Sona")
 
@@ -28,9 +32,9 @@ Sona:Menu("cb", "Combo")
 Sona.cb:Boolean("QCB", "Use Q", true)
 Sona.cb:Boolean("WCB", "Use W", true)
 Sona.cb:Boolean("ECB", "Use E", true)
-tslowhp = TargetSelector(GetCastRange(myHero, _R), TARGET_LOW_HP, DAMAGE_MAGIC)
-Sona.cb:DropDown("RCB", "Choose your R mode", 1, {"Can Hit x enemy", "Target Selection"})
-
+Sona.cb:Boolean("RCB", "Enable use R in Combo", true)
+Sona.cb:Slider("RCBxEnm", "Use R if can hit x enemy", 2, 1, 5, 1)
+PermaShow(Sona.cb.RCB)
 ---- Harass Menu ----
 Sona:Menu("hr", "Harass")
 Sona.hr:Boolean("HrQ", "Use Q", true)
@@ -38,7 +42,7 @@ Sona.hr:Slider("HrMana", "Harass if %My MP >=", 20, 1, 100, 1)
 
 ---- Auto Spell Menu ----
 Sona:Menu("AtSpell", "Auto Spell")
-Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >=", 10, 1, 90, 1)
+Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >=", 15, 1, 90, 1)
 Sona.AtSpell:Menu("QAuto", "Auto Q")
 Sona.AtSpell.QAuto:Boolean("ASQ", "Enable", true)
 Sona.AtSpell:Menu("WAuto", "Auto W")
@@ -71,21 +75,25 @@ Sona.AutoLvlUp:DropDown("AutoSkillUp", "Settings", 1, {"Q-W-E", "W-Q-E"})
 ---- Drawings Menu ----
 Sona:Menu("Draws", "Drawings")
 Sona.Draws:Boolean("DrawsEb", "Enable Drawings", true)
-Sona.Draws:Slider("QualiDraw", "Quality Drawings", 110, 1, 255, 1)
-Sona.Draws:Boolean("DrawQ", "Range Q", true)
-Sona.Draws:ColorPick("Qcol", "Setting Q Color", {255, 30, 144, 255})
-Sona.Draws:Boolean("DrawW", "Range W", true)
-Sona.Draws:ColorPick("Wcol", "Setting W Color", {255, 124, 252, 0})
-Sona.Draws:Boolean("DrawE", "Range E", true)
-Sona.Draws:ColorPick("Ecol", "Setting E Color", {255, 155, 48, 255})
-Sona.Draws:Boolean("DrawR", "Range R", true)
-Sona.Draws:ColorPick("Rcol", "Setting R Color", {255, 248, 245, 120})
-Sona.Draws:Boolean("DrawText", "Draw Text", true)
-Sona.Draws:Boolean("DrawCircleAlly", "Draw Circle Around Ally", true)
-Sona.Draws:Slider("HPAllies", "Draw if %HP Ally <= x%", 40, 6, 70, 2)
-Sona.Draws:ColorPick("Alcol", "Circle Around Ally Color", {255, 173, 255, 47})
-PermaShow(Sona.Draws.DrawText)
-PermaShow(Sona.Draws.DrawCircleAlly)
+Sona.Draws:Slider("QualiDraw", "Circle Quality (Highest = 1)", 110, 1, 255, 1)
+Sona.Draws:Menu("Range", "Skills Range")
+Sona.Draws.Range:Boolean("DrawQ", "Range Q", true)
+Sona.Draws.Range:ColorPick("Qcol", "Setting Q Color", {255, 30, 144, 255})
+Sona.Draws.Range:Boolean("DrawW", "Range W", true)
+Sona.Draws.Range:ColorPick("Wcol", "Setting W Color", {255, 124, 252, 0})
+Sona.Draws.Range:Boolean("DrawE", "Range E", true)
+Sona.Draws.Range:ColorPick("Ecol", "Setting E Color", {255, 155, 48, 255})
+Sona.Draws.Range:Boolean("DrawR", "Range R", true)
+Sona.Draws.Range:ColorPick("Rcol", "Setting R Color", {255, 248, 245, 120})
+Sona.Draws:Menu("Texts", "Draw Text")
+Sona.Draws.Texts:Boolean("HPAlly", "Draw HP Ally", true)
+Sona.Draws.Texts:Boolean("WAlly", "Draw W Heal Ally", true)
+Sona.Draws.Texts:Boolean("WSmyH", "Draw W Heal and W Shiled myHero", true)
+Sona.Draws:Menu("CircleAlly", "Draw Circle Around Ally")
+Sona.Draws.CircleAlly:Boolean("DrawCircleAlly", "Enable draw circle ally", true)
+Sona.Draws.CircleAlly:Slider("HPAllies", "Draw if %HP Ally <= x%", 40, 6, 70, 2)
+Sona.Draws.CircleAlly:ColorPick("Alcol", "Circle Around Ally Color", {255, 173, 255, 47})
+PermaShow(Sona.Draws.CircleAlly.DrawCircleAlly)
 
 ---- Misc Menu ----
 Sona:Menu("misc", "Misc")
@@ -98,8 +106,6 @@ Sona.misc:Info("infocteam", "If enemy team > your team then draw text 'GANKED!!'
 Sona:Info("info3", "Use PActivator for Auto Items")
    
 ---------- End Menu ----------
-
-PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('IPrediction')
@@ -123,12 +129,12 @@ ANTI_SPELLS = {
     ["Pantheon_GrandSkyfall_Jump"]  = {Name = "Pantheon",     Spellslot = _R},
     ["InfiniteDuress"]              = {Name = "Warwick",      Spellslot = _R}, 
     ["EzrealTrueshotBarrage"]       = {Name = "Ezreal",       Spellslot = _R}, 
-    ["TahmKenchR"]                  = {Name = "TahmKench",   Spellslot = _R}, 
+    ["TahmKenchR"]                  = {Name = "TahmKench",    Spellslot = _R}, 
     ["VelKozR"]                     = {Name = "VelKoz",       Spellslot = _R}, 
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
 
-	InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
+	InterruptMenu = MenuConfig("R Stop Spell enemy", "Interrupt")
 	InterruptMenu:Info("InfoQ", "If you don't see any ON/OFF => No enemy can Interrupt.")
 DelayAction(function()
   local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
@@ -161,7 +167,6 @@ local ShieldW
 
 OnTick(function(myHero)
 local target = GetCurrentTarget()
-local unit = tslowhp:GetTarget()
 
  if IOW:Mode() == "Combo" then	
 	------ Start Combo ------
@@ -175,25 +180,13 @@ local unit = tslowhp:GetTarget()
 
   if IsReady(_R) then
    for i, enemy in pairs(GetEnemyHeroes()) do
-    if ValidTarget(enemy, 1000) and IsObjectAlive(enemy) then
-     if Sona.cb.RCB:Value() == 1 then
-	 Sona.cb:Slider("RCBxEnm", "Use R if can hit x enemy", 2, 1, 5, 1)
+    if Sona.cb.RCB:Value() and ValidTarget(enemy, 1000) and IsObjectAlive(enemy) then
+    local Enm = EnemiesAround2(GetOrigin(enemy),150)
+     if Enm >= Sona.cb.RCBxEnm:Value() then
      local hitchance, pos = QPrediction:Predict(enemy)
       if hitchance > 2 then
-      local Enm = EnemiesAround(GetOrigin(enemy), 150)
-       if 1+Enm >= Sona.cb.RCBxEnm:Value() then
         CastSkillShot(_R, pos)
-       end
       end
-     end
-    end
-   end
-   if Sona.cb.RCB:Value() ~= 1 and Sona.cb.RCB:Value() == 2 then
-   Sona:TargetSelector("ts", "Target Selector", tslowhp)
-    if unit and ValidTarget(unit, 1000) and IsObjectAlive(unit) then
-    local hitchance, pos = QPrediction:Predict(unit)
-     if hitchance > 2 then
-      CastSkillShot(_R, pos)
      end
     end
    end
@@ -221,7 +214,7 @@ end
    
    for l, ally in pairs(GetAllyHeroes()) do
     if IsReady(_W) and Sona.AtSpell.WAuto.ally.AllyEb:Value() then
-     if IsInDistance(enemy, 1250) then	   
+     if IsInDistance(enemy, 1250) and IsObjectAlive(enemy) then	   
       if IsInDistance(ally, GetCastRange(myHero, _W)) and GetPercentHP(ally) <= Sona.AtSpell.WAuto.ally.battlemode:Value() then
        CastSpell(_W)
       end
@@ -271,6 +264,8 @@ end
     local WHeal = WDmg + (WDmg*WCheck)/200
     local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
     HealWAlly[l] = math.min(WHeal, WMax)
+   else
+   HealWAlly[l] = 0
    end
   end
  end
@@ -291,30 +286,29 @@ end)
 OnDraw(function(myHero)
 	------ Start Drawings ------
  if Sona.Draws.DrawsEb:Value() then
-if Sona.Draws.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Qcol:Value()) end
-if Sona.Draws.DrawW:Value() and IsReady(_W) then DrawCircle(myHeroPos(),GetCastRange(myHero,_W),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Wcol:Value()) end
-if Sona.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),2,Sona.Draws.QualiDraw:Value(),Sona.Draws.Ecol:Value()) end
-if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastRange(myHero,_R),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Rcol:Value()) end
-  if Sona.Draws.DrawCircleAlly:Value() then
+if Sona.Draws.Range.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Qcol:Value()) end
+if Sona.Draws.Range.DrawW:Value() and IsReady(_W) then DrawCircle(myHeroPos(),GetCastRange(myHero,_W),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Wcol:Value()) end
+if Sona.Draws.Range.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),2,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Ecol:Value()) end
+if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastRange(myHero,_R),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Rcol:Value()) end
+  if Sona.Draws.CircleAlly.DrawCircleAlly:Value() then
    for l, ally in pairs(GetAllyHeroes()) do
-    if GetObjectName(myHero) ~= GetObjectName(ally) then	
-     if IsObjectAlive(ally) then
-      if GetPercentHP(ally) <= Sona.Draws.HPAllies:Value() then
-       DrawCircle(GetOrigin(ally), 1000, 1, Sona.Draws.QualiDraw:Value(), Sona.Draws.Alcol:Value())
+    if GetObjectName(myHero) ~= GetObjectName(ally) then
+     if IsObjectAlive(ally) and IsInDistance(ally, 2500) then	
+      if GetPercentHP(ally) <= Sona.Draws.CircleAlly.HPAllies:Value() then
+       DrawCircle(GetOrigin(ally), 1000, 1, Sona.Draws.QualiDraw:Value(), Sona.Draws.CircleAlly.Alcol:Value())
       end
      end
     end
    end
   end
   
-  if Sona.Draws.DrawText:Value() then
    for l, ally in pairs(GetAllyHeroes()) do
     if GetObjectName(myHero) ~= GetObjectName(ally) then	
      if IsObjectAlive(ally) then
       local AllyTextPos = WorldToScreen(1, GetOrigin(ally))
       local perc = '%'
-      DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(ally), GetCurrentHP(ally), GetMaxHP(ally), perc, GetPercentHP(ally), perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff)
-      DrawText(string.format("Heal of W = %d HP", HealWAlly[l]),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff)
+      if Sona.Draws.Texts.HPAlly:Value() then DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(ally), GetCurrentHP(ally), GetMaxHP(ally), perc, GetPercentHP(ally), perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff) end 
+      if Sona.Draws.Texts.WAlly:Value() then DrawText(string.format("Heal of W = %d HP", HealWAlly[l]),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff) end
      end
     end
    end 
@@ -323,8 +317,8 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
     local Enm = EnemiesAround(GetOrigin(myHero), 4000)
     local Ally = AlliesAround(GetOrigin(myHero), 2500)
     local mytextPos = WorldToScreen(1, GetOrigin(myHero))
-    DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff)
-    if Sona.misc.checkteam:Value() and Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",22,mytextPos.x,mytextPos.y+22,0xffff0000) end
+    if Sona.Draws.Texts.WSmyH:Value() then DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff) end
+    if Sona.misc.checkteam:Value() and Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",23,mytextPos.x,mytextPos.y+22,0xffff0000) end
    end
    
    for i, enemy in pairs(GetEnemyHeroes()) do
@@ -334,7 +328,6 @@ if Sona.Draws.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastR
      end
     end
    end
-  end
   
   for i, enemy in pairs(GetEnemyHeroes()) do
    if ValidTarget(enemy) then
