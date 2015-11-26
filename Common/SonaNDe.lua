@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.25 by Rudo.
-     0.25: Edit and fix some things
+--[[ Rx Sona Without deLibrary Version 0.26 by Rudo.
+     0.26: Edit and fix some things
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.25 -- Current Version
+local ScriptVersion = 0.26 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
@@ -97,7 +97,7 @@ PermaShow(Sona.Draws.CircleAlly.DrawCircleAlly)
 ---- Misc Menu ----
 Sona:Menu("misc", "Misc")
 Sona.misc:Boolean("smite", "Check enemy have Smite", true)
-Sona.misc:Info("infoS", "It will draw text if find enemy have Smite in 2500 Range")
+Sona.misc:Info("infoS", "It will draw text if found enemy have Smite in 2500 Range")
 Sona.misc:Boolean("checkteam", "Enable check ENEMY GANKING", true)
 Sona.misc:Info("infoteam", "This function will check human around you in 4000 range")
 Sona.misc:Info("infocteam", "If enemy team > your team then draw text 'GANKED!!'")
