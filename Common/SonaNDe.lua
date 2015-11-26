@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.2 by Rudo.
-     0.2: Edit some things.
+--[[ Rx Sona Without deLibrary Version 0.25 by Rudo.
+     0.25: Edit and fix error when game start
      Note: You will get error when start game and error will remove, that error function will working!
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.2 -- Newest Version
+local ScriptVersion = 0.25 -- Newest Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
@@ -163,7 +163,9 @@ end)
 local BonusAP = GetBonusAP(myHero)
 local HealWAlly = {}
 local HealWMH
-local ShieldW
+local ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
+local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
+local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
 
 OnTick(function(myHero)
 local target = GetCurrentTarget()
@@ -177,6 +179,13 @@ local target = GetCurrentTarget()
   if IsReady(_W) and ValidTarget(target, 1000) and Sona.cb.WCB:Value() and (GetCurrentHP(myHero) + 10 + 20*GetCastLevel(myHero, _W)) <= GetMaxHP(myHero) then
    CastSpell(_W)
   end
+  
+  if IsReady(_E) and ValidTarget(target, 1500) and Sona.cb.ECB:Value() then
+   if AlliesAround(myHero, GetCastRange(myHero, _E)) >= 1 or not IsInDistance(target, 850) then
+    CastSpell(_E)
+   end
+  end
+ end
 
   if IsReady(_R) then
    for i, enemy in pairs(GetEnemyHeroes()) do
@@ -260,9 +269,7 @@ end
   if GetObjectName(myHero) ~= GetObjectName(ally) then	
    if IsObjectAlive(ally) then
     local WCheck = 100 - GetPercentHP(ally)
-    local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
     local WHeal = WDmg + (WDmg*WCheck)/200
-    local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
     HealWAlly[l] = math.min(WHeal, WMax)
    else
    HealWAlly[l] = 0
@@ -271,11 +278,10 @@ end
  end
    if IsObjectAlive(myHero) then
     local CheckW = 100 - GetPercentHP(myHero)
-    local DmgW = 10 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
-    local HealW = DmgW + (DmgW*CheckW)/200
-    local MaxW = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
-    HealWMH = math.min(HealW, MaxW)
-    ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
+    local HealW = WDmg + (WDmg*CheckW)/200
+    HealWMH = math.min(HealW, WMax)
+   else
+   HealWMH = 0
    end
 --- end OnTick ---
 end)
@@ -308,7 +314,7 @@ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),Ge
       local AllyTextPos = WorldToScreen(1, GetOrigin(ally))
       local perc = '%'
       if Sona.Draws.Texts.HPAlly:Value() then DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(ally), GetCurrentHP(ally), GetMaxHP(ally), perc, GetPercentHP(ally), perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff) end 
-      if Sona.Draws.Texts.WAlly:Value() then DrawText(string.format("Heal of W = %d HP", HealWAlly[l]),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff) end
+      if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WAlly:Value() then DrawText(string.format("Heal of W = %d HP", HealWAlly[l]),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff) end
      end
     end
    end 
@@ -317,7 +323,7 @@ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),Ge
     local Enm = EnemiesAround(GetOrigin(myHero), 4000)
     local Ally = AlliesAround(GetOrigin(myHero), 2500)
     local mytextPos = WorldToScreen(1, GetOrigin(myHero))
-    if Sona.Draws.Texts.WSmyH:Value() then DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff) end
+    if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WSmyH:Value() then DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff) end
     if Sona.misc.checkteam:Value() and Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",23,mytextPos.x,mytextPos.y+22,0xffff0000) end
    end
    
