@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.55 by Rudo.
-     Ver 0.55: Edit some things and now need IPrediction
+--[[ Rx Zilean Version 0.56 by Rudo.
+     Ver 0.56: Fixed don't combo
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 if GetObjectName(GetMyHero()) ~= "Zilean" then return end
@@ -9,7 +9,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local ScriptVersion = 0.55 -- Newest Version
+local ScriptVersion = 0.56 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting to AutoUpdate.</font>")) 
@@ -23,7 +23,7 @@ PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#5
 
 ----------------------------------------
 require('IPrediction')
-local QPred = { name = "ZileanQ", speed = 2000, delay = 0.25, range = 900, width = 100, collision = false, aoe = true, type = "circular"}
+local QPred = { name = "ZileanQ", speed = math.huge, delay = 0.5, range = 900, width = 120, collision = false, aoe = true, type = "circular"}
 QPrediction = IPrediction.Prediction(QPred)
 
 -----------------------
@@ -44,7 +44,7 @@ ANTI_SPELLS = {
     ["Pantheon_GrandSkyfall_Jump"]  = {Name = "Pantheon",     Spellslot = _R},
     ["InfiniteDuress"]              = {Name = "Warwick",      Spellslot = _R}, 
     ["EzrealTrueshotBarrage"]       = {Name = "Ezreal",       Spellslot = _R}, 
-    ["TahmKenchR"]                  = {Name = "Tahm Kench",   Spellslot = _R}, 
+    ["TahmKenchR"]                  = {Name = "TahmKench",   Spellslot = _R}, 
     ["VelKozR"]                     = {Name = "VelKoz",       Spellslot = _R}, 
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
@@ -252,7 +252,7 @@ function Zilean:AutoE()
  if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") <= 0 and CheckE(myHero) then
    CastTargetSpell(myHero, _E)
  end
-  if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(mousePos()) end
+  if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(GetMousePos()) end
 end
 
 function Zilean:Harass()
@@ -442,4 +442,4 @@ function CheckQ(who)
   return GotBuff(who, "zileanqenemybomb") >= 1
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version %s: Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>", ScriptVersion)) 
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
