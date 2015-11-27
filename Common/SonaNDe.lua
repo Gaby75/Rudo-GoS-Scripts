@@ -19,7 +19,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.26 -- Current Version
+local ScriptVersion = 0.261 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
@@ -221,7 +221,7 @@ end
    end
    
    for l, ally in pairs(GetAllyHeroes()) do
-    if IsReady(_W) and Sona.AtSpell.WAuto.ally.AllyEb:Value() then
+    if IsReady(_W) and Sona.AtSpell.WAuto.ally.AllyEb:Value() and IsObjectAlive(ally) then
      if IsInDistance(enemy, 1250) and IsObjectAlive(enemy) then	   
       if IsInDistance(ally, GetCastRange(myHero, _W)) and GetPercentHP(ally) <= Sona.AtSpell.WAuto.ally.battlemode:Value() then
        CastSpell(_W)
