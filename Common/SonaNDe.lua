@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.26 by Rudo.
-     0.26: Edit and fix some things
+--[[ Rx Sona Without deLibrary Version 0.261 by Rudo.
+     0.261: fixed spam W
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
