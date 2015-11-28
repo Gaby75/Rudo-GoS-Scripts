@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.56 by Rudo.
-     Ver 0.56: Fixed don't combo
+--[[ Rx Zilean Version 0.57 by Rudo.
+     Ver 0.57: Edit somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 if GetObjectName(GetMyHero()) ~= "Zilean" then return end
@@ -9,7 +9,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local ScriptVersion = 0.56 -- Newest Version
+local ScriptVersion = 0.57 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting to AutoUpdate.</font>")) 
@@ -23,7 +23,7 @@ PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#5
 
 ----------------------------------------
 require('IPrediction')
-local QPred = { name = "ZileanQ", speed = math.huge, delay = 0.5, range = 900, width = 120, collision = false, aoe = true, type = "circular"}
+local QPred = { name = "ZileanQ", speed = math.huge, delay = 0.5, range = 900, width = 100, collision = false, aoe = true, type = "circular"}
 QPrediction = IPrediction.Prediction(QPred)
 
 -----------------------
@@ -44,7 +44,7 @@ ANTI_SPELLS = {
     ["Pantheon_GrandSkyfall_Jump"]  = {Name = "Pantheon",     Spellslot = _R},
     ["InfiniteDuress"]              = {Name = "Warwick",      Spellslot = _R}, 
     ["EzrealTrueshotBarrage"]       = {Name = "Ezreal",       Spellslot = _R}, 
-    ["TahmKenchR"]                  = {Name = "TahmKench",   Spellslot = _R}, 
+    ["TahmKenchR"]                  = {Name = "TahmKench",    Spellslot = _R}, 
     ["VelKozR"]                     = {Name = "VelKoz",       Spellslot = _R}, 
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
@@ -228,10 +228,13 @@ function Zilean:KillSteal()
    end
   end
 
-  if IsReady(_Q) and ValidTarget(enemy, 900) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) then
+  if IsReady(_Q) and Zilean.KS.QKS:Value() and GetHP2(enemy) <= getdmg("Q",enemy) and ValidTarget(enemy, 900) and IsObjectAlive(enemy) then
     local hitchance, pos = QPrediction:Predict(enemy)
    if hitchance > 2 then
    CastSkillShot(_Q, pos)
+   end
+   if IsReady(_W) and GetCurrentMana(myHero) >= 110 + 5*GetCastLevel(myHero, _Q) and not IsReady(_Q) then
+    CastSpell(_W)
    end
   end
  end
