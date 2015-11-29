@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.261 by Rudo.
-     0.261: fixed spam W
+--[[ Rx Sona Without deLibrary Version 0.3 by Rudo.
+     0.3: Add LastHit Q
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.261 -- Current Version
+local ScriptVersion = 0.3 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
@@ -34,10 +34,17 @@ Sona.cb:Boolean("ECB", "Use E", true)
 Sona.cb:Boolean("RCB", "Enable use R in Combo", true)
 Sona.cb:Slider("RCBxEnm", "Use R if can hit x enemy", 2, 1, 5, 1)
 PermaShow(Sona.cb.RCB)
+
 ---- Harass Menu ----
 Sona:Menu("hr", "Harass")
 Sona.hr:Boolean("HrQ", "Use Q", true)
 Sona.hr:Slider("HrMana", "Harass if %My MP >=", 20, 1, 100, 1)
+
+---- LastHit Menu ----
+Sona:Menu("lh", "Last Hit")
+Sona.lh:Boolean("LasthitQ", "Enable Q LastHit", true)
+Sona.lh:Slider("LhMana", "LastHit if %My MP >=", 20, 1, 100, 1)
+PermaShow(Sona.lh.LasthitQ)
 
 ---- Auto Spell Menu ----
 Sona:Menu("AtSpell", "Auto Spell")
@@ -172,7 +179,7 @@ local target = GetCurrentTarget()
 
  if IOW:Mode() == "Combo" then	
 	------ Start Combo ------
-  if IsReady(_Q) and ValidTarget(target, 820) and IsObjectAlive(target) and Sona.cb.QCB:Value() then
+  if IsReady(_Q) and ValidTarget(target, 822) and IsObjectAlive(target) and Sona.cb.QCB:Value() then
    CastSpell(_Q)
   end
   
@@ -204,15 +211,33 @@ end
 					
  if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Sona.hr.HrMana:Value() then
     ------ Start Harass ------
-  if IsReady(_Q) and ValidTarget(target, 820) and IsObjectAlive(target) and Sona.hr.HrQ:Value() then
+  if IsReady(_Q) and ValidTarget(target, 822) and IsObjectAlive(target) and Sona.hr.HrQ:Value() then
    CastSpell(_Q)
   end	
  end
-	
+
+ if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Sona.lh.LhMana:Value() then
+    ------ Start LastHit ------
+  for I = 1, minionManager.maxObjects do
+  local minion = minionManager.objects[I]
+   if IsReady(_Q) and IsInDistance(minion, GetCastRange(myHero, _Q)) and Sona.lh.LasthitQ:Value() then 
+   local closest = ClosestMinion(myHeroPos(), MINION_ENEMY)
+   local closestagain = ClosestMinion(GetOrigin(closest), MINION_ENEMY)
+    if EnemiesAround(myHeroPos(), 825) <= 1 and GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, 40*GetCastLevel(myHero,_Q) + 0.5*BonusAP + Ludens()) and IsObjectAlive(closest) then
+      CastSpell(_Q)
+    elseif EnemiesAround(myHeroPos(), 825) <= 0 and IsObjectAlive(closestagain) then
+     if GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, QDmg) or GetCurrentHP(closestagain) <= CalcDamage(myHero, closestagain, 0, 40*GetCastLevel(myHero,_Q) + 0.5*BonusAP + Ludens()) then
+      CastSpell(_Q)
+     end
+    end
+   end
+  end
+ end
+ 
  if GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Value() and GotBuff(myHero, "recall") <= 0 then
     ------ Start Auto Spell ------
   for i, enemy in pairs(GetEnemyHeroes()) do				  
-   if IsReady(_Q) and ValidTarget(enemy, 820) and Sona.AtSpell.QAuto.ASQ:Value() then
+   if IsReady(_Q) and ValidTarget(enemy, 823) and Sona.AtSpell.QAuto.ASQ:Value() then
     CastSpell(_Q)
    end
 
@@ -246,9 +271,9 @@ end
    end
   end
 
-  if IsReady(_Q) and ValidTarget(enemy, 820) and Sona.KS.QKS:Value() and IsObjectAlive(enemy) and GetHP2(enemy) < getdmg("Q",enemy) then
+  if IsReady(_Q) and ValidTarget(enemy, 822) and Sona.KS.QKS:Value() and IsObjectAlive(enemy) and GetHP2(enemy) < getdmg("Q",enemy) then
   local name1 = ClosestEnemy(myHeroPos())
-  local name2 = ClosestEnemy(name1)
+  local name2 = ClosestEnemy(GetOrigin(name1))
    if GetObjectName(enemy) == GetObjectName(name1) or GetObjectName(enemy) == GetObjectName(name2) then
     CastSpell(_Q)
    end
@@ -328,7 +353,7 @@ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),Ge
    end
    
    for i, enemy in pairs(GetEnemyHeroes()) do
-    if ValidTarget(enemy, 2500) and IsVisible(enemy) then
+    if ValidTarget(enemy, 2500) and IsObjectAlive(enemy) then
      if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
       if Sona.misc.smite:Value() then DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626) end
      end
