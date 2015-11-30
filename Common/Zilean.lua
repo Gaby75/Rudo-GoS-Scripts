@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.57 by Rudo.
-     Ver 0.57: Edit somethings
+--[[ Rx Zilean Version 0.571 by Rudo.
+     Ver 0.571: Edit somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 if GetObjectName(GetMyHero()) ~= "Zilean" then return end
@@ -9,7 +9,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local ScriptVersion = 0.57 -- Newest Version
+local ScriptVersion = 0.571 -- Newest Version
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting to AutoUpdate.</font>")) 
