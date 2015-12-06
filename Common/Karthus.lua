@@ -9,7 +9,7 @@ if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.1 -- Current Version
+local ScriptVersion = 0.11 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
@@ -28,7 +28,7 @@ Karthus.cb:Boolean("ECB", "Use E", true)
 ---- Harass Menu ----
 Karthus:Menu("hr", "Harass")
 Karthus.hr:Boolean("HrQ", "Use Q", true)
-Karthus.hr:Slider("HrMana", "Enable Harass if My %MP >", 30, 0, 100, 1)
+Karthus.hr:Slider("HrMana", "Enable Harass if %My MP >=", 30, 0, 100, 1)
 
 ---- Lane Clear Menu ----
 Karthus:Menu("FreezeLane", "Lane Clear")
@@ -136,7 +136,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
     if GetCurrentHP(creeps) < CalcDamage(myHero, creeps, GetBaseDamage(myHero), CheckQDmg) +8+4*GetLevel(myHero) then
 	local Checkmnos = MinionsAround(GetOrigin(creeps), 190, MINION_ENEMY)
     local Enm = EnemiesAround(GetOrigin(creeps), 190)
-    local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/math.random(2215,2255))
+    local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/math.random(2220,2300))
     local DmgCheck
     if Checkmnos >= 2 and Enm >= 1 then
 	  DmgCheck = CheckQDmg/2
@@ -185,10 +185,10 @@ if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:V
  for i=1, minionManager.maxObjects do
  local minions = minionManager.objects[i]
   if GetTeam(minions) ~= GetTeam(myHero) and IsInRange(minions, GetCastRange(myHero,_Q)) then
-  local Checkmnos = MinionsAround(GetOrigin(minions), 190, MINION_ENEMY)
-  local Enm = EnemiesAround(GetOrigin(minions), 190)
    if IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
-   local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/math.random(2215,2255))
+   local Checkmnos = MinionsAround(GetOrigin(minions), 190, MINION_ENEMY)
+   local Enm = EnemiesAround(GetOrigin(minions), 190)
+   local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/math.random(2220,2300))
    local DmgCheck
     if Checkmnos >= 2 and Enm >= 1 then
 	  DmgCheck = CheckQDmg/2
@@ -232,9 +232,9 @@ end
  if GetLevel(myHero) == 1 then
 	LevelSpell(_Q)
 elseif GetLevel(myHero) == 2 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) == 3 then
 	LevelSpell(_E)
+elseif GetLevel(myHero) == 3 then
+	LevelSpell(_W)
 elseif GetLevel(myHero) == 4 then
         LevelSpell(_Q)
 elseif GetLevel(myHero) == 5 then
@@ -318,7 +318,8 @@ if Karthus.Draws.Texts.DrawTexts:Value() then
 			
   if GetLevel(myHero) >= 6 and IsObjectAlive(myHero) then
    local myTextPos = WorldToScreen(1,myHeroPos())
-   if Karthus.Draws.Texts.DamageR:Value() then local RDmg = GetCastLevel(myHero, _R)*150 + 100 + 0.60*GetBonusAP(myHero) + Ludens()
+   if Karthus.Draws.Texts.DamageR:Value() then
+    local RDmg = GetCastLevel(myHero, _R)*150 + 100 + 0.60*GetBonusAP(myHero) + Ludens()
     DrawText(string.format("Damage R = %d Dmg", RDmg),16,myTextPos.x,myTextPos.y,0xffffffff) end
    if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) then
     if ValidTarget(enemy) then
