@@ -1,7 +1,7 @@
 --[[Rx Karthus by Rudo
     Version 0.1: Released
     Go to http://gamingonsteroids.com To Download more script.
-    Thanks Deftsu for some Code and DeftLib. Thank Cloud for Karthus Plugin. Thank Inspired for help me in shoul
+    Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
 
 if GetObjectName(myHero) ~= "Karthus" then return end
@@ -13,8 +13,6 @@ local ScriptVersion = 0.1 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
-
-require('IPrediction')
 
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
