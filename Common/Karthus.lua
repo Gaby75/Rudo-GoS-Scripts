@@ -4,7 +4,7 @@
     Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
 
-if GetObjectName(myHero) ~= "Karthus" then return end
+if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
