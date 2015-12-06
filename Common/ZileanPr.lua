@@ -51,7 +51,7 @@ ANTI_SPELLS = {
 
 ---------- Create a Menu ----------
 Zilean = MenuConfig("Rx Zilean", "Zilean")
-tslowhp = TargetSelector(900, 8, DAMAGE_MAGIC) -- 8 = TARGET_LOW_HP
+tslowhp = TargetSelector(900, TARGET_MOST_AD, DAMAGE_MAGIC)
 Zilean:TargetSelector("ts", "Target Selector", tslowhp)
 
 ---- Combo ----
