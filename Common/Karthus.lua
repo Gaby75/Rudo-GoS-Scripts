@@ -1,5 +1,5 @@
---[[Rx Karthus version 0.121 by Rudo
-    Version 0.121: edit somethings. Recommend Farm: LastHit > LaneClear
+--[[Rx Karthus version 0.122 by Rudo
+    Version 0.122: edit somethings. Recommend Farm: LastHit > LaneClear
     Go to http://gamingonsteroids.com To Download more script.
     Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
@@ -9,8 +9,8 @@ if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.121 -- Current Version
-AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
+local ScriptVersion = 0.122 -- Current Version
+AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",0.122)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
@@ -97,7 +97,7 @@ require('Deftlib')
 require('DamageLib')
 
 OnTick(function(myHero)
-local CheckQDmg = 2*(GetCastLevel(myHero, _Q)*20 + 20 + 0.30*GetBonusAP(myHero))
+local CheckQDmg = GetCastLevel(myHero, _Q)*40 + 40 + 0.6*GetBonusAP(myHero)
 	------ Start Combo ------
 local target = tslowhp:GetTarget()
  if target then
@@ -136,7 +136,7 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
     if GetCurrentHP(creeps) < CalcDamage(myHero, creeps, GetBaseDamage(myHero), CheckQDmg) +8+4*GetLevel(myHero) then
 	local Checkmnos = MinionsAround(GetOrigin(creeps), 190, MINION_ENEMY)
     local Enm = EnemiesAround(GetOrigin(creeps), 190)
-    local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/math.random(2220,2300))
+    local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/math.random(2100,2225))
     local DmgCheck
     if Checkmnos >= 2 and Enm >= 1 then
 	  DmgCheck = CheckQDmg/2
@@ -187,7 +187,7 @@ if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:V
    if IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
    local Checkmnos = MinionsAround(GetOrigin(minions), 190, MINION_ENEMY)
    local Enm = EnemiesAround(GetOrigin(minions), 190)
-   local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/math.random(2220,2300))
+   local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/math.random(2100,2225))
    local DmgCheck
     if Checkmnos >= 2 and Enm >= 1 then
 	  DmgCheck = CheckQDmg/2
@@ -315,15 +315,14 @@ if Karthus.Draws.Texts.DrawTexts:Value() then
    end
   end
 			
-  if GetLevel(myHero) >= 6 and IsObjectAlive(myHero) then
-   local myTextPos = WorldToScreen(1,myHeroPos())
+  if GetCastLevel(myHero, _R) >= 1 and IsObjectAlive(myHero) then
+   local myTextPos = WorldToScreen(1,GetOrigin(myHero))
    if Karthus.Draws.Texts.DamageR:Value() then
     local RDmg = GetCastLevel(myHero, _R)*150 + 100 + 0.60*GetBonusAP(myHero) + Ludens()
-    DrawText(string.format("Damage R = %d Dmg", RDmg),16,myTextPos.x,myTextPos.y,0xffffffff) end
-   if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) then
-    if ValidTarget(enemy) then
-     DrawText(string.format("R = Kill Enemy"),20,myTextPos.x,myTextPos.y+23,0xffff0000) 
-    end
+    DrawText(string.format("Damage R = %d Dmg", RDmg),16,myTextPos.x,myTextPos.y,0xffffffff)
+   end
+  if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) and ValidTarget(enemy) then
+    DrawText(string.format("R = Kill Enemy"),20,myTextPos.x,myTextPos.y+23,0xffff0000) 
    end
   end
  end
