@@ -1,5 +1,5 @@
---[[Rx Karthus by Rudo
-    Version 0.1: Released
+--[[Rx Karthus version 0.11 by Rudo
+    Version 0.11: edit somethings. Recommend Farm: LastHit > LaneClear
     Go to http://gamingonsteroids.com To Download more script.
     Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
@@ -116,7 +116,7 @@ local target = tslowhp:GetTarget()
 		CastSpell(_E)
    end
 
-	end
+  end
 	
 	------ Start Harass ------
   if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
