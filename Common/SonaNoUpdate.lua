@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.3 by Rudo.
-     0.3: Add LastHit Q
+--[[ Rx Sona NoAutoUpdate version 0.31 by Rudo.
+     0.31: Edit somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -17,6 +17,10 @@
 if GetObjectName(GetMyHero()) ~= "Sona" then return end
 
 require('Inspired')
+local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
+local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
+local ScriptVersion = 0.31 -- Current Version
+PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
 ---- Create a Menu ----
 Sona = MenuConfig("Rx Sona", "Sona")
@@ -161,15 +165,17 @@ OnProcessSpell(function(unit, spell)
     end
 end)
 
-local BonusAP = GetBonusAP(myHero)
 local HealWAlly = {}
 local allies = {}
 local HealWMH
-local ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
-local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.20*BonusAP
-local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.30*BonusAP
+local ShieldW = nil
+
 
 OnTick(function(myHero)
+local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
+local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.3*GetBonusAP(myHero)
+if ShieldW == nil then ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero) end
+
 local target = GetCurrentTarget()
 
  if IOW:Mode() == "Combo" then	
@@ -218,10 +224,10 @@ end
    if IsReady(_Q) and IsInDistance(minion, GetCastRange(myHero, _Q)) and Sona.lh.LasthitQ:Value() then 
    local closest = ClosestMinion(myHeroPos(), MINION_ENEMY)
    local closestagain = ClosestMinion(GetOrigin(closest), MINION_ENEMY)
-    if EnemiesAround(myHeroPos(), 825) <= 1 and GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, 40*GetCastLevel(myHero,_Q) + 0.5*BonusAP + Ludens()) and IsObjectAlive(closest) then
+    if EnemiesAround(myHeroPos(), 825) <= 1 and GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, 40*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + Ludens()) and IsObjectAlive(closest) then
       CastSpell(_Q)
     elseif EnemiesAround(myHeroPos(), 825) <= 0 and IsObjectAlive(closestagain) then
-     if GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, QDmg) or GetCurrentHP(closestagain) <= CalcDamage(myHero, closestagain, 0, 40*GetCastLevel(myHero,_Q) + 0.5*BonusAP + Ludens()) then
+     if GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, QDmg) or GetCurrentHP(closestagain) <= CalcDamage(myHero, closestagain, 0, 40*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + Ludens()) then
       CastSpell(_Q)
      end
     end
