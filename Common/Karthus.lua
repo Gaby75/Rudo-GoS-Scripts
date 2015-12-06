@@ -15,8 +15,6 @@ PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><fo
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
 require('IPrediction')
-local QPred = { name = "KarthusLayWaste", speed = math.huge, delay = 0.775, range = 900, width = 160, collision = false, aoe = true, type = "circular"}
-QPrediction = IPrediction.Prediction(QPred)
 
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
@@ -106,16 +104,14 @@ local CheckQDmg = 2*(GetCastLevel(myHero, _Q)*20 + 20 + 0.30*GetBonusAP(myHero))
 local target = tslowhp:GetTarget()
  if target then
   if IOW:Mode() == "Combo" then
- local WPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,150,GetCastRange(myHero,_W),800,false,true)
+ local WPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,250,GetCastRange(myHero,_W),800,false,true)
+ local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,775,GetCastRange(myHero,_W),160,false,true)
    if IsReady(_W) and GetCurrentMana(myHero) >= 130 and IsObjectAlive(target) and ValidTarget(target, GetCastRange(myHero,_W)) and WPred.HitChance >= 1 and Karthus.cb.WCB:Value() then
 		CastSkillShot(_W, WPred.PredPos)
    end
 		
-   if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and Karthus.cb.QCB:Value() then
-    local hitchance, pos = QPrediction:Predict(target)
-    if hitchance > 2 then
-     CastSkillShot(_Q, pos)
-    end
+   if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and QPred.HitChance >= 1 and Karthus.cb.QCB:Value() then
+    CastSkillShot(_Q, QPred.PredPos)
    end
 		
    if IsReady(_E) and IsInRange(target, GetCastRange(myHero,_E)) and GotBuff(myHero, "KarthusDefile") <= 0 and Karthus.cb.ECB:Value() then
@@ -126,11 +122,9 @@ local target = tslowhp:GetTarget()
 	
 	------ Start Harass ------
   if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
-   if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and Karthus.hr.HrQ:Value() then
-    local hitchance, pos = QPrediction:Predict(target)
-    if hitchance > 2 then
-     CastSkillShot(_Q, pos)
-    end
+   local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),math.huge,775,GetCastRange(myHero,_W),160,false,true)
+   if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and QPred.HitChance >= 1 and Karthus.hr.HrQ:Value() then
+     CastSkillShot(_Q, QPred.PredPos)
    end
   end
  end
@@ -226,12 +220,10 @@ if Karthus.KS.KSEb:Value() then
    end
   end
 	
-  if IsReady(_Q) and IsInRange(enemy, GetCastRange(myHero, _Q)) and Karthus.KS.QKS:Value() then
-   if GetHP2(enemy) <= getdmg("Q",enemy) then
-    local hitchance, pos = QPrediction:Predict(target)
-    if hitchance > 2 then
-     CastSkillShot(_Q, pos)
-    end
+  if IsReady(_Q) and IsInRange(enemy, GetCastRange(myHero, _Q)) and GetHP2(enemy) <= getdmg("Q",enemy) and Karthus.KS.QKS:Value() then
+   local QPred = GetPredictionForPlayer(myHeroPos(),enemy,GetMoveSpeed(enemy),math.huge,775,GetCastRange(myHero,_W),160,false,true)
+   if QPred.HitChance >= 1 then
+    CastSkillShot(_Q, QPred.PredPos)
    end
   end
  end
@@ -306,9 +298,9 @@ end
 
 	------ Start Drawings ------
 if Karthus.Draws.DrawsEb:Value() then 
-if Karthus.Draws.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Karthus.Draws.Range.QualiDraw:Value(),Karthus.Draws.Range.Qcol:Value()) end
-if Karthus.Draws.DrawW:Value() and IsReady(_W) then DrawCircle(myHeroPos(),GetCastRange(myHero,_W),2,Karthus.Draws.Range.QualiDraw:Value(),Karthus.Draws.Range.Wcol:Value()) end
-if Karthus.Draws.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),1,Karthus.Draws.Range.QualiDraw:Value(),Karthus.Draws.Range.Ecol:Value()) end
+if Karthus.Draws.Range.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Karthus.Draws.Range.QualiDraw:Value(),Karthus.Draws.Range.Qcol:Value()) end
+if Karthus.Draws.Range.DrawW:Value() and IsReady(_W) then DrawCircle(myHeroPos(),GetCastRange(myHero,_W),2,Karthus.Draws.Range.QualiDraw:Value(),Karthus.Draws.Range.Wcol:Value()) end
+if Karthus.Draws.Range.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),1,Karthus.Draws.Range.QualiDraw:Value(),Karthus.Draws.Range.Ecol:Value()) end
 if Karthus.Draws.Texts.DrawTexts:Value() then
  for i, enemy in pairs(GetEnemyHeroes()) do
   if ValidTarget(enemy) then
