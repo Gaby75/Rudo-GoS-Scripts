@@ -1,5 +1,5 @@
---[[Rx Karthus version 0.11 by Rudo
-    Version 0.11: edit somethings. Recommend Farm: LastHit > LaneClear
+--[[Rx Karthus version 0.12 by Rudo
+    Version 0.12: edit somethings. Recommend Farm: LastHit > LaneClear
     Go to http://gamingonsteroids.com To Download more script.
     Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
@@ -9,7 +9,7 @@ if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.11 -- Current Version
+local ScriptVersion = 0.12 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
@@ -147,13 +147,13 @@ if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LCMa
 	elseif Checkmnos <= 1 and Enm >= 1 then
 	  DmgCheck = CheckQDmg/2
 	end
-     if QDmgPredict > 0 and QDmgPredict <= DmgCheck then
+     if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, creeps, 0, DmgCheck) then
       CastSkillShot(_Q, GetOrigin(creeps))
      else
       IOW.attacksEnabled = false
      end
 	else
-	 CastSkillShot(_Q, GetOrigin(creeps))
+	 DelayAction(function() CastSkillShot(_Q, GetOrigin(creeps)) end, math.random(500,800))
 	 IOW.attacksEnabled = true
     end
    end
@@ -199,7 +199,7 @@ if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:V
 	elseif Checkmnos <= 1 and Enm >= 1 then
 	  DmgCheck = CheckQDmg/2
 	end
-    if QDmgPredict > 0 and QDmgPredict <= DmgCheck then
+    if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, minions, 0, DmgCheck) then
      CastSkillShot(_Q, GetOrigin(minions))
     else
      IOW.attacksEnabled = false
