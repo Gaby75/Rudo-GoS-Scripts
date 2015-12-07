@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.31 by Rudo.
-     0.31: Edit somethings
+--[[ Rx Sona Without deLibrary Version 0.3 by Rudo.
+     0.32: Fixed error and edit cast
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.31 -- Current Version
+local ScriptVersion = 0.32 -- Current Version
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
@@ -115,8 +115,6 @@ Sona:Info("info3", "Use PActivator for Auto Items")
 
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('IPrediction')
-local QPred = { name = "SonaR", speed = 2400, delay = 0.3, range = 1000, width = 150, collision = false, aoe = true, type = "linear"}
-QPrediction = IPrediction.Prediction(QPred)
 ------------------------------------------
 require('DeftLib')
 require('DamageLib')
@@ -157,10 +155,7 @@ OnProcessSpell(function(unit, spell)
     if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_R) then
       if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, 990) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-         local hitchance, pos = QPrediction:Predict(unit)
-         if hitchance > 2 then
-		  CastSkillShot(_R, pos)
-         end
+         Fire(unit)
 		end
       end
     end
@@ -200,10 +195,7 @@ local target = GetCurrentTarget()
     if Sona.cb.RCB:Value() and IsInRange(enemy, 1000) then
     local Enm = EnemiesAround2(GetOrigin(enemy), 150)
      if Enm >= Sona.cb.RCBxEnm:Value() then
-     local hitchance, pos = QPrediction:Predict(enemy)
-      if hitchance > 2 then
-        CastSkillShot(_R, pos)
-      end
+      Fire(enemy)
      end
     end
    end
@@ -337,7 +329,7 @@ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),Ge
   
    for l, ally in pairs(allies) do
     if GetObjectName(myHero) ~= GetObjectName(ally) then	
-     if IsInDistance(ally, 3500) IsObjectAlive(ally) then
+     if IsInDistance(ally, 3500) and IsObjectAlive(ally) then
       local AllyTextPos = WorldToScreen(1, GetOrigin(ally))
       local perc = '%'
       if Sona.Draws.Texts.HPAlly:Value() then DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(ally), GetCurrentHP(ally), GetMaxHP(ally), perc, GetPercentHP(ally), perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff) end 
@@ -382,4 +374,9 @@ end)
 function IsInRange(unit, range)
     return ValidTarget(unit, range) and IsObjectAlive(unit)
 end
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 0.3 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+
+function Fire(target)
+    return Cast(_R, target, myHero, 2400, 0.3, 1000, 150, 3, false, false, false, "SonaR", "linear")
+end
+
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
