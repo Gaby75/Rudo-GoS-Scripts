@@ -1,5 +1,5 @@
---[[ Rx Helper Version 0.1
-     Ver 0.1: Released
+--[[ Rx Helper Version 0.11
+     Ver 0.11: Released
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
 
@@ -9,7 +9,7 @@ require('Inspired')
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.version"
 local ScriptName = "RxHelper.lua"
-local ScriptVersion = 0.1
+local ScriptVersion = 0.11
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired <3
 AutoUpdate(WebLuaFile,WebVersion,ScriptName,ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
@@ -67,7 +67,7 @@ end)
 
 OnDraw(function(myHero)
  for i, enemy in pairs(enemies) do
-  if IsObjectAlive(enemy) and IsInDistance(enemy, 2500) and RxHelper.texts.smite:Value() then
+  if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.texts.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
     DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626)
    end
