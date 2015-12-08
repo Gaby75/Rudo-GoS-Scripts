@@ -47,6 +47,7 @@ RxHelper.texts:Info("info6", "Draw if found enemy have Smite in 2500 range")
 RxHelper.texts:Boolean("simple", "Draw text 'Dangerous!'", true)
 RxHelper.texts:Info("info6", "Check human around myHero and draw if MyTeam < EnemyTeam")
 PermaShow(RxHelper.circle.CircleEnable)
+PermaShow(RxHelper.texts.seconds)
 
 ------ Starting -------
 OnTick(function(myHero)
@@ -96,6 +97,5 @@ OnDrawMinimap(function()
         end
     end
 end)
-
 
 PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
