@@ -34,9 +34,9 @@ RxHelper.circle:Boolean("CircleEnable", "Enable Draw Circle", true)
 RxHelper.circle:ColorPick("col1", "Circle Color 1 (Default: Green)", {255, 0, 255, 127})
 RxHelper.circle:ColorPick("col2", "Circle Color 2 (Default: Orange)", {255, 255, 127, 0})
 RxHelper.circle:ColorPick("col3", "Circle Color 3 (Default: Red)", {255, 255, 0, 0})
-RxHelper.circle:Info("info1", "Color 1: Not found enemy in the past 10s")
-RxHelper.circle:Info("info2", "Color 1: Not found enemy in the past 20s")
-RxHelper.circle:Info("info3", "Color 1: Not found enemy in the past > 20s")
+RxHelper.circle:Info("info1", "Color 1: Not found enemy in the past 12s")
+RxHelper.circle:Info("info2", "Color 1: Not found enemy in the past 25s")
+RxHelper.circle:Info("info3", "Color 1: Not found enemy in the past > 25s")
 RxHelper.circle:Slider("QualiDraw", "Circle Quality", 80, 1, 255, 1)
 RxHelper.circle:Info("info4", "Circle Highest Quality: 1")
 RxHelper:Menu("texts", "Draw Texts")
@@ -53,7 +53,7 @@ PermaShow(RxHelper.texts.seconds)
 OnTick(function(myHero)
 enemies = GetEnemyHeroes()
   for i, enemy in pairs(enemies) do
-   if IsVisible(enemy) == false and IsDead(enemy) == false then
+   if NotFound(enemy) then
 	 if check[i] == nil then
 	  check[i] = GetTickCount()
      end
@@ -81,21 +81,25 @@ end)
 
 OnDrawMinimap(function() 
     for i, enemy in pairs(enemies) do
-        if enemy ~= nil and not IsDead(enemy) and IsVisible(enemy) == false then
+        if enemy ~= nil and NotFound(enemy) then
           local DeftCheck = GetMoveSpeed(enemy)*seconds[i]
 		  local color
-          if seconds[i] < 10 then
+          if seconds[i] < 12 then
 		  color = RxHelper.circle.col1:Value()
-		  elseif seconds[i] >= 10 and seconds[i] < 20 then
+		  elseif seconds[i] >= 12 and seconds[i] < 25 then
 		  color = RxHelper.circle.col2:Value()
 		  else
 		  color = RxHelper.circle.col3:Value()
           end
 		  local time = WorldToMinimap(GetOrigin(enemy))
-          if DeftCheck > 1100 and RxHelper.circle.CircleEnable:Value() then DrawCircleMinimap(GetOrigin(enemy), 1100, 1, RxHelper.circle.QualiDraw:Value(), color) end
-		  if RxHelper.texts.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, time.x-8, time.y-6, ARGB(255,255,255,255)) end
+          if DeftCheck > 1050 and RxHelper.circle.CircleEnable:Value() then DrawCircleMinimap(GetOrigin(enemy), 1050, 1, RxHelper.circle.QualiDraw:Value(), color) end
+		  if RxHelper.texts.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, time.x-8, time.y-7, ARGB(255,255,255,255)) end
         end
     end
 end)
+
+function NotFound(enemy)
+    return IsDead(enemy) == false and IsVisible(enemy) == false
+end
 
 PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
