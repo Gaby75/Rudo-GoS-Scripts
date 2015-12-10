@@ -1,6 +1,7 @@
 --[[ Rx Helper Version 0.1
      Ver 0.1: Released
      Go to http://gamingonsteroids.com to Download more script. 
+	 Download Sprites HERE: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view?pli=1
 ------------------------------------------------------------------------------------]]
 
 require('Inspired')
@@ -70,7 +71,7 @@ OnDraw(function(myHero)
  for i, enemy in pairs(enemies) do
   if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.texts.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
-    if smite > 0 then DrawSprite(smite,900,67,0,0,400,51,ARGB(255,255,255,255)) else print("Error loading, 'FoundSmite.png' not found. Go to origin topic to download it and put like this 'Sprites\RxHelper\FoundSmite.png'") end
+    if smite > 0 then DrawSprite(smite,900,67,0,0,400,51,ARGB(255,255,255,255)) else PrintChat("Error loading, 'FoundSmite.png' not found. Download here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view?pli=1 and extract in Sprites Folder") end
    end
   end
  end
