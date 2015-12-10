@@ -20,7 +20,7 @@ if not FileExist(SCRIPT_PATH.."\\DAwareness.lua") then
 else
     require('DAwareness')
 end
-if not pcall(require, "DAwareness") then return end
+if not pcall( require, "DAwareness" ) then return end
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8000FF'>Deftsu </font><font color='#FFFFFF'>for DAwareness and </font><font color='#5900B3'>Inspired </font><font color='#FFFFFF'>for Inspired.lua</font>"))
 ---------------------------------------------------------------------
