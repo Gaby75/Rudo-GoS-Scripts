@@ -19,13 +19,14 @@ if not FileExist(SCRIPT_PATH.."\\DAwareness.lua") then
 else
     require('DAwareness')
 end
-if not pcall(require, "DAwareness" ) then return end
+if not pcall(require, "DAwareness") then return end
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8000FF'>Deftsu </font><font color='#FFFFFF'>for DAwareness and </font><font color='#5900B3'>Inspired </font><font color='#FFFFFF'>for Inspired.lua</font>"))
 ---------------------------------------------------------------------
 local seconds = {}
 local check = {}
 local enemies = {}
+local smite = CreateSpriteFromFile("\\RxHelper\\FoundSmite.png")
 
 ---- Create Menu -----
 RxHelper = MenuConfig("Rx Helper", "Helper")
@@ -69,7 +70,7 @@ OnDraw(function(myHero)
  for i, enemy in pairs(enemies) do
   if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.texts.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
-    DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626)
+    if smite > 0 then DrawSprite(smite,900,67,0,0,400,51,ARGB(255,255,255,255)) else print("Error loading, 'FoundSmite.png' not found. Go to origin topic to download it and put like this 'Sprites\RxHelper\FoundSmite.png'") end
    end
   end
  end
