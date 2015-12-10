@@ -16,7 +16,7 @@ AutoUpdate(WebLuaFile,WebVersion,ScriptName,ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 
 if not FileExist(SCRIPT_PATH.."\\DAwareness.lua") then
-    print("Go to http://gamingonsteroids.com/topic/8815-d3utility-dawareness to download it and put in script folder then load script again.")
+    print("DAwareness not found. Go to http://gamingonsteroids.com/topic/8815-d3utility-dawareness to download it and put in script folder then load script again.")
 else
     require('DAwareness')
 end
@@ -71,7 +71,7 @@ OnDraw(function(myHero)
  for i, enemy in pairs(enemies) do
   if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.texts.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
-    if smite > 0 then DrawSprite(smite,900,67,0,0,400,51,ARGB(255,255,255,255)) else PrintChat("Error loading, 'FoundSmite.png' not found. Download here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view?pli=1 and extract in Sprites Folder") end
+    if smite > 0 then DrawSprite(smite,900,67,0,0,400,51,ARGB(255,255,255,255)) else print("Error loading, 'FoundSmite.png' not found. Download here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view?pli=1 and extract in Sprites Folder") end
    end
   end
  end
