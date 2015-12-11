@@ -1,5 +1,5 @@
---[[ Rx Karthus version 0.124 by Rudo
-     Version 0.124: edit somethings. Recommend Farm: LastHit > LaneClear
+--[[ Rx Karthus version 0.125 by Rudo
+     Version 0.125: edit somethings. Recommend Farm: LastHit > LaneClear
      Go to http://gamingonsteroids.com To Download more script.
      Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
@@ -9,11 +9,13 @@ if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.124
+local ScriptVersion = 0.125
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
+require('Deftlib')
+require('DamageLib')
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
 tslowhp = TargetSelector(875, 8, DAMAGE_MAGIC) -- 8 = TARGET_LOW_HP
@@ -86,8 +88,7 @@ PermaShow(Karthus.Miscset.StopE)
 Karthus:Info("info1", "Use PActivator for Auto Use Items")
 
 ---------- End Menu ----------
-require('Deftlib')
-require('DamageLib')
+
 -------------------------------------------------------Starting--------------------------------------------------------------
 
 OnTick(function(myHero)
@@ -157,8 +158,6 @@ if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() then
    end
   end
  end
-else
-IOW.attacksEnabled = true
 end
 end
 	
@@ -258,7 +257,7 @@ elseif GetLevel(myHero) == 18 then
 
 if GotBuff(myHero, "KarthusDefile") >= 1 then
 if IOW:Mode() == "Combo" and EnemiesAround(GetOrigin(myHero), GetCastRange(myHero, _E)) <= 0 then CastSpell(_E) end
-if IOW:Mode() == "LaneClear" and MinionsAround(GetOrigin(myHero), GetCastRange(myHero, _E), MINION_ENEMY) < Karthus.FreezeLane.CELC:Value() then CastSpell(_E) end
+if IOW:Mode() == "LaneClear" and MinionsAround(GetOrigin(myHero), GetCastRange(myHero, _E), MINION_ENEMY) < Karthus.FreezeLane.CELC:Value() and MinionsAround(GetOrigin(myHero), GetCastRange(myHero, _E), MINION_JUNGLE) < 1 then CastSpell(_E) end
 if Karthus.Miscset.StopE:Value() and MinionsAround(GetOrigin(myHero), GetCastRange(myHero, _E), MINION_ENEMY) < 2 and MinionsAround(GetOrigin(myHero), GetCastRange(myHero, _E), MINION_JUNGLE) < 1 and EnemiesAround(GetOrigin(myHero), GetCastRange(myHero, _E)) <= 0 then CastSpell(_E) end end
 end)
 
