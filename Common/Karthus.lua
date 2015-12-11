@@ -1,7 +1,7 @@
---[[Rx Karthus version 0.123 by Rudo
-    Version 0.123: edit somethings. Recommend Farm: LastHit > LaneClear
-    Go to http://gamingonsteroids.com To Download more script.
-    Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
+--[[ Rx Karthus version 0.124 by Rudo
+     Version 0.124: edit somethings. Recommend Farm: LastHit > LaneClear
+     Go to http://gamingonsteroids.com To Download more script.
+     Thank: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
 
 if GetObjectName(GetMyHero()) ~= "Karthus" then return end
@@ -9,13 +9,11 @@ if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.123
+local ScriptVersion = 0.124
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
-require('Deftlib')
-require('DamageLib')
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
 tslowhp = TargetSelector(875, 8, DAMAGE_MAGIC) -- 8 = TARGET_LOW_HP
@@ -78,7 +76,7 @@ Karthus.Draws.Texts:Boolean("DamageR", "Draw R Damage", true)
 PermaShow(Karthus.Draws.Texts.DamageR)
 
 ---- Misc Menu ----
-Karthus:Menu("Miscset", "Auto Level Up")
+Karthus:Menu("Miscset", "Misc")
 Karthus.Miscset:Boolean("AutoSkillUpQ", "Auto Lvl Up Q-E-W", true)
 Karthus.Miscset:Boolean("StopE", "Auto Stop E", true)
 Karthus.Miscset:Info("SEI", "Auto Stop E if no creeps/enemy in E range")
@@ -88,7 +86,8 @@ PermaShow(Karthus.Miscset.StopE)
 Karthus:Info("info1", "Use PActivator for Auto Use Items")
 
 ---------- End Menu ----------
-
+require('Deftlib')
+require('DamageLib')
 -------------------------------------------------------Starting--------------------------------------------------------------
 
 OnTick(function(myHero)
@@ -127,13 +126,13 @@ if IOW:Mode() == "LaneClear" then
 if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() then
  for i=1, minionManager.maxObjects do
  local creeps = minionManager.objects[i]
-  if GetTeam(creeps) == MINION_ENEMY or GetTeam(creeps) == MINION_JUNGLE then
-   if IsInRange(creeps, GetCastRange(myHero,_Q)) then
+  if GetObjectType(creeps) == Obj_AI_Minion and IsEnemy(creeps) then
+   if IsInRange(creeps, GetCastRange(myHero, _Q)) then
     if IsReady(_Q) and Karthus.FreezeLane.QLJC:Value() then
      if GetCurrentHP(creeps) < CalcDamage(myHero, creeps, GetBaseDamage(myHero), CheckQDmg) +10+7*GetLevel(myHero) then
 	 local Checkmnos = MinionsAround(GetOrigin(creeps), 190, MINION_ENEMY)
      local Enm = EnemiesAround(GetOrigin(creeps), 190)
-     local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/4500)
+     local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/(4500-35*GetLevel(myHero)))
      local DmgCheck
      if Checkmnos >= 2 and Enm >= 1 then
       DmgCheck = CheckQDmg/2
@@ -152,7 +151,7 @@ if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() then
      end
     end
 		
-    if IsReady(_E) and Karthus.FreezeLane.ELJC:Value() and IsObjectAlive(creeps) and (MinionsAround(GetOrigin(myHero), GetCastRange(myHero,_E), MINION_ENEMY) >= Karthus.FreezeLane.CELC:Value() or MinionsAround(GetOrigin(myHero), GetCastRange(myHero,_E), MINION_JUNGLE) >= 1) and GotBuff(myHero, "KarthusDefile") <= 0 then
+    if IsReady(_E) and Karthus.FreezeLane.ELJC:Value() and (MinionsAround(GetOrigin(myHero), GetCastRange(myHero,_E), MINION_ENEMY) >= Karthus.FreezeLane.CELC:Value() or MinionsAround(GetOrigin(myHero), GetCastRange(myHero,_E), MINION_JUNGLE) >= 1) and GotBuff(myHero, "KarthusDefile") <= 0 then
      CastSpell(_E)	
     end
    end
@@ -168,12 +167,12 @@ if IOW:Mode() == "LastHit" then
  if GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
   for i=1, minionManager.maxObjects do
   local minions = minionManager.objects[i]
-   if GetTeam(minions) == MINION_ENEMY or GetTeam(minions) == MINION_JUNGLE then
+   if GetObjectType(minions) == Obj_AI_Minion and IsEnemy(minions) then
     if IsInRange(minions, GetCastRange(myHero,_Q)) then
      if IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
      local Checkmnos = MinionsAround(GetOrigin(minions), 190, MINION_ENEMY)
      local Enm = EnemiesAround(GetOrigin(minions), 190)
-     local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/4500)
+     local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/(4500-35*GetLevel(myHero)))
      local DmgCheck
       if Checkmnos >= 2 and Enm >= 1 then
        DmgCheck = CheckQDmg/2
@@ -269,15 +268,13 @@ OnDraw(function(myHero)
 	------ Start Info R ------
 if Karthus.InfoR.EninfoR:Value() and GetLevel(myHero) >= 6 and not IsDead(myHero) then
                         info = ""
-  for nID, enemy in pairs(GetEnemyHeroes()) do
-   if IsObjectAlive(enemy) then
-    if getdmg("R",enemy) > GetHP2(enemy) then
-    info = info..GetObjectName(enemy)
-     if not IsVisible(enemy) then
-      info = info.." Not see enemy in map maybe"
-     end
-      info = info.." R KILL!\n"
+  for i, enemy in pairs(GetEnemyHeroes()) do
+   if IsObjectAlive(enemy) and GetHP2(enemy) < CalcDamage(myHero, enemy, 0, getdmg("R",enemy)) then
+   info = info..GetObjectName(enemy)
+    if not IsVisible(enemy) then
+     info = info.." Not see enemy in map maybe"
     end
+     info = info.." R KILL!\n"
    end
   end
  DrawText(info,30,0,110,0xffff0000) 
