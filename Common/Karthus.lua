@@ -31,10 +31,10 @@ Karthus.hr:Boolean("HrQ", "Use Q", true)
 Karthus.hr:Slider("HrMana", "Enable Harass if %My MP >=", 30, 0, 100, 1)
 
 ---- Lane Clear Menu ----
-Karthus:Menu("FreezeLane", "Lane Clear")
-Karthus.FreezeLane:Slider("LJCMana", "Enable LaneClear if %My MP >=", 20, 0, 100, 1)
-Karthus.FreezeLane:Boolean("QLJC", "Use Q LaneClear", true)
-Karthus.FreezeLane:Boolean("ELJC", "Use E LaneClear", true)
+Karthus:Menu("FreezeLane", "Lane Jungle Clear")
+Karthus.FreezeLane:Slider("LJCMana", "Enable LaneJugnleClear if %My MP >=", 20, 0, 100, 1)
+Karthus.FreezeLane:Boolean("QLJC", "Use Q", true)
+Karthus.FreezeLane:Boolean("ELJC", "Use E", true)
 Karthus.FreezeLane:Slider("CELC", "Use E if Minions Around >=", 3, 1, 10, 1)
 
 ---- Last Hit Menu ----
