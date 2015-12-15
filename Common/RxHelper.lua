@@ -72,7 +72,7 @@ OnDrawMinimap(function()
     if CreateIcon(enemy) > 0 then
      DrawSprite(CreateIcon(enemy), Orgenemy.x-10, Orgenemy.y-10, 0, 0, 20, 20, ARGB(255,255,255,255))
     else
-     PrintChat("("..GetObjectName(enemy).."_GoS_MiniMH.png) Not found, go to Origin topic to download Sprites.\n")
+     PrintChat("("..GetObjectName(enemy).."_GoS_MiniMH.png) Not found, go to Origin topic to download Sprites.")
     end
    end
    
