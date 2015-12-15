@@ -1,13 +1,13 @@
---[[ Rx Helper Version 0.11
-     Ver 0.11: Added Minimap Icons
-	 Download Sprites Here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
+--[[ Rx Helper Version 0.115
+     Ver 0.115: edit somethings
+     Download Sprites Here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
 
 require('Inspired')
 
 ---- Script Update ----
-AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.version","RxHelper.lua",0.11)
+AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.version","RxHelper.lua",0.115)
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8000FF'>Deftsu </font><font color='#FFFFFF'>for DAwareness, </font><font color='#5900B3'>Inspired </font><font color='#FFFFFF'>for Inspired.lua and </font><font color='#FF0000'>Feretorix</font>"))
 ---------------------------------------------------------------------
@@ -26,6 +26,7 @@ RxHelper:Boolean("smite", "Draw text enemy have Smite", true)
 RxHelper:Info("info6", "Draw if found enemy have Smite in 2500 range")
 RxHelper:Boolean("simple", "Draw text 'Dangerous!'", true)
 RxHelper:Info("info6", "Check human around myHero and draw if MyTeam < EnemyTeam")
+PermaShow(RxHelper.sprites)
 PermaShow(RxHelper.seconds)
 
 ------ Starting -------
@@ -66,15 +67,16 @@ end)
 OnDrawMinimap(function()
  for i, enemy in pairs(enemies) do
   if enemy ~= nil and NotFound(enemy) then
-  local sprites = CreateSpriteFromFile("\\RxHelper\\"..GetObjectName(enemy).."_GoS_MiniMH.png")
   local Orgenemy = WorldToMinimap(GetOrigin(enemy))
-   if RxHelper.sprites:Value() and sprites > 0 then
-    DrawSprite(sprites, Orgenemy.x-10, Orgenemy.y-10, 0, 0, 20, 20, ARGB(255,255,255,255))
-   else
-    PrintChat("("..GetObjectName(enemy).."_GoS_MiniMH.png) Not found, go to Origin topic to download Sprites.\n")
+   if RxHelper.sprites:Value() then
+    if CreateIcon(enemy) > 0 then
+     DrawSprite(CreateIcon(enemy), Orgenemy.x-10, Orgenemy.y-10, 0, 0, 20, 20, ARGB(255,255,255,255))
+    else
+     PrintChat("("..GetObjectName(enemy).."_GoS_MiniMH.png) Not found, go to Origin topic to download Sprites.\n")
+    end
    end
    
-   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-5, Orgenemy.y+6, ARGB(255,255,255,255)) end
+   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-7, Orgenemy.y+6, ARGB(255,255,255,255)) end
   end
  end
 end)
@@ -83,5 +85,9 @@ function NotFound(enemy)
     return IsDead(enemy) == false and IsVisible(enemy) == false
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.11 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+function CreateIcon(enemy)
+    return CreateSpriteFromFile("\\RxHelper\\"..GetObjectName(enemy).."_GoS_MiniMH.png")
+end
+
+PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.115 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
 print("Recommend use with DAwaraness")
