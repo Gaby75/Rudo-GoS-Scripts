@@ -1,5 +1,6 @@
---[[ Rx Helper Version 0.12
-     Ver 0.12: Delete Minimap Icon because crashes the game, add draw circle.
+--[[ Rx Helper Version 0.121
+     Ver 0.122: Fix error
+     Ver 0.121: Delete Minimap Icon because crashes the game, add draw circle.
      Download Sprites Here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
@@ -7,7 +8,7 @@
 require('Inspired')
 
 ---- Script Update ----
-AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.version","RxHelper.lua",0.12)
+AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.version","RxHelper.lua",0.121)
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8000FF'>Deftsu </font><font color='#FFFFFF'>for DAwareness, </font><font color='#5900B3'>Inspired </font><font color='#FFFFFF'>for Inspired.lua and </font><font color='#FF0000'>Feretorix</font>"))
 ---------------------------------------------------------------------
@@ -16,9 +17,12 @@ local check = {}
 local enemies = {}
 local smite = CreateSpriteFromFile("\\RxHelper\\FoundSmite.png")
 local danger = CreateSpriteFromFile("\\RxHelper\\danger.png")
+if smite <= 0 then print("'FoundSmite.png' Not found, go to Origin topic to download Sprites") end
+if danger <= 0 then print("'danger.png' Not found, go to Origin topic to download Sprites") end
+
 ---- Create Menu -----
 RxHelper = MenuConfig("Rx Helper", "Helper")
-RxHelper:Info("info7", "Minimap Icon will crashes the game, waitting")
+RxHelper:Info("info7", "Minimap Icon will crashes the game, waitting...")
 RxHelper:Info("info8", "Now use draw circle minimap.")
 RxHelper:Boolean("sprites", "Draw Circle Minimap", true)
 RxHelper:ColorPick("col1", "Color 1 Default:Green", {255, 0, 255, 127})
@@ -56,7 +60,7 @@ OnDraw(function()
  for i, enemy in pairs(enemies) do
   if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
-    if smite > 0 then DrawSprite(smite, 900, 67, 0, 0, 400, 51, ARGB(255,255,255,255)) else print("'FoundSmite.png' Not found, go to Origin topic to download Sprites") end
+    if smite > 0 then DrawSprite(smite, 940, 80, 0, 0, 400, 44, ARGB(255,255,255,255)) end
    end
   end
  end
@@ -64,9 +68,7 @@ OnDraw(function()
  if EnemiesAround(myHeroPos(), 3500) > AlliesAround(myHeroPos(), 2500) +1 and RxHelper.simple:Value() then
  local Org = WorldToScreen(1, myHeroPos())
   if danger > 0 then
-   DrawSprite(danger, Org.x-80, Org.y+12, 0, 0, 140, 28, ARGB(255,255,255,255))
-  else
-   print("'danger.png' Not found, go to Origin topic to download Sprites")
+   DrawSprite(danger, Org.x-70, Org.y+25, 0, 0, 140, 28, ARGB(255,255,255,255))
   end
  end
 end)
@@ -85,8 +87,8 @@ OnDrawMinimap(function()
     else
      color = RxHelper.col3:Value()
     end
-     if speed > 1 and speed < 5800 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
-	 if speed > 1050 then DrawCircleMinimap(GetOrigin(enemy), 1050, 1, 80, color) end
+     if speed > 0 and speed <= 5800 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
+	 if speed > 1050 or (speed <= 0 and seconds[i] > 0) then DrawCircleMinimap(GetOrigin(enemy), 1050, 1, 80, color) end
    end
    
    if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-9, Orgenemy.y-9, ARGB(255,255,255,255)) end
@@ -98,4 +100,4 @@ function NotFound(enemy)
     return IsDead(enemy) == false and IsVisible(enemy) == false
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.12 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.121 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",GetObjectBaseName(myHero))) 
