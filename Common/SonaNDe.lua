@@ -296,12 +296,13 @@ local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.3*GetBonusAP(myHero)
   end
  end
    if IsObjectAlive(myHero) then
-    ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
     local CheckW = 100 - GetPercentHP(myHero)
     local HealW = WDmg + (WDmg*CheckW)/200
     HealWMH = math.min(HealW, WMax)
+	ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
    else
     HealWMH = 0
+	ShieldW = 0
    end
 --- end OnTick ---
 end)
