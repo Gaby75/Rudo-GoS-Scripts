@@ -1,5 +1,5 @@
---[[ Rx Sona NoAutoUpdate version 0.32 by Rudo.
-     0.32: Edit somethings
+--[[ Rx Sona Without deLibrary Version 0.33 by Rudo.
+     0.33: Fixed Cast R
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ if GetObjectName(GetMyHero()) ~= "Sona" then return end
 require('Inspired')
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.32 -- Current Version
+local ScriptVersion = 0.33 -- Current Version
 PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
 ---- Create a Menu ----
@@ -100,22 +100,15 @@ Sona.Draws.CircleAlly:Slider("HPAllies", "Draw if %HP Ally <= x%", 40, 6, 70, 2)
 Sona.Draws.CircleAlly:ColorPick("Alcol", "Circle Around Ally Color", {255, 173, 255, 47})
 PermaShow(Sona.Draws.CircleAlly.DrawCircleAlly)
 
----- Misc Menu ----
-Sona:Menu("misc", "Misc")
-Sona.misc:Boolean("smite", "Check enemy have Smite", true)
-Sona.misc:Info("infoS", "It will draw text if found enemy have Smite in 2500 Range")
-Sona.misc:Boolean("checkteam", "Enable check ENEMY GANKING", true)
-Sona.misc:Info("infoteam", "This function will check human around you in 4000 range")
-Sona.misc:Info("infocteam", "If enemy team > your team then draw text 'GANKED!!'")
-
 Sona:Info("info3", "Use PActivator for Auto Items")
    
 ---------- End Menu ----------
 
 -------------------------------------------------------Starting--------------------------------------------------------------
 require('IPrediction')
-local QPred = { name = "SonaR", speed = 2400, delay = 0.3, range = 1000, width = 150, collision = false, aoe = true, type = "linear"}
+local QPred = { name = "SonaR", speed = 2400, delay = 0.3, range = 1000, width = 150, collision = false, aoe = true, type = "circular"}
 QPrediction = IPrediction.Prediction(QPred)
+
 ------------------------------------------
 require('DeftLib')
 require('DamageLib')
@@ -156,7 +149,10 @@ OnProcessSpell(function(unit, spell)
     if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_R) then
       if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, 990) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-         Fire(unit)
+        local hitchance, pos = QPrediction:Predict(unit)
+		 if hitchance > 2 then
+		  CastSkillShot(_R, pos)
+		 end
 		end
       end
     end
@@ -165,13 +161,10 @@ end)
 local HealWAlly = {}
 local allies = {}
 local HealWMH
-local ShieldW = nil
+local ShieldW
 
 
 OnTick(function(myHero)
-local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
-local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.3*GetBonusAP(myHero)
-if ShieldW == nil then ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero) end
 
 local target = GetCurrentTarget()
 
@@ -196,7 +189,10 @@ local target = GetCurrentTarget()
     if Sona.cb.RCB:Value() and IsInRange(enemy, 1000) then
     local Enm = EnemiesAround2(GetOrigin(enemy), 150)
      if Enm >= Sona.cb.RCBxEnm:Value() then
-      Fire(enemy)
+     local hitchance, pos = QPrediction:Predict(enemy)
+      if hitchance > 2 then
+       CastSkillShot(_R, pos)
+      end
      end
     end
    end
@@ -285,6 +281,8 @@ end
 
 ---------- Calculate Check Heal of W ----------
 allies = GetAllyHeroes()
+local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
+local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.3*GetBonusAP(myHero)
  for l, ally in pairs(allies) do
   if GetObjectName(myHero) ~= GetObjectName(ally) then	
    if IsObjectAlive(ally) then
@@ -297,11 +295,12 @@ allies = GetAllyHeroes()
   end
  end
    if IsObjectAlive(myHero) then
+    ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
     local CheckW = 100 - GetPercentHP(myHero)
     local HealW = WDmg + (WDmg*CheckW)/200
     HealWMH = math.min(HealW, WMax)
    else
-   HealWMH = 0
+    HealWMH = 0
    end
 --- end OnTick ---
 end)
@@ -340,19 +339,8 @@ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),Ge
    end 
    
    if IsObjectAlive(myHero) then
-    local Enm = EnemiesAround(myHeroPos(), 4000)
-    local Ally = AlliesAround(myHeroPos(), 2500)
     local mytextPos = WorldToScreen(1, myHeroPos())
     if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WSmyH:Value() then DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff) end
-    if Sona.misc.checkteam:Value() and Enm > 0 and Enm > 1+Ally then DrawText("GANKED!!",23,mytextPos.x,mytextPos.y+22,0xffff0000) end
-   end
-   
-   for i, enemy in pairs(GetEnemyHeroes()) do
-    if IsInRange(enemy, 2500) then
-     if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
-      if Sona.misc.smite:Value() then DrawText("Found enemy have Smite in 2500 range",24,660,150,0xffff2626) end
-     end
-    end
    end
   
   for i, enemy in pairs(GetEnemyHeroes()) do
@@ -376,8 +364,4 @@ function IsInRange(unit, range)
     return ValidTarget(unit, range) and IsObjectAlive(unit)
 end
 
-function Fire(target)
-    return Cast(_R, target, myHero, 2400, 0.3, 1000, 150, 3, false, false, false, "SonaR", "linear")
-end
-
-PrintChat(string.format("<font color='#FF0000'>Rx Sona NoUpdate by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
