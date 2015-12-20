@@ -366,7 +366,7 @@ OnProcessSpell(function(unit, spell)
       if IsReady(_W) or CheckQ(unit) then
        if ANTI_SPELLS[spell.name] then
         if ValidTarget(unit, GetCastRange(myHero,_Q)) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-         local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),1800,250,GetCastRange(myHero,_Q),160,false,true)
+         local QPred = GetPredictionForPlayer(myHeroPos(),unit,GetMoveSpeed(unit),1800,250,GetCastRange(myHero,_Q),160,false,true)
 		  if QPred.HitChance >= 1 then CastSkillShot(_Q, QPred.PredPos) end
          if IsReady(_W) and not IsReady(_Q) then
           CastSpell(_W)
