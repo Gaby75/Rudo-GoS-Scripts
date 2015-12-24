@@ -65,7 +65,7 @@ Zilean.cb:Info("infoE", "If not AllyAround my Hero then Use E in myHero")
 
 ---- Harass Menu ----
 Zilean:Menu("hr", "Harass")
-Zilean.hr:Slider("HrMana", "Harass if %MP >= ", 10, 1, 100, 1)
+Zilean.hr:Slider("HrMana", "Harass if %MP >= ", 15, 1, 100, 1)
 Zilean.hr:Boolean("HrQ", "Use Q", true)
 
 ---- Lane Clear Menu ----
@@ -91,11 +91,11 @@ PermaShow(Zilean.AtSpell.ATSE.KeyE)
 ---- Drawings Menu ----
 Zilean:Menu("Draws", "Drawings")
 Zilean.Draws:Boolean("DrawsEb", "Enable Drawings", true)
-Zilean.Draws:Slider("QualiDraw", "Quality Drawings", 110, 1, 255, 1)
+Zilean.Draws:Slider("QualiDraw", "Quality Drawings", 100, 1, 255, 1)
 Zilean.Draws:Boolean("DrawQR", "Range Q + R", true)
-Zilean.Draws:ColorPick("QRcol", "Setting Q + R Color", {255, 244, 245, 120})
+Zilean.Draws:ColorPick("QRcol", "Setting Q + R Color", {135, 244, 245, 120})
 Zilean.Draws:Boolean("DrawE", "Range E", true)
-Zilean.Draws:ColorPick("Ecol", "Setting E Color", {255, 155, 48, 255})
+Zilean.Draws:ColorPick("Ecol", "Setting E Color", {220, 155, 48, 255})
 Zilean.Draws:Boolean("DrawText", "Draw Text", true)
 Zilean.Draws:Info("infoR", "Draw Text If Allies in 2500 Range and %HP Allies <= 20%")
 PermaShow(Zilean.Draws.DrawText)
@@ -113,7 +113,7 @@ Zilean:Menu("Misc", "Misc Mode")
 Zilean.Misc:Menu("AutoR", "Auto Use R")
 Zilean.Misc.AutoR:Boolean("EnbR", "Enable Auto R", true)
 PermaShow(Zilean.Misc.AutoR.EnbR)
-Zilean.Misc.AutoR:Slider("myHP", "If %MyHP < x%", 5, 1, 100, 1)
+Zilean.Misc.AutoR:Slider("myHP", "If %MyHP < x%", 10, 1, 100, 1)
 Zilean.Misc.AutoR:Boolean("DrawR", "Enable Draw HP use R ", true)
 Zilean.Misc.AutoR:Info("DRInfo", "It will draw x%HP, if MyHP <= HP then auto R")
 Zilean.Misc.AutoR:Info("DRInfo2", "You muse enable AutoR and draw HP to see this")
@@ -312,7 +312,7 @@ function Zilean:DrawHP()
     local color
     if GetPercentHP(myally) > 20 then color = 0xffffffff else color = 0xffff0000 end
     if GotBuff(myally, "karthusfallenonetarget") >= 1 and KarthusDmg(myally) >= GetHP2(myally) then
-     DrawText("This Unit can die with Karthus R",22,alliesPos.x,alliesPos.y+12,0xffff0000)
+     DrawText("This Unit can die with Karthus R", 22, alliesPos.x, alliesPos.y+12, ARGB(255,255,0,0))
     end
      DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), GetCurrentHP(myally), GetMaxHP(myally), per, minhp, per), 18, alliesPos.x, alliesPos.y, color)
    end
@@ -324,9 +324,9 @@ function Zilean:DrawHP()
    local myTextPos = WorldToScreen(1, myHeroPos())
    local pmh = '%'
    local miniumhp = math.max(1, GetPercentHP(myHero))
-    if GetPercentHP(myHero) <= 20 then DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh), 21, myTextPos.x-20, myTextPos.y+15, 0xffff0000) end
+    if GetPercentHP(myHero) <= 20 then DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh), 21, myTextPos.x-20, myTextPos.y+16, 0xffff0000) end
    if GotBuff(myHero, "karthusfallenonetarget") >= 1 and KarthusDmg(myHero) >= GetHP2(myHero) then
-    DrawText("Karthus R can 'KILL!' You", 22, myTextPos.x-20, myTextPos.y+30, 0xffff0000)
+    DrawText("Karthus R can 'KILL!' You", 21, myTextPos.x-20, myTextPos.y+32, ARGB(255,255,0,0))
    end
   end
 end
@@ -338,7 +338,7 @@ function Zilean:InfoR()
     drawtexts = drawtexts..GetObjectName(myally).." %HP < 20%. Should Use R\n"
   end
  end
-    DrawText(drawtexts,27,0,110,0xff00ff00) 
+    DrawText(drawtexts, 27, 0, 110, ARGB(255,0,255,0)) 
 end
 
 function Zilean:DrawRHP()
