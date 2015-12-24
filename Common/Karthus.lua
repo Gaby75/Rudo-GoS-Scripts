@@ -1,5 +1,5 @@
---[[ Rx Karthus version 0.13 by Rudo
-     Version 0.13: edit somethings. Recommend Farm: LastHit > LaneClear
+--[[ Rx Karthus version 0.14 by Rudo
+     Version 0.14: edit somethings. Recommend Farm: LastHit > LaneClear
      Go to http://gamingonsteroids.com To Download more script.
      Thanks: Deftsu, Zypppy, and Cloud for Karthus plugins
 ----------------------------------------------------]]
@@ -7,11 +7,11 @@
 if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 
 require('Inspired')
-local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
+--[[local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.version"
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
 local ScriptVersion = 0.13
 AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Karthus.lua",WebVersion,"Karthus.lua",ScriptVersion)
-PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))
+PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))]]
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
 require('Deftlib')
@@ -128,22 +128,10 @@ if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() then
    if IsInRange(creeps, GetCastRange(myHero, _Q)) then
     if IsReady(_Q) and Karthus.FreezeLane.QLJC:Value() then
      if GetCurrentHP(creeps) < CalcDamage(myHero, creeps, GetBaseDamage(myHero), CheckQDmg) +10+7*GetLevel(myHero) then
-	 local Checkmnos = MinionsAround(GetOrigin(creeps), 165, MINION_ENEMY)
-     local Enm = EnemiesAround(GetOrigin(creeps), 165)
 	 local plus
 	 if GetLevel(myHero) <= 7 then plus = 5 else plus = 20 end
      local QDmgPredict = GetCurrentHP(creeps) - GetDamagePrediction(creeps, 250 + GetDistance(creeps)/(4500+plus*GetLevel(myHero)))
-     local DmgCheck
-     if Checkmnos >= 2 and Enm >= 1 then
-      DmgCheck = CheckQDmg/2
-     elseif Checkmnos <= 1 and Enm < 1 then
-      DmgCheck = CheckQDmg
-     elseif Checkmnos >= 2 and Enm < 1 then
-      DmgCheck = CheckQDmg/2
-     elseif Checkmnos <= 1 and Enm >= 1 then
-      DmgCheck = CheckQDmg/2
-     end
-      if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, creeps, 0, DmgCheck) then
+      if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, creeps, 0, QCheck(creeps)) then
        CastSkillShot(_Q, GetOrigin(creeps))
       end
 	 else
@@ -168,22 +156,10 @@ for i=1, minionManager.maxObjects do
    if GetObjectType(minions) == Obj_AI_Minion and IsEnemy(minions) then
     if IsInRange(minions, GetCastRange(myHero,_Q)) then
      if IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
-     local Checkmnos = MinionsAround(GetOrigin(minions), 165, MINION_ENEMY)
-     local Enm = EnemiesAround(GetOrigin(minions), 165)
 	 local plus
-	 if GetLevel(myHero) <= 7 then plus = 5*GetLevel(myHero) else plus = 20*GetLevel(myHero) end
+	 if GetLevel(myHero) <= 9 then plus = 5*GetLevel(myHero) else plus = 20*GetLevel(myHero) end
      local QDmgPredict = GetCurrentHP(minions) - GetDamagePrediction(minions, 250 + GetDistance(minions)/(4500+plus))
-     local DmgCheck
-      if Checkmnos >= 2 and Enm >= 1 then
-       DmgCheck = CheckQDmg/2
-      elseif Checkmnos <= 1 and Enm < 1 then
-       DmgCheck = CheckQDmg
-      elseif Checkmnos >= 2 and Enm < 1 then
-       DmgCheck = CheckQDmg/2
-      elseif Checkmnos <= 1 and Enm >= 1 then
-       DmgCheck = CheckQDmg/2
-      end
-      if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, minions, 0, DmgCheck) then
+      if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, minions, 0, QCheck(minions)) then
        CastSkillShot(_Q, GetOrigin(minions))
       else
        IOW.attacksEnabled = false
@@ -216,45 +192,45 @@ if Karthus.KS.KSEb:Value() then
 end
 
 	------ Start Auto Lvl Up ------ --- Full Q First then E, last is W	
-	if Karthus.Miscset.AutoSkillUpQ:Value() then
+if Karthus.Miscset.AutoSkillUpQ:Value() then
  if GetLevel(myHero) == 1 then
 	LevelSpell(_Q)
-elseif GetLevel(myHero) == 2 then
-	LevelSpell(_E)
-elseif GetLevel(myHero) == 3 then
-	LevelSpell(_W)
-elseif GetLevel(myHero) == 4 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) == 5 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) == 6 then
-	LevelSpell(_R)
-elseif GetLevel(myHero) == 7 then
-	LevelSpell(_Q)
-elseif GetLevel(myHero) == 8 then
-        LevelSpell(_Q)
-elseif GetLevel(myHero) == 9 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 10 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 11 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) == 12 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 13 then
-        LevelSpell(_E)
-elseif GetLevel(myHero) == 14 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) == 15 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) == 16 then
-        LevelSpell(_R)
-elseif GetLevel(myHero) == 17 then
-        LevelSpell(_W)
-elseif GetLevel(myHero) == 18 then
-        LevelSpell(_W)
+ elseif GetLevel(myHero) == 2 then
+    LevelSpell(_E)
+ elseif GetLevel(myHero) == 3 then
+    LevelSpell(_Q)
+ elseif GetLevel(myHero) == 4 then
+    LevelSpell(_W)
+ elseif GetLevel(myHero) == 5 then
+    LevelSpell(_Q)
+ elseif GetLevel(myHero) == 6 then
+    LevelSpell(_R)
+ elseif GetLevel(myHero) == 7 then
+    LevelSpell(_Q)
+ elseif GetLevel(myHero) == 8 then
+    LevelSpell(_E)
+ elseif GetLevel(myHero) == 9 then
+    LevelSpell(_Q)
+ elseif GetLevel(myHero) == 10 then
+    LevelSpell(_E)
+ elseif GetLevel(myHero) == 11 then
+    LevelSpell(_R)
+ elseif GetLevel(myHero) == 12 then
+    LevelSpell(_E)
+ elseif GetLevel(myHero) == 13 then
+    LevelSpell(_E)
+ elseif GetLevel(myHero) == 14 then
+    LevelSpell(_W)
+ elseif GetLevel(myHero) == 15 then
+    LevelSpell(_W)
+ elseif GetLevel(myHero) == 16 then
+    LevelSpell(_R)
+ elseif GetLevel(myHero) == 17 then
+    LevelSpell(_W)
+ elseif GetLevel(myHero) == 18 then
+    LevelSpell(_W)
  end
-    end	
+end	
 
 if GotBuff(myHero, "KarthusDefile") >= 1 then
 if IOW:Mode() == "Combo" and EnemiesAround(GetOrigin(myHero), GetCastRange(myHero, _E)) <= 0 then CastSpell(_E) end
@@ -333,5 +309,23 @@ function IsInRange(unit, range)
     return ValidTarget(unit, range) and IsObjectAlive(unit)
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
+function QCheck(unit)
+ local Checkmnos = MinionsAround(GetOrigin(unit), 165, MINION_ENEMY)
+ local Enm = EnemiesAround(GetOrigin(unit), 165)
+ local CheckQDmg = GetCastLevel(myHero, _Q)*40 + 40 + 0.6*GetBonusAP(myHero)
+ local DmgCheck
+ if Checkmnos >= 2 and Enm >= 1 then
+  DmgCheck = CheckQDmg/2
+ elseif Checkmnos <= 1 and Enm < 1 then
+  DmgCheck = CheckQDmg
+ elseif Checkmnos >= 2 and Enm < 1 then
+  DmgCheck = CheckQDmg/2
+ elseif Checkmnos <= 1 and Enm >= 1 then
+  DmgCheck = CheckQDmg/2
+ end
+    return DmgCheck
+end
+
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.14 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
 print("Recommend Farm with LastHit.")
+
