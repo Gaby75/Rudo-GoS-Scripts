@@ -73,17 +73,18 @@ OnDrawMinimap(function()
  for i, enemy in pairs(enemies) do
   if enemy ~= nil and NotFound(enemy) then
   local Orgenemy = WorldToMinimap(GetOrigin(enemy))
-  local speed = seconds[i]*GetMoveSpeed(enemy) +1050
+  local ms
+  if GetMoveSpeed(enemy) == 0 then ms = 325 else ms = GetMoveSpeed(enemy) end
+  local speed = seconds[i]*ms +1000
    if RxHelper.sprites:Value() then
     DrawSprite(Icon, Orgenemy.x-10.26, Orgenemy.y-10.26, 0, 0, 20.52, 20.52, ARGB(255,255,255,255))
    end
    
    if RxHelper.circle:Value() then
-    if  speed < 5800 then
-     DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255))
-    end
+    if speed < 5900 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
    end
-   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-6, Orgenemy.y+8, ARGB(255,255,255,255)) end
+   
+   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(255,255,255,0)) end
   end
  end
 end)
