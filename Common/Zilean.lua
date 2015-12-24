@@ -1,23 +1,22 @@
---[[ Rx Zilean Version 0.572 by Rudo.
-     Ver 0.572: Edit somethings
+--[[ Rx Zilean Version 0.573 by Rudo.
+     Ver 0.573: Added Auto R.
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 if GetObjectName(GetMyHero()) ~= "Zilean" then return end
 
 require('Inspired')
----- Script Update ----
+--[[---- Script Update ----
 local WebLuaFile = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.lua"
 local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/Zilean.version"
 local ScriptName = "Zilean.lua"
-local ScriptVersion = 0.572 -- Newest Version
+local ScriptVersion = 0.573
 local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired <3
 if ScriptVersion < tonumber(CheckWebVer) then
 PrintChat(string.format("<font color='#00B359'>Script need update.</font><font color='#FF2626'> Waiting to AutoUpdate.</font>")) 
 AutoUpdate(WebLuaFile,WebVersion,ScriptName,ScriptVersion)
 else
 PrintChat(string.format("<font color='#FFFF26'>You are using newest Version. Don't need to update</font>")) 
-end
-PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer))) 
+end --]]
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
 
@@ -109,10 +108,18 @@ Zilean.KS:Boolean("IgniteKS", "KS with IgniteKS", true)
 PermaShow(Zilean.KS.IgniteKS)
 PermaShow(Zilean.KS.QKS)
 
----- Auto Level Up Skills Menu ----
-Zilean:Menu("AutoLvlUp", "Auto Level Up")
-Zilean.AutoLvlUp:Boolean("UpSpellEb", "Enable Auto Lvl Up", true)
-Zilean.AutoLvlUp:DropDown("AutoSkillUp", "Settings", 1, {"Q-W-E", "Q-E-W"}) 
+---- Misc Menu ----
+Zilean:Menu("Misc", "Misc Mode")
+Zilean.Misc:Menu("AutoR", "Auto Use R")
+Zilean.Misc.AutoR:Boolean("EnbR", "Enable Auto R", true)
+PermaShow(Zilean.Misc.AutoR.EnbR)
+Zilean.Misc.AutoR:Slider("myHP", "If %MyHP < x%", 5, 1, 100, 1)
+Zilean.Misc.AutoR:Boolean("DrawR", "Enable Draw HP use R ", true)
+Zilean.Misc.AutoR:Info("DRInfo", "It will draw x%HP, if MyHP <= HP then auto R")
+Zilean.Misc.AutoR:Info("DRInfo2", "You muse enable AutoR and draw HP to see this")
+Zilean.Misc:Menu("AutoLvlUp", "Auto Level Up")
+Zilean.Misc.AutoLvlUp:Boolean("UpSpellEb", "Enable Auto Lvl Up", true)
+Zilean.Misc.AutoLvlUp:DropDown("AutoSkillUp", "Settings", 1, {"Q-W-E", "Q-E-W"}) 
 end
 ---------- End Menu ----------
 
@@ -136,7 +143,10 @@ function Zilean:Fight(myHero)
       self:LaneJungleClear()
     end
 	
-	  if Zilean.AutoLvlUp.UpSpellEb:Value() then self:LevelUp() end
+	  if Zilean.Misc.AutoLvlUp.UpSpellEb:Value() then self:LevelUp() end
+	  
+	  if Zilean.Misc.AutoR.EnbR:Value() then self:AutoR() end
+	  
 end
 
 function Zilean:CastW()
@@ -170,6 +180,10 @@ function Zilean:Combo()
  end
 end
 
+function Zilean:AutoR()
+ if EnemiesAround(myHeroPos(), 1000) >= 1 and GetPercentHP(myHero) <= Zilean.Misc.AutoR.myHP:Value() then CastTargetSpell(myHero, _R) end
+ if GotBuff(myHero, "karthusfallenonetarget") >= 1 and KarthusDmg(myHero) > GetHP2(myHero) then CastTargetSpell(myHero, _R) end
+end
 
 function Zilean:CastECb()
 local target = tslowhp:GetTarget()
@@ -259,8 +273,8 @@ function Zilean:AutoSpell()
  end
  
 function Zilean:LevelUp()
- if Zilean.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First then W
-  elseif Zilean.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _E , _E, _R, _E, _E, _W, _W, _R, _W, _W} -- Full Q First then E
+ if Zilean.Misc.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First then W
+  elseif Zilean.Misc.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _E , _E, _R, _E, _E, _W, _W, _R, _W, _W} -- Full Q First then E
  end
    LevelSpell(leveltable[GetLevel(myHero)])
 end
@@ -275,6 +289,7 @@ function Zilean:Draws(myHero)
   if Zilean.Draws.DrawText:Value() then
    self:DrawHP()
    self:InfoR()
+   self:DrawRHP()
   end
   
  end
@@ -295,27 +310,23 @@ function Zilean:DrawHP()
     local per = '%'
     local minhp = math.max(1,GetPercentHP(myally))
     local color
-    if GetPercentHP(myally) > 20 then
-     color = 0xffffffff
-    else
-     color = 0xffff0000
-    end
-    if GotBuff(myally, "karthusfallenonetarget") >= 1 and (GetCastLevel(myHero, _R)*150 + 100 + 0.60*BonusAP) >= GetHP2(myally) then
+    if GetPercentHP(myally) > 20 then color = 0xffffffff else color = 0xffff0000 end
+    if GotBuff(myally, "karthusfallenonetarget") >= 1 and KarthusDmg(myally) >= GetHP2(myally) then
      DrawText("This Unit can die with Karthus R",22,alliesPos.x,alliesPos.y+12,0xffff0000)
     end
-     DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), GetCurrentHP(myally), GetMaxHP(myally), per, minhp, per),18,alliesPos.x,alliesPos.y,0xffffffff)
+     DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(myally), GetCurrentHP(myally), GetMaxHP(myally), per, minhp, per), 18, alliesPos.x, alliesPos.y, color)
    end
   end	
  end
 
 
-  if IsObjectAlive(myHero) and GetPercentHP(myHero) <= 20 and GetLevel(myHero) >= 6  then
-   local myTextPos = WorldToScreen(1,myHeroPos())
+  if IsObjectAlive(myHero) and GetLevel(myHero) >= 6  then
+   local myTextPos = WorldToScreen(1, myHeroPos())
    local pmh = '%'
-   local miniumhp = math.max(1,GetPercentHP(myHero))
-    DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh),21,myTextPos.x,myTextPos.y,0xffff0000)
-   if GotBuff(myHero, "karthusfallenonetarget") >= 1 and (GetCastLevel(myHero, _R)*150 + 100 + 0.60*BonusAP) >= GetHP2(myHero) then
-    DrawText("Karthus R can 'KILL!' You",22,myTextPos.x,myTextPos.y+12,0xffff0000)
+   local miniumhp = math.max(1, GetPercentHP(myHero))
+    if GetPercentHP(myHero) <= 20 then DrawText(string.format("%sHP = %d%s CAREFUL!", pmh, miniumhp, pmh), 21, myTextPos.x-20, myTextPos.y+15, 0xffff0000) end
+   if GotBuff(myHero, "karthusfallenonetarget") >= 1 and KarthusDmg(myHero) >= GetHP2(myHero) then
+    DrawText("Karthus R can 'KILL!' You", 22, myTextPos.x-20, myTextPos.y+30, 0xffff0000)
    end
   end
 end
@@ -328,6 +339,13 @@ function Zilean:InfoR()
   end
  end
     DrawText(drawtexts,27,0,110,0xff00ff00) 
+end
+
+function Zilean:DrawRHP()
+ if IsObjectAlive(myHero) and IsReady(_R) and Zilean.Misc.AutoR.DrawR:Value() and Zilean.Misc.AutoR.EnbR:Value() then
+  local myTextPos = WorldToScreen(1, myHeroPos())
+  DrawText(string.format("AutoR if HP < %d | %s%s", GetMaxHP(myHero)*Zilean.Misc.AutoR.myHP:Value()/100, Zilean.Misc.AutoR.myHP:Value(), '%'), 20, myTextPos.x-20, myTextPos.y, 0xffffffff)
+ end
 end
 
 function Zilean:DmgHPBar()
@@ -345,7 +363,7 @@ end
 if _G[GetObjectName(myHero)] then
   _G[GetObjectName(myHero)]()
 end
---------
+----------------------------------
 	InterruptMenu = MenuConfig("Q-Q to Stop Spell enemy", "Interrupt")
 	InterruptMenu:Info("InfoQ", "If you don't see any ON/OFF => No enemy can Interrupt.")
 	
@@ -380,15 +398,33 @@ end)
 --------------------------------------------------------------------------
 
 function CheckE(who)
-    return GotBuff(who, "TimeWarp") <= 0
+ if GotBuff(who, "TimeWarp") <= 0 then
+	return true
+ else
+	return false
+ end
 end
 
 function CheckQ(who)
-    return GotBuff(who, "zileanqenemybomb") >= 1
+ if GotBuff(who, "zileanqenemybomb") >= 1 then
+	return true
+ else
+	return false
+ end
 end
 
 function IsInRange(unit, range)
     return ValidTarget(unit, range) and IsObjectAlive(unit)
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
+function KarthusDmg(unit)
+local Damage
+ for i, enemy in pairs(GetEnemyHeroes()) do
+  if GetObjectName(enemy) == "Karthus" and enemy ~= nil then
+   Damage = CalcDamage(enemy, unit, 0, GetCastLevel(enemy, _R)*150 + 100 + 0.6*GetBonusAP(enemy))
+  end 
+ end
+    return Damage
+end
+
+PrintChat(string.format("<font color='#FF0000'>Rx Zilean by Rudo </font><font color='#FFFF00'>Version 0.573 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
