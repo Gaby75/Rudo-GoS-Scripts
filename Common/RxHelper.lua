@@ -14,9 +14,9 @@ PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8
 local seconds = {}
 local check = {}
 local enemies = {}
+local Icon = CreateSpriteFromFile("\\RxHelper\\Icon.png",0.38)
 local smite = CreateSpriteFromFile("\\RxHelper\\FoundSmite.png",1)
 local danger = CreateSpriteFromFile("\\RxHelper\\danger.png",1)
-local Icon = CreateSpriteFromFile("\\RxHelper\\Icon3.png",1)
 local human = CreateSpriteFromFile("\\RxHelper\\OPMCb.png",1)
 if smite <= 0 then print("'FoundSmite.png' Not found, go to Origin topic to download Sprites.rar") end
 if danger <= 0 then print("'danger.png' Not found, go to Origin topic to download Sprites.rar") end
@@ -28,11 +28,7 @@ RxHelper = MenuConfig("Rx Helper", "Helper")
 RxHelper:Info("info7", "Minimap Icon will crashes the game, waitting...")
 RxHelper:Info("info8", "Now use simple Icon.")
 RxHelper:Boolean("icon", "Draw Icon Minimap", true)
-RxHelper:Boolean("circle", "Draw moving circle", true)
-RxHelper:Boolean("colcir", "Draw colorful circle", true)
-RxHelper:Info("info", "Green color: Not found at 10s before")
-RxHelper:Info("info2", "Orange color: Not found at 25s before")
-RxHelper:Info("info3", "Red color: Not found > 25s before")
+RxHelper:Boolean("circle", "Draw Circle Minimap", true)
 RxHelper:Boolean("seconds", "Draw time Minimap", true)
 RxHelper:Boolean("sprite", "Draw sprite if not see enemy", true)
 RxHelper:Boolean("circleA", "Draw circle if not see enemy", true)
@@ -89,28 +85,16 @@ OnDrawMinimap(function()
   local Orgenemy = WorldToMinimap(GetOrigin(enemy))
   local ms
   if GetMoveSpeed(enemy) == 0 then ms = 325 else ms = GetMoveSpeed(enemy) end
-  local speed = seconds[i]*ms +971
-   if RxHelper.icon:Value() and Icon > 0 then
-    DrawSprite(Icon, Orgenemy.x-10, Orgenemy.y-10, 0, 0, 20, 20, ARGB(255,255,255,255))
+  local speed = seconds[i]*ms +1000
+   if RxHelper.icon:Value() then
+    DrawSprite(Icon, Orgenemy.x-10.26, Orgenemy.y-10.26, 0, 0, 20.52, 20.52, ARGB(255,255,255,255))
    end
    
-   if RxHelper.colcir:Value() then
-    local color
-    if seconds[i] > 0 and seconds[i] < 12 then
-     color = ARGB(255,0,255,127)
-    elseif seconds[i] >= 12 and seconds[i] < 25 then
-     color = ARGB(255,255,127,36)
-    else
-     color = ARGB(255,255,0,0)
-    end
-     DrawCircleMinimap(GetOrigin(enemy), 970, 1, 80, color)
-   end
-	
    if RxHelper.circle:Value() then
     if speed < 5800 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
    end
    
-   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-7.5, Orgenemy.y+7.3, ARGB(255,255,255,0)) DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-7.5, Orgenemy.y+7.3, ARGB(160,255,255,0)) end
+   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(255,255,255,0)) end
   end
  end
 end)
@@ -120,3 +104,4 @@ function NotFound(enemy)
 end
 
 PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.124 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",GetObjectBaseName(myHero))) 
+
