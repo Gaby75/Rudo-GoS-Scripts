@@ -1,10 +1,11 @@
---[[ Rx Helper Version 0.124
-     Ver 0.124: Added OnePuchManChibiIcon when not see enemy Kappa.
+--[[ Rx Helper Version 0.125
+     Ver 0.124: Added Champ Icons Minimap again.
      Download Sprites Here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
 
 require('Inspired')
+require('DeftLib')
 
 ---- Script Update ----
 --AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.lua","/anhvu2001ct/Rudo-GoS-Scripts/master/Common/RxHelper.version","RxHelper.lua",0.121)
@@ -13,14 +14,12 @@ PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8
 ---------------------------------------------------------------------
 local seconds = {}
 local check = {}
-local enemies = {}
-local Icon = CreateSpriteFromFile("\\RxHelper\\Icon.png",0.38)
+local champsIcons = {}
 local smite = CreateSpriteFromFile("\\RxHelper\\FoundSmite.png",1)
 local danger = CreateSpriteFromFile("\\RxHelper\\danger.png",1)
 local human = CreateSpriteFromFile("\\RxHelper\\OPMCb.png",1)
 if smite <= 0 then print("'FoundSmite.png' Not found, go to Origin topic to download Sprites.rar") end
 if danger <= 0 then print("'danger.png' Not found, go to Origin topic to download Sprites.rar") end
-if Icon <= 0 then print("'Icon.png' Not found, go to Origin topic to download Sprites.rar") end
 if human <= 0 then print("'OPMCb.png' Not found, go to Origin topic to download Sprites.rar") end
 
 ---- Create Menu -----
@@ -42,8 +41,7 @@ PermaShow(RxHelper.seconds)
 
 ------ Starting -------
 OnTick(function()
-enemies = GetEnemyHeroes()
-  for i, enemy in pairs(enemies) do
+  for i, enemy in pairs(GetEnemyHeroes()) do
    if NotFound(enemy) then
 	 if check[i] == nil then
 	  check[i] = GetTickCount()
@@ -53,11 +51,12 @@ enemies = GetEnemyHeroes()
     check[i] = nil
     seconds[i] = 0
    end
+    table.insert(champsIcons, CreateSpriteFromFile("\\RxHelper\\"..GetObjectName(enemy).."_GoS_MiniMH.png",1))
   end
 end)
 
 OnDraw(function()
- for i, enemy in pairs(enemies) do
+ for i, enemy in pairs(GetEnemyHeroes()) do
   if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
     if smite > 0 then DrawSprite(smite, 940, 80, 0, 0, 400, 44, ARGB(255,255,255,255)) end
@@ -67,7 +66,7 @@ OnDraw(function()
   if enemy ~= nil and NotFound(enemy) then
   local Orgenemy = WorldToScreen(1, GetOrigin(enemy))
    if human > 0 and RxHelper.sprite:Value() then DrawSprite(human, Orgenemy.x-16, Orgenemy.y-17.5, 0, 0, 32, 35, ARGB(255,255,255,255)) end
-    if RxHelper.circleA:Value() then DrawCircle(GetOrigin(enemy), 80, 1, 50, ARGB(255,255,0,0)) end
+    if RxHelper.circleA:Value() then DrawCircle3D(GetOrigin(enemy).x, GetOrigin(enemy).y, GetOrigin(enemy).z, GetHitBox(enemy), 1, ARGB(255,255,0,0), 50) end
   end
  end
 
@@ -80,27 +79,33 @@ OnDraw(function()
 end)
 
 OnDrawMinimap(function()
- for i, enemy in pairs(enemies) do
+ for i, enemy in pairs(GetEnemyHeroes()) do
   if enemy ~= nil and NotFound(enemy) then
   local Orgenemy = WorldToMinimap(GetOrigin(enemy))
   local ms
   if GetMoveSpeed(enemy) == 0 then ms = 325 else ms = GetMoveSpeed(enemy) end
   local speed = seconds[i]*ms +1000
+  
    if RxHelper.icon:Value() then
-    DrawSprite(Icon, Orgenemy.x-10.26, Orgenemy.y-10.26, 0, 0, 20.52, 20.52, ARGB(255,255,255,255))
+    DrawSprite(champsIcons[i], Orgenemy.x-10, Orgenemy.y-10, 0, 0, 20, 20, ARGB(255,255,255,255))
    end
    
    if RxHelper.circle:Value() then
-    if speed < 5800 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
+    if speed < 5100 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
    end
    
-   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(255,255,255,0)) end
+   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(255,255,255,0)) DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(140,255,255,0))  end
   end
+    if champsIcons[i] ~= nil and champsIcons[i] > 0 then ReleaseSprite(champsIcons[i]) end
  end
 end)
 
 function NotFound(enemy)
-    return IsDead(enemy) == false and IsVisible(enemy) == false
+ if IsDead(enemy) == false and IsVisible(enemy) == false then
+    return true
+ else
+    return false
+ end
 end
 
 PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.124 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",GetObjectBaseName(myHero))) 
