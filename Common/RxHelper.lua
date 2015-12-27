@@ -1,5 +1,5 @@
 --[[ Rx Helper Version 0.125
-     Ver 0.124: Added Champ Icons Minimap again.
+     Ver 0.125: Added Champ Icons Minimap.
      Download Sprites Here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
@@ -40,7 +40,7 @@ PermaShow(RxHelper.icon)
 PermaShow(RxHelper.seconds)
 
 ------ Starting -------
-OnTick(function()
+OnTick(function(myHero)
   for i, enemy in pairs(GetEnemyHeroes()) do
    if NotFound(enemy) then
 	 if check[i] == nil then
@@ -51,11 +51,11 @@ OnTick(function()
     check[i] = nil
     seconds[i] = 0
    end
-    table.insert(champsIcons, CreateSpriteFromFile("\\RxHelper\\"..GetObjectName(enemy).."_GoS_MiniMH.png",1))
+    Load()
   end
 end)
 
-OnDraw(function()
+OnDraw(function(myHero)
  for i, enemy in pairs(GetEnemyHeroes()) do
   if IsObjectAlive(enemy) and IsVisible(enemy) and IsInDistance(enemy, 2500) and RxHelper.smite:Value() then
    if GetCastName(enemy, SUMMONER_1):lower():find("smite") or GetCastName(enemy, SUMMONER_2):lower():find("smite") then
@@ -66,7 +66,7 @@ OnDraw(function()
   if enemy ~= nil and NotFound(enemy) then
   local Orgenemy = WorldToScreen(1, GetOrigin(enemy))
    if human > 0 and RxHelper.sprite:Value() then DrawSprite(human, Orgenemy.x-16, Orgenemy.y-17.5, 0, 0, 32, 35, ARGB(255,255,255,255)) end
-    if RxHelper.circleA:Value() then DrawCircle3D(GetOrigin(enemy).x, GetOrigin(enemy).y, GetOrigin(enemy).z, GetHitBox(enemy), 1, ARGB(255,255,0,0), 50) end
+    if RxHelper.circleA:Value() then DrawCircle(GetOrigin(enemy), GetHitBox(enemy), 1, 80, ARGB(255,255,0,0)) end
   end
  end
 
@@ -78,6 +78,13 @@ OnDraw(function()
  end
 end)
 
+
+function Load()
+ for i, enemy in pairs(GetEnemyHeroes()) do
+  table.insert(champsIcons, CreateSpriteFromFile("\\RxHelper\\"..GetObjectName(enemy).."_GoS_MiniMH.png",0.4))
+ end
+end
+
 OnDrawMinimap(function()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if enemy ~= nil and NotFound(enemy) then
@@ -87,18 +94,24 @@ OnDrawMinimap(function()
   local speed = seconds[i]*ms +1000
   
    if RxHelper.icon:Value() then
-    DrawSprite(champsIcons[i], Orgenemy.x-10, Orgenemy.y-10, 0, 0, 20, 20, ARGB(255,255,255,255))
+    DrawSprite(champsIcons[i], Orgenemy.x-10.8, Orgenemy.y-10.8, 0, 0, 21.6, 21.6, ARGB(255,255,255,255))
    end
    
    if RxHelper.circle:Value() then
     if speed < 5100 then DrawCircleMinimap(GetOrigin(enemy), speed, 1, 80, ARGB(255,0,245,255)) end
    end
    
-   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(255,255,255,0)) DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(140,255,255,0))  end
-  end
-    if champsIcons[i] ~= nil and champsIcons[i] > 0 then ReleaseSprite(champsIcons[i]) end
+   if RxHelper.seconds:Value() then DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-8, Orgenemy.y+8, ARGB(255,255,255,0)) DrawText(math.floor(seconds[i]).."s", 12, Orgenemy.x-9, Orgenemy.y+9, ARGB(140,255,255,0))  end
+  end  
  end
+Unload()
 end)
+
+function Unload()
+   for i =1, #champsIcons do
+    ReleaseSprite(champsIcons[i]);
+   end
+end
 
 function NotFound(enemy)
  if IsDead(enemy) == false and IsVisible(enemy) == false then
@@ -108,5 +121,5 @@ function NotFound(enemy)
  end
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.124 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",GetObjectBaseName(myHero))) 
+PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.125 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",GetObjectBaseName(myHero))) 
 
