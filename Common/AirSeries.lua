@@ -1,4 +1,7 @@
---[[ Script Update for New Inspired. ]]--
+--[[ Script Update for New Inspired. 
+  Not done it yet.
+  Sprite can be download here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
+]]--
 
 require("Inspired_new")
 
