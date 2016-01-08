@@ -83,7 +83,7 @@ Width  = SpellData[myHero.charName].Width
 Speed  = SpellData[myHero.charName].MissileSpeed
 end
 
--------------------------> END Requiment
+-------------------------> END Requirement
 
 class "AirSeries"
 function AirSeries:__init()
