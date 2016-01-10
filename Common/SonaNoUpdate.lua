@@ -361,7 +361,7 @@ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),Ge
 end)
 
 function IsInRange(unit, range)
-    return ValidTarget(unit, range) and IsObjectAlive(unit)
+    if ValidTarget(unit, range) and IsObjectAlive(unit) then return true else return false end
 end
 
 PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 0.33 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
