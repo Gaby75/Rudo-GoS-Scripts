@@ -1,5 +1,5 @@
---[[ Rx Karthus version 0.15
-     Version 0.15: Improve LastHit now request OpenPredict.
+--[[ Rx Karthus version 0.16
+     Version 0.16: Improve LaneClear and LastHit.
      Go to http://gamingonsteroids.com To Download more script.
      Credits: Deftsu, Zypppy, Cloud.
 ----------------------------------------------------]]
@@ -7,7 +7,7 @@
 if GetObjectName(GetMyHero()) ~= "Karthus" then return end
 
 -- Requirement
-require('Inspired_old')
+require('Inspired')
 require('OpenPredict')
 require('DamageLib')
 
@@ -117,7 +117,7 @@ local QPred = GetPredictionForPlayer(myHeroPos(),target,GetMoveSpeed(target),mat
   end
  end
 	
-	--[[ LaneJung Clear ]]--
+	--[[ LaneJungle Clear ]]--
 for _, creep in pairs(minionManager.objects) do
  if IOW:Mode() == "LaneClear" and GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() then
   if GetTeam(creep) ~= GetTeam(myHero) and GetCurrentHP(creep) > 0 then
@@ -126,7 +126,7 @@ for _, creep in pairs(minionManager.objects) do
 	 local QPred = GetCircularAOEPrediction(creep, KarthusQ)
      if GetCurrentHP(creep) < CalcDamage(myHero, creep, GetBaseDamage(myHero), CheckQDmg) +10+7*GetLevel(myHero) then
       local QDmgPredict = GetCurrentHP(creep) - GetDamagePrediction(creep, 750)
-      if QDmgPredict > 0 and QDmgPredict < CheckQDmg+10 and QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(QPred.castPos, creep)) then
+      if QDmgPredict > 0 and QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(creep, QPred.castPos)) then
        CastSkillShot(_Q, QPred.castPos)
       end
      else
@@ -149,13 +149,11 @@ for _, creep in pairs(minionManager.objects) do
    if GetTeam(creep) ~= GetTeam(myHero) and GetCurrentHP(creep) > 0 then
     if IsInRange(creep, GetCastRange(myHero,_Q)) and IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
      local QDmgPredict = GetCurrentHP(creep) - GetDamagePrediction(creep, 750)
-     if QDmgPredict > 0 and QDmgPredict < CheckQDmg+10 then
-      local QPred = GetCircularAOEPrediction(creep, KarthusQ)
-      if QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(QPred.castPos, creep)) then
-       CastSkillShot(_Q, QPred.castPos)
-      else
-       IOW.attacksEnabled = false
-      end
+     local QPred = GetCircularAOEPrediction(creep, KarthusQ)
+     if QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(creep, QPred.castPos)) then
+      CastSkillShot(_Q, QPred.castPos)
+     else
+      IOW.attacksEnabled = false
      end
     end
    end
@@ -203,7 +201,7 @@ OnDraw(function(myHero)
 if Karthus.InfoR.EninfoR:Value() and GetLevel(myHero) >= 6 and not IsDead(myHero) then
                         info = ""
   for i, enemy in pairs(GetEnemyHeroes()) do
-   if IsObjectAlive(enemy) and GetHP2(enemy) < CalcDamage(myHero, enemy, 0, GetCastLevel(enemy, _R)*150 + 100 + 0.6*GetBonusAP(enemy)) then
+   if IsObjectAlive(enemy) and GetHP2(enemy)+GetHPRegen(enemy)*3 < CalcDamage(myHero, enemy, 0, GetCastLevel(enemy, _R)*150 + 100 + 0.6*GetBonusAP(enemy)) then
    info = info..GetObjectName(enemy)
     if not IsVisible(enemy) then
      info = info.." Not see in map maybe"
@@ -223,7 +221,7 @@ if Karthus.Draws.Texts.DrawTexts:Value() then
  for i, enemy in pairs(GetEnemyHeroes()) do
   if ValidTarget(enemy) then
    local EnmTextPos = WorldToScreen(1,GetOrigin(enemy))
-   if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) then
+   if IsReady(_R) and GetHP2(enemy)+GetHPRegen(enemy)*3 <= getdmg("R",enemy) then
     DrawText("Enemy R = KILL",20,EnmTextPos.x,EnmTextPos.y+23,0xffff0000)
    end
 			
@@ -239,7 +237,7 @@ if Karthus.Draws.Texts.DrawTexts:Value() then
     local RDmg = GetCastLevel(myHero, _R)*150 + 100 + 0.60*GetBonusAP(myHero)
     DrawText(string.format("Damage R = %d Dmg", RDmg),16,myTextPos.x,myTextPos.y,0xffffffff)
    end
-  if IsReady(_R) and GetHP2(enemy) <= getdmg("R",enemy) and ValidTarget(enemy) then
+  if IsReady(_R) and GetHP2(enemy)+GetHPRegen(enemy)*3 <= getdmg("R",enemy) and ValidTarget(enemy) then
     DrawText(string.format("R = Kill Enemy"),20,myTextPos.x,myTextPos.y+23,0xffff0000) 
    end
   end
@@ -267,10 +265,10 @@ function IsInRange(unit, range)
     return ValidTarget(unit, range) and IsObjectAlive(unit)
 end
 
-function QCheck(pos, unit)
+function QCheck(unit, pos)
  local Mno, Enm = MinionsAround(pos, 163, MINION_ENEMY), EnemiesAround(pos, 163)
  local CheckQDmg = GetCastLevel(myHero, _Q)*40 + 40 + 0.6*GetBonusAP(myHero)
- if GetDistance(GetOrigin(unit), pos) < 158 then
+ if GetDistance(GetOrigin(unit), pos) <= 153 then
   if Mno <= 1 and Enm < 1 then
    return CheckQDmg
   elseif Mno >= 2 and Enm >= 1 then
@@ -293,5 +291,5 @@ function QCheck(pos, unit)
  end
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.15 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.16 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
 print("Recommend Farm with LastHit.")
