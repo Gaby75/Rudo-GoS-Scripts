@@ -1,5 +1,5 @@
---[[ Rx Karthus version 0.16
-     Version 0.16: Improve LaneClear and LastHit.
+--[[ Rx Karthus version 0.161
+     Version 0.161: Improve LaneClear and LastHit.
      Go to http://gamingonsteroids.com To Download more script.
      Credits: Deftsu, Zypppy, Cloud.
 ----------------------------------------------------]]
@@ -12,7 +12,7 @@ require('OpenPredict')
 require('DamageLib')
 
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
-local KarthusQ = { delay = 0.75, speed = math.huge, width = 153, range = GetCastRange(myHero,_Q) }
+local KarthusQ = { delay = 0.75, speed = math.huge, width = 160, range = GetCastRange(myHero,_Q) }
 
 ---- Create a Menu ----
 Karthus = MenuConfig("Rx Karthus", "Karthus")
@@ -124,9 +124,9 @@ for _, creep in pairs(minionManager.objects) do
    if IsInRange(creep, GetCastRange(myHero, _Q)) then
     if IsReady(_Q) and Karthus.FreezeLane.QLJC:Value() then
 	 local QPred = GetCircularAOEPrediction(creep, KarthusQ)
-     if GetCurrentHP(creep) < CalcDamage(myHero, creep, GetBaseDamage(myHero), CheckQDmg) +10+7*GetLevel(myHero) then
-      local QDmgPredict = GetCurrentHP(creep) - GetDamagePrediction(creep, 750)
-      if QDmgPredict > 0 and QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(creep, QPred.castPos)) then
+     if GetCurrentHP(creep) < CalcDamage(myHero, creep, GetBaseDamage(myHero), CheckQDmg) +10+7*GetLevel(myHero) and QPred then
+      local QDmgPredict =  GetCurrentHP(creep) - GetDamagePrediction(creep, 750)
+      if QDmgPredict > 0 and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(creep, QPred.castPos)) then
        CastSkillShot(_Q, QPred.castPos)
       end
      else
@@ -150,7 +150,7 @@ for _, creep in pairs(minionManager.objects) do
     if IsInRange(creep, GetCastRange(myHero,_Q)) and IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
      local QDmgPredict = GetCurrentHP(creep) - GetDamagePrediction(creep, 750)
      local QPred = GetCircularAOEPrediction(creep, KarthusQ)
-     if QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(creep, QPred.castPos)) then
+     if QDmgPredict > 0 and QPred and QDmgPredict < CalcDamage(myHero, creep, 0, QCheck(creep, QPred.castPos)) then
       CastSkillShot(_Q, QPred.castPos)
      else
       IOW.attacksEnabled = false
@@ -266,30 +266,14 @@ function IsInRange(unit, range)
 end
 
 function QCheck(unit, pos)
- local Mno, Enm = MinionsAround(pos, 163, MINION_ENEMY), EnemiesAround(pos, 163)
+ local Mno, Enm = CountObjectsNearPos(pos, 165, 165, minionManager.objects, MINION_ENEMY), CountObjectsNearPos(pos, 165, 165, GetEnemyHeroes(), MINION_ENEMY)
  local CheckQDmg = GetCastLevel(myHero, _Q)*40 + 40 + 0.6*GetBonusAP(myHero)
- if GetDistance(GetOrigin(unit), pos) <= 153 then
-  if Mno <= 1 and Enm < 1 then
-   return CheckQDmg
-  elseif Mno >= 2 and Enm >= 1 then
-   return CheckQDmg/2
-  elseif Mno >= 2 and Enm < 1 then
-   return CheckQDmg/2
-  elseif Mno <= 1 and Enm >= 1 then
-   return CheckQDmg/2
-  end
+ if GetDistance(GetOrigin(unit), pos) <= 160 then
+  if Mno == 1 and Enm < 1 then return CheckQDmg else return CheckQDmg/2 end
  else
-  if Mno < 1 and Enm < 1 then
-   return CheckQDmg
-  elseif Mno >= 1 and Enm >= 1 then
-   return CheckQDmg/2
-  elseif Mno >= 1 and Enm < 1 then
-   return CheckQDmg/2
-  elseif Mno < 1 and Enm >= 1 then
-   return CheckQDmg/2
-  end
+  if Mno < 1 and Enm < 1 then return CheckQDmg else return CheckQDmg/2 end
  end
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.16 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.161 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
 print("Recommend Farm with LastHit.")
