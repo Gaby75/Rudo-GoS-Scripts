@@ -76,6 +76,7 @@ Karthus.Miscset:Boolean("AutoSkillUpQ", "Auto Lvl Up Q-E-W", true)
 Karthus.Miscset:Boolean("StopE", "Auto Stop E", true)
 Karthus.Miscset:Info("SEI", "Auto Stop E if no creeps/enemy in E range")
 Karthus.Miscset:Info("StopEInfo", "If you want to spam Seraph's Embrace you must OFF it")
+Karthus.Miscset:Slider("hc", "Setting Q HitChance ", 2, 1, 10, 0.5)
 PermaShow(Karthus.Miscset.StopE)
 
 Karthus:Info("info1", "Use PActivator for Auto Use Items")
@@ -126,7 +127,7 @@ local target = tslowhp:GetTarget()
    CastSpell(_E)
   end
   
-  if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and QPred and QPred.hitChance >= 0.2 and Karthus.cb.QCB:Value() then
+  if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and QPred and QPred.hitChance >= Karthus.Miscset.hc:Value()/10 and Karthus.cb.QCB:Value() then
    CastSkillShot(_Q, QPred.castPos)
   end
  end
@@ -136,7 +137,7 @@ function RxKarthus:Harass(target)
 local target = tslowhp:GetTarget()
  if target and IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Karthus.hr.HrMana:Value() then
    local QPred = GetCircularAOEPrediction(target, KarthusQ)
-  if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and QPred and QPred.hitChance >= 0.2 and Karthus.hr.HrQ:Value() then
+  if IsReady(_Q) and IsInRange(target, GetCastRange(myHero,_Q)) and QPred and QPred.hitChance >= Karthus.Miscset.hc:Value()/10 and Karthus.hr.HrQ:Value() then
    CastSkillShot(_Q, QPred.castPos)
   end
  end
@@ -200,7 +201,7 @@ function RxKarthus:KillSteal()
 
    if IsReady(_Q) and IsInRange(enemy, GetCastRange(myHero, _Q)) and GetHP2(enemy) <= myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _Q)*40 + 40 + 0.6*myHero.ap) and Karthus.KS.QKS:Value() then
     local QPred = GetCircularAOEPrediction(enemy, KarthusQ)
-    if QPred.hitChance >= 0.2 then
+    if QPred.hitChance >= 0.1 then
      CastSkillShot(_Q, QPred.castPos)
     end
    end
@@ -277,13 +278,13 @@ function RxKarthus:HPBar()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if IsInRange(enemy, 3000) then
    if IsReady(_Q) and IsReady(_R) then
-    DrawDmgOverHpBar(enemy,enemy.health,0,myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _R)*150 + 100 + 0.6*myHero.ap),GoS.White)
+    enemy:DrawDmg(math.min(enemy.health,myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _R)*150 + 100 + 0.6*myHero.ap)),GoS.White)
    elseif IsReady(_R) and not IsReady(_Q) then
-    DrawDmgOverHpBar(enemy,enemy.health,0,myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _R)*150 + 100 + 0.6*myHero.ap),GoS.White)
+    enemy:DrawDmg(math.min(enemy.health,myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _R)*150 + 100 + 0.6*myHero.ap)),GoS.White)
    elseif IsReady(_Q) and not IsReady(_R) then
-    DrawDmgOverHpBar(enemy,enemy.health,0,myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _Q)*40 + 40 + 0.6*myHero.ap),GoS.White)
+    enemy:DrawDmg(math.min(enemy.health,myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _Q)*40 + 40 + 0.6*myHero.ap)),GoS.White)
    else
-    DrawDmgOverHpBar(enemy,enemy.health,myHero:CalcDamage(enemy, myHero.damage),0,GoS.White)
+    enemy:DrawDmg(myHero.damage,GoS.White)
    end
   end
  end
