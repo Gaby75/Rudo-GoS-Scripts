@@ -4,9 +4,9 @@
      Credits: Deftsu, Zypppy, Cloud.
 ----------------------------------------------------]]
 ---- Requirement
-require('Inspired')
 require('OpenPredict')
 require('DamageLib')
+require('Inspired')
 ----> End
 local RxKarthusLoaded = true
 
