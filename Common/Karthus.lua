@@ -119,7 +119,7 @@ local target = tslowhp:GetTarget()
  local WPred = GetPredictionForPlayer(myHero.pos,target,target.ms,math.huge,250,GetCastRange(myHero, _W),100,false,true)
  local QPred = GetCircularAOEPrediction(target, KarthusQ)
  
-  if IsReady(_W) and myHero.mana >= 130 and target.alive and IsInRange(target, GetCastRange(myHero, _W)) and WPred.HitChance >= 1 and Karthus.cb.WCB:Value() then
+  if IsReady(_W) and myHero.mana >= 130 and IsInRange(target, GetCastRange(myHero, _W)) and WPred.HitChance >= 1 and Karthus.cb.WCB:Value() then
    CastSkillShot(_W, WPred.PredPos)
   end
   
