@@ -153,7 +153,6 @@ if self.cf.track.sd:Value() == 1 then col1 = 0xff00FF7F col2 = 0xffFF7F00 col3 =
   i=i+1
   local leftTime = recall.starttime - os.clock() + recall.info.totalTime/1000
   if leftTime < 0 then leftTime = 0 end
-   ---- [[ Normal Champions]] ----
    recallNormal:Draw(450, 390+55*i, GoS.White)
    DrawText(string.format("%s", R), 20, 456.6, 392+55*i, GoS.White)
    DrawText(string.format("%s HP", math.ceil(recall.Champ.health)), 21, 459, 412.5+55*i, GoS.White)
