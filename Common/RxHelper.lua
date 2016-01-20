@@ -1,5 +1,5 @@
---[[ Rx Helper Version 0.13
-     Ver 0.13: Updated for Inspired_new, add some features.
+--[[ Rx Helper Version 0.126
+     Ver 0.126: Updated for Inspired_new, add some features.
      Download Sprites Here: https://drive.google.com/file/d/0B6Je7vbhD0EaRjZmcW40UHRqM3M/view
      Go to http://gamingonsteroids.com to Download more script. 
 ------------------------------------------------------------------------------------]]
@@ -8,7 +8,7 @@ require('Inspired')
 print("----------------------------------------------")
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#8000FF'>Deftsu </font><font color='#FFFFFF'>, </font><font color='#5900B3'>Inspired </font>"))
 local seconds, check, enemies, allies, HeroesIcon, RECALLING = { }, { }, { }, { }, { }, { }
-local pn, ScriptVersion, danger, chibi, recallNormal = '%', 0.13
+local pn, ScriptVersion, danger, chibi, recallNormal = '%', 0.126
 
 class "RxHelper"
 function RxHelper:__init()
@@ -25,7 +25,6 @@ self.cf.mnm:Info("info1", "Green color: Not found at 10s before")
 self.cf.mnm:Info("info2", "Orange color: Not found at 25s before")
 self.cf.mnm:Info("info3", "Red color: Not found > 25s before")
 self.cf.mnm:Slider("qlt", "Circle Quality", 255, 1, 255, 1)
-self.cf.mnm:Info("info4", "Highest Quality: 1")
 
 --[[ Tracker Menu ]]--
 self.cf:Menu("track", "Tracker")
@@ -223,7 +222,7 @@ function RxHelper:RecallProc(unit, proc)
   if self.cf.track.enb2:Value() then
    if proc.isStart then PrintChat(string.format("<font color =\"#00F5FF\">[RxHelper]: </font><font color =\"#FFA500\">(%s) </font><font color =\"#FFFFF0\">Started Recalling | HP: %s</font>", unit.charName, math.ceil(unit.health)))
    else
-   if math.min(8,proc.passedTime/1000) == proc.totalTime/1000 or proc.isFinish == true then PrintChat(string.format("<font color =\"#00F5FF\">[RxHelper]: </font><font color =\"#FFA500\">(%s) </font><font color =\"#FFFFF0\"><i>Finished</i></font><font color =\"#FFFFFF\"> Recall</font>", unit.charName))
+   if math.min(8,proc.passedTime/1000) == proc.totalTime/1000 or proc.isFinish == true then PrintChat(string.format("<font color =\"#00F5FF\">[RxHelper]: </font><font color =\"#FFA500\">(%s) </font><font color =\"#7FFFD4\"><i>Finished</i></font><font color =\"#FFFFFF\"> Recall</font>", unit.charName))
    elseif proc.isFinish == false then PrintChat(string.format("<font color =\"#00F5FF\">[RxHelper]: </font><font color =\"#FFA500\">(%s) </font><font color =\"#FFFF00\"><u>Cancelled</u></font><font color =\"#FFFFFF\"> Recall</font>", unit.charName)) end
    end
   end
@@ -231,4 +230,4 @@ function RxHelper:RecallProc(unit, proc)
 end
 
 if _G.RxHelper then _G.RxHelper() end
-PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.13 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",GetObjectBaseName(myHero))) 
+PrintChat(string.format("<font color='#FF0000'>Rx Helper </font><font color='#FFFF00'>Version 0.126 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck </font><font color='#CD2990'>%s</font>",myHero.name)) 
