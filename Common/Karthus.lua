@@ -1,20 +1,17 @@
---[[ Rx Karthus version 0.162
-     Version 0.162: Update for Inspired_new
+--[[ Rx Karthus version 0.163
+     Version 0.163: Update some code
      Go to http://gamingonsteroids.com To Download more script.
      Credits: Deftsu, Zypppy, Cloud.
 ----------------------------------------------------]]
 
-if GetObjectName(GetMyHero()) ~= "Karthus" then return end
-
 -- Requirement
-require('Inspired')
-require('OpenPredict')
-PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>"))
+require "Inspired" 
+require "OpenPredict"
+print("<font color='#FFFFFF'>Credits to </font><font color='#3366FF'>Cloud </font><font color='#FFFFFF'>, </font><font color='#54FF9F'>Deftsu </font><font color='#FFFFFF'>and Thank </font><font color='#912CEE'>Inspired </font><font color='#FFFFFF'>for help me </font>")
 
 class "RxKarthus"
 function RxKarthus:__init()
-LoadIOW()
----- [[ Create Menu ]] ----
+---- Create Menu ----
 Karthus = MenuConfig("Karthus", "Rx Karthus")
 tslowhp = TargetSelector(GetCastRange(myHero, _Q), 8, DAMAGE_MAGIC) -- 8 = TARGET_LOW_HP
 
@@ -63,7 +60,7 @@ Karthus.Draws.Texts:Boolean("EninfoR", "Draw R Info", true)
 Karthus.Draws.Texts:Info("infoR1", "If you can see Enemy can KS with R")
 Karthus.Draws.Texts:Info("infoR2", "Press R to Killable enemy")
 
----- Misc Menu ----
+-- [[ Misc ]] --
 Karthus:Menu("Miscset", "Misc")
 Karthus.Miscset:Boolean("AutoSkillUpQ", "Auto Lvl Up Q-E-W", true)
 Karthus.Miscset:Boolean("StopE", "Auto Stop E", true)
@@ -78,7 +75,7 @@ Callback.Add("Draw", function(myHero) self:Drawings(myHero) end)
 end
 
 --- [[ Location ]] ---
-local QRange, WRange, ERange, pn, RxKarthusLoaded = GetCastRange(myHero, _Q), GetCastRange(myHero, _W), GetCastRange(myHero, _E), '%', true
+local QRange, WRange, ERange, pn = GetCastRange(myHero, _Q), GetCastRange(myHero, _W), GetCastRange(myHero, _E), '%'
 local KarthusQ, leveltable = { delay = 0.75, speed = math.huge, width = 160, range = QRange }, {_Q, _E, _Q, _W, _Q , _R, _Q , _E, _Q , _E, _R, _E, _E, _W, _W, _R, _W, _W}
 local function IsInRange(unit, range)
     return unit.valid and IsInDistance(unit, range)
@@ -89,19 +86,19 @@ local function RCheck()
 end
 
 local function QCheck(unit, pos)
- local Mno, Enm = MinionsAround(pos, 175, MINION_ENEMY), CountObjectsNearPos(pos, 173, 173, GetEnemyHeroes(), MINION_ENEMY)
+ local Mno, Enm = MinionsAround(pos, 183, MINION_ENEMY), CountObjectsNearPos(pos, 175, 175, GetEnemyHeroes(), MINION_ENEMY)
  local CheckQDmg = GetCastLevel(myHero, _Q)*40 + 40 + 0.6*myHero.ap
- if GetDistance(unit.pos, pos) <= 160 then
-  if Mno == 1 and Enm < 1 then return CheckQDmg else return CheckQDmg/2 end
+ if GetDistance(unit.pos, pos) <= 167 then
+  if Mno + Enm == 1 then return CheckQDmg else return CheckQDmg/2 end
  else
-  if Mno < 1 and Enm < 1 then return CheckQDmg else return CheckQDmg/2 end
+  if Mno + Enm < 1 then return CheckQDmg else return CheckQDmg/2 end
  end
 end
 
 function RxKarthus:Tick(myHero)
  if IOW:Mode() == "Combo" then self:Combo()
  elseif IOW:Mode() == "Harass" then self:Harass()
- elseif IOW:Mode() == "LaneClear" then self:LaneJungleClear()
+ elseif IOW:Mode() == "LaneClear" then self:LaneClear() self: JungleClear()
  elseif IOW:Mode() == "LastHit" then self:LastHit()
  end
  self:KillSteal()
@@ -138,14 +135,14 @@ function RxKarthus:Harass(target)
  end
 end
 
-function RxKarthus:LaneJungleClear()
+function RxKarthus:LaneClear()
  for C=1, minionManager.maxObjects do
  local creep = minionManager.objects[C]
-  if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() and creep.team ~= myHero.team and creep.health > 0 then
+  if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() and creep.team == MINION_ENEMY and creep.health > 0 then
    if IsInRange(creep, QRange) and IsReady(_Q) and Karthus.FreezeLane.QLJC:Value() then
    local QPred = GetCircularAOEPrediction(creep, KarthusQ)
-    if creep.health < myHero:CalcMagicDamage(creep, GetCastLevel(myHero, _Q)*40 + 40 + 0.6*myHero.ap) +2/myHero.damage+12+7.5*GetLevel(myHero) then
-    local QDmgPredict = creep.health - GetDamagePrediction(creep, 750)
+    if creep.health < myHero:CalcMagicDamage(creep, GetCastLevel(myHero, _Q)*40 + 40 + 0.6*myHero.ap) +myHero.damage/2+12+7.5*GetLevel(myHero) then
+    local QDmgPredict, ac = GetHealthPrediction(creep, 750)
      if QDmgPredict > 0 and QPred and QDmgPredict < myHero:CalcMagicDamage(creep, QCheck(creep, QPred.castPos)) then
       CastSkillShot(_Q, QPred.castPos)
      end
@@ -161,13 +158,22 @@ function RxKarthus:LaneJungleClear()
  end
 end
 
+function RxKarthus:JungleClear()
+ for C, creep in pairs(minionManager.objects) do
+  if GetPercentMP(myHero) >= Karthus.FreezeLane.LJCMana:Value() and creep.team == MINION_JUNGLE and creep.health > 0 and IsInRange(creep, QRange) and IsReady(_Q) and Karthus.FreezeLane.QLJC:Value() then
+   local QPred = GetCircularAOEPrediction(creep, KarthusQ)
+   CastSkillShot(_Q, QPred.castPos)
+  end
+ end
+end
+
 function RxKarthus:LastHit()
  for C=1, minionManager.maxObjects do
  local creep = minionManager.objects[C]
   if GetPercentMP(myHero) >= Karthus.LHMinion.LHMana:Value() then
    if creep.team ~= myHero.team and creep.health > 0 then
      if IsInRange(creep, QRange) and IsReady(_Q) and Karthus.LHMinion.QLH:Value() then
-      local QDmgPredict = creep.health - GetDamagePrediction(creep, 750)
+      local QDmgPredict, ac = GetHealthPrediction(creep, 750)
       local QPred = GetCircularAOEPrediction(creep, KarthusQ)
       if QDmgPredict > 0 and QPred and QDmgPredict < myHero:CalcMagicDamage(creep, QCheck(creep, QPred.castPos)) then
        CastSkillShot(_Q, QPred.castPos)
@@ -240,9 +246,9 @@ function RxKarthus:Range()
 end
 
 function RxKarthus:RDamage()
-local myPos = myHero.pos2D
+local myPos = WorldToScreen(1, myHero.pos)
  for i, enemy in pairs(GetEnemyHeroes()) do
-  local enmPos = enemy.pos2D
+  local enmPos = WorldToScreen(1, enemy.pos)
   if myHero.alive and RCheck() and enemy.valid and (enemy.health+enemy.shieldAD+enemy.shieldAP)+enemy.hpRegen*3 <= myHero:CalcMagicDamage(enemy, GetCastLevel(myHero, _R)*150 + 100 + 0.60*myHero.ap) then
    DrawText("Enemy R = KILL",20,enmPos.x,enmPos.y+23,GoS.Red)
   end
@@ -256,7 +262,7 @@ local myPos = myHero.pos2D
   end
  end
 
- if myHero.dead == false then
+ if myHero.dead == false and GetCastLevel(myHero, _R) > 0 then
   if Karthus.Draws.Texts.DamageR:Value() then
    DrawText("Damage R = "..math.ceil(GetCastLevel(myHero, _R)*150 + 100 + 0.60*myHero.ap).." Dmg",16,myPos.x,myPos.y,GoS.White)
   end
@@ -279,6 +285,6 @@ function RxKarthus:HPBar()
  end
 end
 
-if RxKarthusLoaded then _G.RxKarthus() end
-PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.162 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",GetObjectBaseName(myHero))) 
+if myHero.charName == "Karthus" then RxKarthus() end
+PrintChat(string.format("<font color='#FF0000'>Rx Karthus by Rudo </font><font color='#FFFF00'>Version 0.163 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s</font>",myHero.name)) 
 print("Recommend Farm with LastHit.")
