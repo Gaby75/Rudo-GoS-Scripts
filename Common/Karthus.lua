@@ -98,7 +98,7 @@ end
 function RxKarthus:Tick(myHero)
  if IOW:Mode() == "Combo" then self:Combo()
  elseif IOW:Mode() == "Harass" then self:Harass()
- elseif IOW:Mode() == "LaneClear" then self:LaneClear() self: JungleClear()
+ elseif IOW:Mode() == "LaneClear" then self:LaneClear() self:JungleClear()
  elseif IOW:Mode() == "LastHit" then self:LastHit()
  end
  self:KillSteal()
