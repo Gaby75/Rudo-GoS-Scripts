@@ -68,7 +68,7 @@ Zilean:Menu("Misc", "Misc Mode")
 Zilean.Misc:Menu("AutoR", "Auto Use R")
 Zilean.Misc.AutoR:Boolean("EnbR", "Enable Auto R", true)
 PermaShow(Zilean.Misc.AutoR.EnbR)
-Zilean.Misc.AutoR:Slider("myHP", "If %MyHP < x%", 10, 1, 100, 1)
+Zilean.Misc.AutoR:Slider("myHP", "If %MyHP < x%", 15, 1, 100, 1)
 Zilean.Misc.AutoR:Boolean("DrawR", "Draw xHP to R (x-x%)", true)
 Zilean.Misc.AutoR:Info("DRInfo", "It will draw hp from x%HP, if MyHP <= HP then auto R")
 Zilean.Misc.AutoR:Info("DRInfo2", "You muse enable AutoR and draw HP to see this")
@@ -107,7 +107,7 @@ local QDmg, QRange, ERange, CanR = {75, 115, 165, 230, 300}, GetCastRange(myHero
 local Ignite = (GetCastName(myHero, SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(myHero, SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
 local function ZileanQ(unit)
- return { delay = 0.1, speed = math.min(1750,GetDistance(unit.pos)/0.43), width = 160, range = QRange }
+ return { delay = 0.1, speed = math.min(GetDistance(unit.pos)/0.43,1900), width = 160, range = QRange }
 end
 
 local function CheckQ(unit)
@@ -326,7 +326,7 @@ text = ""
     text = text..ally.charName.." %HP < 20%. Should Use R\n"
   end
  end
-    DrawText(text, 27, 0, 110, Green) 
+    DrawText(text, 27, 0, 110, GoS.Green) 
 end
 
 function RxZilean:DrawRHP()
