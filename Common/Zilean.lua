@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.574
-     Ver 0.574: Fixed some function, improve CastQ
+--[[ Rx Zilean Version 0.575
+     Ver 0.575: Fixed CastQ
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 require('Inspired')
@@ -107,7 +107,7 @@ local QDmg, QRange, ERange, CanR = {75, 115, 165, 230, 300}, GetCastRange(myHero
 local Ignite = (GetCastName(myHero, SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(myHero, SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
 local function ZileanQ(unit)
- return { delay = 0.1, speed = math.min(GetDistance(unit.pos)/0.43,1900), width = 160, range = QRange }
+ return { delay = 0.1, speed = math.min(GetDistance(unit.pos)/0.43-20,1900), width = 160, range = QRange }
 end
 
 local function CheckQ(unit)
@@ -160,7 +160,7 @@ end
 function RxZilean:CastQ(target)
 local target = tslowhp:GetTarget()
  if target and IsInRange(target, QRange) then
-  local QPred = GetLinearAOEPrediction(target, ZileanQ(target))
+  local QPred = GetCircularAOEPrediction(target, ZileanQ(target))
   if QPred.hitChance >= Zilean.Misc.Qhc:Value()/10 then
    CastSkillShot(_Q, QPred.castPos)
   end
@@ -222,7 +222,7 @@ function RxZilean:KillSteal()
   end
 
   if IsReady(_Q) and Zilean.KS.QKS:Value() and enemy.health + enemy.shieldAD + enemy.shieldAP < myHero:CalcMagicDamage(enemy, QDmg[GetCastLevel(myHero, _Q)]) and IsInRange(enemy, QRange) then
-   local QPred = GetLinearAOEPrediction(enemy, ZileanQ(enemy))
+   local QPred = GetCircularAOEPrediction(enemy, ZileanQ(enemy))
    if QPred.hitChance >= 0.2 then CastSkillShot(_Q, QPred.castPos) end
    if IsReady(_W) and GetCurrentMana(myHero) >= 145 + 5*GetCastLevel(myHero, _Q) and not IsReady(_Q) then CastSpell(_W) end
   end
@@ -232,7 +232,7 @@ end
 function RxZilean:AutoQ(enemy)
  for i, enemy in pairs(GetEnemyHeroes()) do
   if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") < 1 and IsInRange(enemy, QRange) and CheckQ(enemy) then
-   local QPred = GetLinearAOEPrediction(enemy, ZileanQ(enemy))
+   local QPred = GetCircularAOEPrediction(enemy, ZileanQ(enemy))
    if QPred.hitChance >= 1 then
     CastSkillShot(_Q, QPred.castPos)
    end
@@ -255,7 +255,7 @@ function RxZilean:LaneJungleClear()
  for _, minimobs in pairs(minionManager.objects) do
   if minimobs.team == MINION_ENEMY or minimobs.team == MINION_JUNGLE then
    if minimobs.health > 0 and IsInRange(minimobs, 900) and IsReady(_Q) and Zilean.ljc.LJcQ:Value() then
-    local QPred = GetLinearAOEPrediction(minimobs, ZileanQ(minimobs))
+    local QPred = GetCircularAOEPrediction(minimobs, ZileanQ(minimobs))
     if QPred.hitChance >= 0.1 then CastSkillShot(_Q, QPred.castPos) end
    end
   end
@@ -349,14 +349,14 @@ function RxZilean:DmgHPBar()
 end
 
 DelayAction(function()
-  local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
-  for i, spell in pairs(ANTI_SPELLS) do
-    for _,k in pairs(GetEnemyHeroes()) do
-        if spell["Name"] == k.charName then
-        Zilean.Misc.Interrupt:Boolean(k.charName.."Inter", "On "..k.charName.." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
-		end
-    end
+local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
+ for i, spell in pairs(ANTI_SPELLS) do
+  for _,k in pairs(GetEnemyHeroes()) do
+   if spell["Name"] == k.charName then
+    Zilean.Misc.Interrupt:Boolean(k.charName.."Inter", "On "..k.charName.." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
+   end
   end
+ end
 end, 1)
 
 function RxZilean:AutoQQ(unit, spell)
@@ -365,8 +365,8 @@ function RxZilean:AutoQQ(unit, spell)
    if IsReady(_W) or CheckQ(unit) then
     if ANTI_SPELLS[spell.name] then
      if IsInRange(unit, QRange) and unit.charName == ANTI_SPELLS[spell.name].Name and Zilean.Misc.Interrupt[unit.charName.."Inter"]:Value() then 
-     local QPred = GetLinearAOEPrediction(unit, ZileanQ(unit))
-      if QPred.hitChance >= 0.1 then CastSkillShot(_Q, QPred.castPos) end
+     local QPred = GetCircularAOEPrediction(unit, ZileanQ(unit))
+      if QPred.hitChance >= 0.2 then CastSkillShot(_Q, QPred.castPos) end
       if IsReady(_W) and not IsReady(_Q) then
         CastSpell(_W)
       end
@@ -389,6 +389,6 @@ function RxZilean:RemoveBuff(o, buff)
  end
 end
 
-PrintChat("<font color='#FFFF00'>RxZilean Version 0.574 Loaded Success</font>")
+PrintChat("<font color='#FFFF00'>RxZilean Version 0.575 Loaded Success</font>")
 PrintChat(string.format("<font color='#08F7F3'>Enjoy and Good Luck %s (%s)</font>", GetUser(), myHero.name))
 if myHero.charName == "Zilean" then RxZilean() end
