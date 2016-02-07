@@ -1,5 +1,5 @@
---[[ Rx Sona Without deLibrary Version 0.34 by Rudo.
-     0.34: Fixed Crash game.
+--[[ Rx Sona Version 0.35
+     0.35: Update for Inspired_new, fix somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------
 
@@ -14,19 +14,24 @@
                                                 
 ---------------------------------------------------]]
 
-if GetObjectName(GetMyHero()) ~= "Sona" then return end
-
 require('Inspired')
---[[local WebVersion = "/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.version"
-local CheckWebVer = require("GOSUtility").request("https://raw.githubusercontent.com",WebVersion.."?no-cache="..(math.random(100000))) -- Copy from Inspired >3
-local ScriptVersion = 0.33 -- Current Version
-AutoUpdate("/anhvu2001ct/Rudo-GoS-Scripts/master/Common/SonaNDe.lua",WebVersion,"SonaNDe.lua",ScriptVersion)
-PrintChat(string.format("<font color='#C926FF'>Script Current Version:</font><font color='#FF8000'> %s </font>| <font color='#C926FF'>Newest Version:</font><font color='#FF8000'> %s </font>", ScriptVersion, tonumber(CheckWebVer)))]]
+require('DeftLib')
 PrintChat(string.format("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu, Inspired, Zypppy. </font>"))
----- Create a Menu ----
-Sona = MenuConfig("Rx Sona", "Sona")
 
----- Combo ----
+class "RxSona"
+function RxSona:__init()
+Callback.Add("Load", function() self:Loading() end)
+Callback.Add("Tick", function(myHero) self:Fight(myHero) end)
+Callback.Add("Draw", function(myHero) self:Draws(myHero) end)
+Callback.Add("ProcessSpell", function(unit, spell) self:AutoUseR(unit, spell) end)
+end
+
+local allies, enemies, HealWAlly, HealWMH, ShieldW = {}, {}, {}
+function RxSona:Loading()
+---- [[ CREATE MENU ]] ----
+Sona = MenuConfig("Sona", "Rx Sona Version 0.35")
+
+-- [[ Combo ]] --
 Sona:Menu("cb", "Combo")
 Sona.cb:Boolean("QCB", "Use Q", true)
 Sona.cb:Boolean("WCB", "Use W", true)
@@ -35,62 +40,60 @@ Sona.cb:Boolean("RCB", "Enable use R in Combo", true)
 Sona.cb:Slider("RCBxEnm", "Use R if can hit x enemy", 2, 1, 5, 1)
 PermaShow(Sona.cb.RCB)
 
----- Harass Menu ----
+-- [[ Harass ]] --
 Sona:Menu("hr", "Harass")
 Sona.hr:Boolean("HrQ", "Use Q", true)
 Sona.hr:Slider("HrMana", "Harass if %My MP >=", 20, 1, 100, 1)
 
----- LastHit Menu ----
+-- [[ LastHit ]] --
 Sona:Menu("lh", "Last Hit")
-Sona.lh:Boolean("LasthitQ", "Enable Q LastHit", true)
+Sona.lh:Boolean("LasthitQ", "Q LastHit", true)
 Sona.lh:Slider("LhMana", "LastHit if %My MP >=", 20, 1, 100, 1)
-PermaShow(Sona.lh.LasthitQ)
 
----- Auto Spell Menu ----
+-- [[ Auto Spell ]] --
 Sona:Menu("AtSpell", "Auto Spell")
 Sona.AtSpell:Slider("ASMana", "Auto Spell if My %MP >=", 15, 1, 90, 1)
 Sona.AtSpell:Menu("QAuto", "Auto Q")
 Sona.AtSpell.QAuto:Boolean("ASQ", "Enable Auto Q", true)
 Sona.AtSpell:Menu("WAuto", "Auto W")
 Sona.AtSpell.WAuto:Menu("me", "Auto W My Hero")
-Sona.AtSpell.WAuto.me:Boolean("ASW", "Enable Auto W(check myHero HP)", true)
+Sona.AtSpell.WAuto.me:Boolean("ASW", "AutoW myHero", true)
 Sona.AtSpell.WAuto.me:Slider("myHrHP", "Auto W if %My HP  =<", 55, 1, 100, 1)
 Sona.AtSpell.WAuto:Menu("ally", "Auto W Ally")
-Sona.AtSpell.WAuto.ally:Boolean("AllyEb", "Enable AutoW(check Ally HP)", true)
+Sona.AtSpell.WAuto.ally:Boolean("AllyEb", "AutoW ally", true)
 Sona.AtSpell.WAuto.ally:Info("info0", "Setting %x HP ally in battle mode or normal mode") 
 Sona.AtSpell.WAuto.ally:Slider("battlemode", "Battle Mode", 70, 2, 100, 1)
 Sona.AtSpell.WAuto.ally:Info("info1", "Battle Mode: if Enemy Heroes in 1250 range then Auto W if %HP Ally <= %x HP")
 Sona.AtSpell.WAuto.ally:Slider("normalmode", "Normal Mode", 50, 2, 100, 1)
 Sona.AtSpell.WAuto.ally:Info("info2", "Normal Mode: if no Enemy Heroes in 1250 range then Auto W if %HP Ally <= %x HP")
-PermaShow(Sona.AtSpell.QAuto.ASQ)
-PermaShow(Sona.AtSpell.WAuto.me.ASW)
+Sona.AtSpell:Menu("Interrupt", "Auto R Stop Spell")
+Sona.AtSpell.Interrupt:Info("InfoQ", "If you don't see any ON/OFF => No enemy can Interrupt.")
 PermaShow(Sona.AtSpell.WAuto.ally.AllyEb)
+PermaShow(Sona.AtSpell.QAuto.ASQ)
 
----- Kill Steal Menu ----
+-- [[ Kill Steal ]] --
 Sona:Menu("KS", "Kill Steal")
 Sona.KS:Boolean("KSEb", "Enable KillSteal", true)
 Sona.KS:Boolean("IgniteKS", "KS with Ignite", true)
 Sona.KS:Boolean("QKS", "KS with Q", true)
-PermaShow(Sona.KS.IgniteKS)
 
----- Auto Level Up Menu ----
+-- [[ Auto LevelUp ]] --
 Sona:Menu("AutoLvlUp", "Auto Level Up")
-Sona.AutoLvlUp:Boolean("UpSpellEb", "Enable Auto Lvl Up", true)
-Sona.AutoLvlUp:DropDown("AutoSkillUp", "Settings", 1, {"Q-W-E", "W-Q-E"}) 
+Sona.AutoLvlUp:Boolean("Enable", "Enable Auto Lvl Up", true)
+Sona.AutoLvlUp:DropDown("Choose", "Settings", 1, {"Q-W-E", "W-Q-E"}) 
 
----- Drawings Menu ----
+-- [[ Drawings ]] --
 Sona:Menu("Draws", "Drawings")
-Sona.Draws:Boolean("DrawsEb", "Enable Drawings", true)
-Sona.Draws:Slider("QualiDraw", "Circle Quality (Highest = 1)", 110, 1, 255, 1)
+Sona.Draws:Slider("QualiDraw", "Circle Quality ", 50, 1, 100, 1)
 Sona.Draws:Menu("Range", "Skills Range")
 Sona.Draws.Range:Boolean("DrawQ", "Range Q", true)
-Sona.Draws.Range:ColorPick("Qcol", "Setting Q Color", {255, 30, 144, 255})
+Sona.Draws.Range:ColorPick("Qcol", "Q Color", {180, 30, 144, 255})
 Sona.Draws.Range:Boolean("DrawW", "Range W", true)
-Sona.Draws.Range:ColorPick("Wcol", "Setting W Color", {255, 124, 252, 0})
+Sona.Draws.Range:ColorPick("Wcol", "W Color", {180, 124, 252, 0})
 Sona.Draws.Range:Boolean("DrawE", "Range E", true)
-Sona.Draws.Range:ColorPick("Ecol", "Setting E Color", {255, 155, 48, 255})
+Sona.Draws.Range:ColorPick("Ecol", "E Color", {180, 155, 48, 255})
 Sona.Draws.Range:Boolean("DrawR", "Range R", true)
-Sona.Draws.Range:ColorPick("Rcol", "Setting R Color", {255, 248, 245, 120})
+Sona.Draws.Range:ColorPick("Rcol", "R Color", {180, 248, 245, 120})
 Sona.Draws:Menu("Texts", "Draw Text")
 Sona.Draws.Texts:Boolean("HPAlly", "Draw HP Ally", true)
 Sona.Draws.Texts:Boolean("WAlly", "Draw W Heal Ally", true)
@@ -98,23 +101,22 @@ Sona.Draws.Texts:Boolean("WSmyH", "Draw W Heal and W Shiled myHero", true)
 Sona.Draws:Menu("CircleAlly", "Draw Circle Around Ally")
 Sona.Draws.CircleAlly:Boolean("DrawCircleAlly", "Enable draw circle ally", true)
 Sona.Draws.CircleAlly:Slider("HPAllies", "Draw if %HP Ally <= x%", 40, 6, 70, 2)
-Sona.Draws.CircleAlly:ColorPick("Alcol", "Circle Around Ally Color", {255, 173, 255, 47})
-PermaShow(Sona.Draws.CircleAlly.DrawCircleAlly)
-
+Sona.Draws.CircleAlly:ColorPick("Alcol", "Circle Around Ally Color", {140, 173, 255, 47})
 Sona:Info("info3", "Use PActivator for Auto Items")
-   
----------- End Menu ----------
 
--------------------------------------------------------Starting--------------------------------------------------------------
-require('IPrediction')
-local QPred = { name = "SonaR", speed = 2400, delay = 0.3, range = 1000, width = 150, collision = false, aoe = true, type = "circular"}
-QPrediction = IPrediction.Prediction(QPred)
+ for i, enemy in pairs(GetEnemyHeroes()) do
+  table.insert(enemies, enemy)
+ end
+ for l, ally in pairs(GetAllyHeroes()) do
+  table.insert(allies, ally)
+ end
+end
 
-------------------------------------------
-require('DeftLib')
-require('DamageLib')
--- Deftsu CHANELLING_SPELLS but no stop Varus Q and Fidd W
-ANTI_SPELLS = {
+--- [[ Location ]] ---
+local RPred = { name = "SonaR", speed = 2400, delay = 0.3, range = 1000, width = 150, collision = false, aoe = true, type = "linear"}
+SonaR = IPrediction.Prediction(RPred)
+local Ignite = (GetCastName(myHero, SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(myHero, SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
+local ANTI_SPELLS = { -- Deftsu CHANELLING_SPELLS but no stop Varus Q and Fidd W
     ["CaitlynAceintheHole"]         = {Name = "Caitlyn",      Spellslot = _R},
     ["KatarinaR"]                   = {Name = "Katarina",     Spellslot = _R},
     ["Crowstorm"]                   = {Name = "FiddleSticks", Spellslot = _R},
@@ -133,237 +135,229 @@ ANTI_SPELLS = {
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
 
-	InterruptMenu = MenuConfig("R Stop Spell enemy", "Interrupt")
-	InterruptMenu:Info("InfoQ", "If you don't see any ON/OFF => No enemy can Interrupt.")
-DelayAction(function()
-  local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
-  for i, spell in pairs(ANTI_SPELLS) do
-    for _,k in pairs(GetEnemyHeroes()) do
-        if spell["Name"] == GetObjectName(k) then
-        InterruptMenu:Boolean(GetObjectName(k).."Inter", "On "..GetObjectName(k).." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
-        end
-    end
-  end
-end, 1)
+local function IsInRange(unit, range)
+    return unit.valid and IsInDistance(unit, range)
+end
 
-OnProcessSpell(function(unit, spell)
-    if GetObjectType(unit) == Obj_AI_Hero and GetTeam(unit) ~= GetTeam(myHero) and IsReady(_R) then
-      if ANTI_SPELLS[spell.name] then
-        if ValidTarget(unit, 990) and GetObjectName(unit) == ANTI_SPELLS[spell.name].Name and InterruptMenu[GetObjectName(unit).."Inter"]:Value() then 
-        local hitchance, pos = QPrediction:Predict(unit)
-		 if hitchance > 2 then
-		  CastSkillShot(_R, pos)
-		 end
-		end
-      end
-    end
-end)
+function RxSona:Fight(myHero)
+ if IOW:Mode() == "Combo" then
+  self:Combo()
+ elseif IOW:Mode() == "Harass" then
+  self:Harass()
+ elseif IOW:Mode() == "LastHit" then
+  self:LastHit()
+ end
+ if Sona.KS.KSEb:Value() then self:KillSteal() end
+ if Sona.AutoLvlUp.Enable:Value() then self:AutoLvlUp() end
+ if GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Value() and GotBuff(myHero, "recall") <= 0 then self:AutoSpell() end
+ self:GetWValue()
+end
 
-local HealWAlly = {}
-local allies = {}
-local HealWMH
-local ShieldW
-
-
-OnTick(function(myHero)
-
+function RxSona:Combo()
 local target = GetCurrentTarget()
+ if IsReady(_Q) and IsInRange(target, 822) and Sona.cb.QCB:Value() then
+  CastSpell(_Q)
+ end
 
- if IOW:Mode() == "Combo" then	
-	------ Start Combo ------
-  if IsReady(_Q) and IsInRange(target, 822) and Sona.cb.QCB:Value() then
+ if IsReady(_W) and IsInRange(target, 1000) and Sona.cb.WCB:Value() and (myHero.health + 10 + 20*GetCastLevel(myHero, _W)) < myHero.maxHealth then
+  CastSpell(_W)
+ end
+
+ if IsReady(_E) and IsInRange(target, 1300) and Sona.cb.ECB:Value() then
+  if AlliesAround(myHero.pos, GetCastRange(myHero, _E)) >= 1 or not IsInDistance(target, 850) then
+   CastSpell(_E)
+  end
+ end
+
+ for i, enemy in pairs(enemies) do
+  if Sona.cb.RCB:Value() and IsInRange(enemy, 1000) and EnemiesAround2(enemy.pos, 150, 300) >= Sona.cb.RCBxEnm:Value() then
+   local hitchance, pos = SonaR:Predict(enemy)
+   if hitchance > 2 then
+    CastSkillShot(_R, pos)
+   end
+  end
+ end
+end
+	
+function RxSona:Harass()
+local target = GetCurrentTarget()
+ if GetPercentMP(myHero) >= Sona.hr.HrMana:Value() and IsReady(_Q) and IsInRange(target, 822) and Sona.hr.HrQ:Value() then
+  CastSpell(_Q)
+ end	
+end
+
+function RxSona:LastHit()
+ for I = 1, minionManager.maxObjects do
+ local minion = minionManager.objects[I]
+  if GetPercentMP(myHero) >= Sona.lh.LhMana:Value() and minion.team ~= myHero.team and IsReady(_Q) and IsInRange(minion, GetCastRange(myHero, _Q)) and Sona.lh.LasthitQ:Value() then 
+   local mno1 = ClosestMinion(myHero.pos, MINION_ENEMY)
+   local mno2 = ClosestMinion(mno1.pos, MINION_ENEMY)
+   if EnemiesAround(myHero.pos, 825) == 1 and mno1.health < myHero:CalcMagicDamage(mno1, 40*GetCastLevel(myHero, _Q) + 0.5*myHero.ap) then
+     if mno1.health > 0 then CastSpell(_Q) end
+   elseif EnemiesAround(myHero.pos, 825) <= 0 then
+    if mno1.health < myHero:CalcMagicDamage(mno1, 40*GetCastLevel(myHero, _Q) + 0.5*myHero.ap) or mno2.health < myHero:CalcMagicDamage(mno2, 40*GetCastLevel(myHero, _Q) + 0.5*myHero.ap) then
+     if mno1.health > 0 and mno2.health > 0 then CastSpell(_Q) end
+    end
+   end
+  end
+ end
+end
+ 
+function RxSona:AutoSpell()
+ for i, enemy in pairs(enemies) do
+  if IsReady(_Q) and IsInRange(enemy, 823) and Sona.AtSpell.QAuto.ASQ:Value() then
    CastSpell(_Q)
   end
-  
-  if IsReady(_W) and ValidTarget(target, 1000) and Sona.cb.WCB:Value() and (GetCurrentHP(myHero) + 10 + 20*GetCastLevel(myHero, _W)) <= GetMaxHP(myHero) then
+
+  if IsReady(_W) and GetPercentHP(myHero) <= Sona.AtSpell.WAuto.me.myHrHP:Value() and Sona.AtSpell.WAuto.me.ASW:Value() then
    CastSpell(_W)
   end
-  
-  if IsReady(_E) and ValidTarget(target, 1500) and Sona.cb.ECB:Value() then
-   if AlliesAround(myHeroPos(), GetCastRange(myHero, _E)) >= 1 or not IsInDistance(target, 850) then
-    CastSpell(_E)
-   end
-  end
 
-  if IsReady(_R) then
-   for i, enemy in pairs(GetEnemyHeroes()) do
-    if Sona.cb.RCB:Value() and IsInRange(enemy, 1000) then
-    local Enm = EnemiesAround2(GetOrigin(enemy), 150)
-     if Enm >= Sona.cb.RCBxEnm:Value() then
-     local hitchance, pos = QPrediction:Predict(enemy)
-      if hitchance > 2 then
-       CastSkillShot(_R, pos)
-      end
+  for l, ally in pairs(allies) do
+   if IsReady(_W) and Sona.AtSpell.WAuto.ally.AllyEb:Value() then
+    if IsInRange(enemy, 1250) then	   
+     if IsInRange(ally, GetCastRange(myHero, _W)) and GetPercentHP(ally) <= Sona.AtSpell.WAuto.ally.battlemode:Value() then
+      CastSpell(_W)
      end
-    end
-   end
-  end
-end
-		
-					
- if IOW:Mode() == "Harass" and GetPercentMP(myHero) >= Sona.hr.HrMana:Value() then
-    ------ Start Harass ------
-  if IsReady(_Q) and IsInRange(target, 822) and Sona.hr.HrQ:Value() then
-   CastSpell(_Q)
-  end	
- end
-
- if IOW:Mode() == "LastHit" and GetPercentMP(myHero) >= Sona.lh.LhMana:Value() then
-    ------ Start LastHit ------
-  for I = 1, minionManager.maxObjects do
-  local minion = minionManager.objects[I]
-   if IsReady(_Q) and IsInDistance(minion, GetCastRange(myHero, _Q)) and Sona.lh.LasthitQ:Value() then 
-   local closest = ClosestMinion(myHeroPos(), MINION_ENEMY)
-   local closestagain = ClosestMinion(GetOrigin(closest), MINION_ENEMY)
-    if EnemiesAround(myHeroPos(), 825) <= 1 and GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, 40*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + Ludens()) and IsObjectAlive(closest) then
-      CastSpell(_Q)
-    elseif EnemiesAround(myHeroPos(), 825) <= 0 and IsObjectAlive(closestagain) then
-     if GetCurrentHP(closest) <= CalcDamage(myHero, closest, 0, QDmg) or GetCurrentHP(closestagain) <= CalcDamage(myHero, closestagain, 0, 40*GetCastLevel(myHero,_Q) + 0.5*GetBonusAP(myHero) + Ludens()) then
-      CastSpell(_Q)
-     end
-    end
-   end
-  end
- end
- 
- if GetPercentMP(myHero) >= Sona.AtSpell.ASMana:Value() and GotBuff(myHero, "recall") <= 0 then
-    ------ Start Auto Spell ------
-  for i, enemy in pairs(GetEnemyHeroes()) do				  
-   if IsReady(_Q) and IsInRange(enemy, 823) and Sona.AtSpell.QAuto.ASQ:Value() then
-    CastSpell(_Q)
-   end
-
-   if IsReady(_W) and GetPercentHP(myHero) <= Sona.AtSpell.WAuto.me.myHrHP:Value() and Sona.AtSpell.WAuto.me.ASW:Value() then
-    CastSpell(_W)
-   end
-   
-   for l, ally in pairs(GetAllyHeroes()) do
-    if IsReady(_W) and Sona.AtSpell.WAuto.ally.AllyEb:Value() and IsObjectAlive(ally) then
-     if IsInDistance(enemy, 1250) and IsObjectAlive(enemy) then	   
-      if IsInDistance(ally, GetCastRange(myHero, _W)) and GetPercentHP(ally) <= Sona.AtSpell.WAuto.ally.battlemode:Value() then
-       CastSpell(_W)
-      end
-     elseif GetDistance(myHero, enemy) > 1250 then
-      if IsInDistance(ally, GetCastRange(myHero, _W)) and GetPercentHP(ally) <= Sona.AtSpell.WAuto.ally.normalmode:Value() then
-       CastSpell(_W)
-      end
-     end
-    end 
-   end
-  end
- end
-	
- if Sona.KS.KSEb:Value() then
-	 	------ Start Kill Steal ------
-  for i, enemy in pairs(GetEnemyHeroes()) do
-   if Ignite and Sona.KS.IgniteKS:Value() then
-    if IsReady(Ignite) and 20*GetLevel(myHero)+50 >= GetHP(enemy)+GetHPRegen(enemy)*2.5 and ValidTarget(enemy, 600) then
-      CastTargetSpell(enemy, Ignite)
-    end
-   end
-  end
-
-  if IsReady(_Q) and IsInRange(enemy, 822) and Sona.KS.QKS:Value() and GetHP2(enemy) < getdmg("Q",enemy) then
-  local name1 = ClosestEnemy(myHeroPos())
-  local name2 = ClosestEnemy(GetOrigin(name1))
-   if GetObjectName(enemy) == GetObjectName(name1) or GetObjectName(enemy) == GetObjectName(name2) then
-    CastSpell(_Q)
-   end
-  end
- end
-	
-if Sona.AutoLvlUp.UpSpellEb:Value() then
-	 	------ Start Auto Level Up _Settings Full Q or Full W first ------
-  if Sona.AutoLvlUp.AutoSkillUp:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First
-  elseif Sona.AutoLvlUp.AutoSkillUp:Value() == 2 then leveltable = {_W, _Q, _E, _W, _W , _R, _W , _W, _Q , _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- Full W First
-  end
-   LevelSpell(leveltable[GetLevel(myHero)])
-end
-
----------- Calculate Check Heal of W ----------
-allies = GetAllyHeroes()
-local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
-local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.3*GetBonusAP(myHero)
- for l, ally in pairs(allies) do
-  if GetObjectName(myHero) ~= GetObjectName(ally) then	
-   if IsObjectAlive(ally) then
-    local WCheck = 100 - GetPercentHP(ally)
-    local WHeal = WDmg + (WDmg*WCheck)/200
-    HealWAlly[l] = math.min(WHeal, WMax)
-   else
-   HealWAlly[l] = 0
-   end
-  end
- end
-   if IsObjectAlive(myHero) then
-    local CheckW = 100 - GetPercentHP(myHero)
-    local HealW = WDmg + (WDmg*CheckW)/200
-    HealWMH = math.min(HealW, WMax)
-	ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
-   else
-    HealWMH = 0
-	ShieldW = 0
-   end
---- end OnTick ---
-end)
- 
-
-------------------------------------------------------
-	
-OnDraw(function(myHero)
-	------ Start Drawings ------
- if Sona.Draws.DrawsEb:Value() then
-if Sona.Draws.Range.DrawQ:Value() and IsReady(_Q) then DrawCircle(myHeroPos(),GetCastRange(myHero,_Q),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Qcol:Value()) end
-if Sona.Draws.Range.DrawW:Value() and IsReady(_W) then DrawCircle(myHeroPos(),GetCastRange(myHero,_W),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Wcol:Value()) end
-if Sona.Draws.Range.DrawE:Value() and IsReady(_E) then DrawCircle(myHeroPos(),GetCastRange(myHero,_E),2,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Ecol:Value()) end
-if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle(myHeroPos(),GetCastRange(myHero,_R),1,Sona.Draws.QualiDraw:Value(),Sona.Draws.Range.Rcol:Value()) end
-  if Sona.Draws.CircleAlly.DrawCircleAlly:Value() then
-   for l, ally in pairs(allies) do
-    if GetObjectName(myHero) ~= GetObjectName(ally) then
-     if IsObjectAlive(ally) and IsInDistance(ally, 2000) then	
-      if GetPercentHP(ally) <= Sona.Draws.CircleAlly.HPAllies:Value() then
-       DrawCircle(GetOrigin(ally), 1000, 1, Sona.Draws.QualiDraw:Value(), Sona.Draws.CircleAlly.Alcol:Value())
-      end
-     end
-    end
-   end
-  end
-  
-   for l, ally in pairs(allies) do
-    if GetObjectName(myHero) ~= GetObjectName(ally) then	
-     if IsInDistance(ally, 3500) and IsObjectAlive(ally) then
-      local AllyTextPos = WorldToScreen(1, GetOrigin(ally))
-      local perc = '%'
-      if Sona.Draws.Texts.HPAlly:Value() then DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", GetObjectName(ally), GetCurrentHP(ally), GetMaxHP(ally), perc, GetPercentHP(ally), perc),16,AllyTextPos.x,AllyTextPos.y,0xffffffff) end 
-      if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WAlly:Value() then DrawText(string.format("Heal of W = %d HP", HealWAlly[l]),18,AllyTextPos.x,AllyTextPos.y+20,0xffffffff) end
+     else
+     if IsInRange(ally, GetCastRange(myHero, _W)) and GetPercentHP(ally) <= Sona.AtSpell.WAuto.ally.normalmode:Value() then
+      CastSpell(_W)
      end
     end
    end 
-   
-   if IsObjectAlive(myHero) then
-    local mytextPos = WorldToScreen(1, myHeroPos())
-    if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WSmyH:Value() then DrawText(string.format("Heal of W: %d HP | Shield of W: %d Armor", HealWMH, ShieldW),18,mytextPos.x,mytextPos.y,0xffffffff) end
+  end
+ end
+end
+
+function RxSona:KillSteal()
+ for i, enemy in pairs(enemies) do
+  if Ignite and Zilean.KS.IgniteKS:Value() then
+   if IsReady(Ignite) and 20*GetLevel(myHero)+50 >= enemy.health+enemy.shieldAD + enemy.hpRegen*2.5 and IsInRange(enemy, 600) then
+	CastTargetSpell(enemy, Ignite)
    end
-  
-  for i, enemy in pairs(GetEnemyHeroes()) do
-   if IsInRange(enemy, 4000) then
-   local Check = GetMagicShield(enemy)+GetDmgShield(enemy)
-    if IsReady(_R) and IsReady(_Q) then
-     DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,getdmg("R",enemy) - Check,0xffffffff)
-    elseif IsReady(_R) and not IsReady(_Q) then
-     DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,getdmg("R",enemy) - Check,0xffffffff)
-	elseif IsReady(_Q) and not IsReady(_R) then
-     DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,getdmg("Q",enemy) - Check,0xffffffff)
-    else
-     DrawDmgOverHpBar(enemy,GetCurrentHP(enemy),0,GetBaseDamage(myHero) - Check,0xffffffff)
+  end
+
+  if IsReady(_Q) and IsInRange(enemy, 822) and Sona.KS.QKS:Value() and enemy.health+enemy.shieldAD+enemy.shieldAP < myHero:CalcMagicDamage(enemy, 40*GetCastLevel(myHero, _Q) + 0.5*myHero.ap) then
+   local ks1 = ClosestEnemy(myHero.pos)
+   local ks2 = ClosestEnemy(ks1.pos)
+   if enemy.networkID == ks1.networkID or enemy.networkID == ks2.networkID then
+    CastSpell(_Q)
+   end
+  end
+ end
+end
+
+function RxSona:AutoLvlUp()
+ if Sona.AutoLvlUp.Enable:Value() then
+  if Sona.AutoLvlUp.Choose:Value() == 1 then leveltable = {_Q, _W, _E, _Q, _Q , _R, _Q , _Q, _W , _W, _R, _W, _W, _E, _E, _R, _E, _E} -- Full Q First
+  elseif Sona.AutoLvlUp.Choose:Value() == 2 then leveltable = {_W, _Q, _E, _W, _W , _R, _W , _W, _Q , _Q, _R, _Q, _Q, _E, _E, _R, _E, _E} -- Full W First
+  end
+   LevelSpell(leveltable[GetLevel(myHero)])
+ end
+end
+
+function RxSona:GetWValue()
+local WDmg = 10 + 20*GetCastLevel(myHero,_W) + 0.2*myHero.ap
+local WMax = 15 + 30*GetCastLevel(myHero,_W) + 0.3*myHero.ap
+ for l, ally in pairs(allies) do
+  if ally.alive then
+   local WCheck = 100 - GetPercentHP(ally)
+   local WHeal = WDmg + (WDmg*WCheck)/200
+   HealWAlly[l] = math.min(WHeal, WMax)
+  else
+   HealWAlly[l] = 0
+  end
+ end
+ 
+ if myHero.alive then
+  local CheckW = 100 - GetPercentHP(myHero)
+  local HealW = WDmg + (WDmg*CheckW)/200
+  HealWMH = math.min(HealW, WMax)
+  ShieldW = 15 + 20*GetCastLevel(myHero,_W) + 0.2*GetBonusAP(myHero)
+ else
+  HealWMH = 0
+  ShieldW = 0
+ end
+end
+ 
+function RxSona:Draws(myHero)
+ self:SkillsRange()
+ self:DrawTexts()
+ self:HPBar()
+end
+
+function RxSona:SkillsRange()
+local pos = myHero.pos
+ if Sona.Draws.Range.DrawQ:Value() and IsReady(_Q) then DrawCircle3D(pos.x, pos.y, pos.z, GetCastRange(myHero, _Q), 1, Sona.Draws.Range.Qcol:Value(), Sona.Draws.QualiDraw:Value()) end
+ if Sona.Draws.Range.DrawW:Value() and IsReady(_W) then DrawCircle3D(pos.x, pos.y, pos.z, GetCastRange(myHero, _W), 1, Sona.Draws.Range.Wcol:Value(), Sona.Draws.QualiDraw:Value()) end
+ if Sona.Draws.Range.DrawE:Value() and IsReady(_E) then DrawCircle3D(pos.x, pos.y, pos.z, GetCastRange(myHero, _E), 1, Sona.Draws.Range.Ecol:Value(), Sona.Draws.QualiDraw:Value()) end
+ if Sona.Draws.Range.DrawR:Value() and IsReady(_R) then DrawCircle3D(pos.x, pos.y, pos.z, GetCastRange(myHero, _R), 1, Sona.Draws.Range.Rcol:Value(), Sona.Draws.QualiDraw:Value()) end
+
+  if Sona.Draws.CircleAlly.DrawCircleAlly:Value() then
+   for l, ally in pairs(allies) do
+    if IsInRange(ally, 2000) and GetPercentHP(ally) <= Sona.Draws.CircleAlly.HPAllies:Value() then	
+     DrawCircle3D(ally.pos.x, ally.pos.y, ally.pos.z, 1000, 1, Sona.Draws.CircleAlly.Alcol:Value(), Sona.Draws.QualiDraw:Value())
+    end
+   end
+  end
+end
+
+function RxSona:DrawTexts()
+ for l, ally in pairs(allies) do
+  if IsInRange(ally, 2500) then
+   local pos = WorldToScreen(1, ally.pos)
+   if Sona.Draws.Texts.HPAlly:Value() then DrawText(string.format("%s HP: %d / %d | %sHP = %d%s", ally.charName, ally.health, ally.maxHealth, '%', GetPercentHP(ally), '%'), 16, pos.x-80, pos.y, GoS.White) end 
+   if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WAlly:Value() then DrawText(string.format("Heal W = %d HP", HealWAlly[l]), 18, pos.x-80, pos.y+20, GoS.White) end
+  end
+ end 
+
+ if IsObjectAlive(myHero) then
+  local pos = WorldToScreen(1, myHero.pos)
+  if GetCastLevel(myHero, _W) >= 1 and Sona.Draws.Texts.WSmyH:Value() then DrawText(string.format("Heal W: %d HP | Shield W: %d Armor", HealWMH, ShieldW), 18, pos.x-80, pos.y, GoS.White) end
+ end
+end
+
+function RxSona:HPBar()  
+ for i, enemy in pairs(enemies) do
+  if IsInRange(enemy, 4000) then
+  local damage
+   if IsReady(_R) and IsReady(_Q) then
+    damage = myHero:CalcMagicDamage(enemy, 100*GetCastLevel(myHero, _R)+ 50+0.5*myHero.ap)
+   elseif IsReady(_R) and not IsReady(_Q) then
+    damage = myHero:CalcMagicDamage(enemy, 100*GetCastLevel(myHero, _R)+ 50+0.5*myHero.ap)
+   elseif IsReady(_Q) and not IsReady(_R) then
+    damage = myHero:CalcMagicDamage(enemy, 40*GetCastLevel(myHero, _Q) +0.5*myHero.ap)
+   else
+    damage = myHero:CalcDamage(enemy, myHero.damage)
+   end
+    DrawDmgOverHpBar(enemy, enemy.health, 0, math.min(enemy.health,damage), GoS.Green)
+  end
+ end
+end
+
+DelayAction(function()
+local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
+ for i, spell in pairs(ANTI_SPELLS) do
+  for _,k in pairs(enemies) do
+   if spell["Name"] == k.charName then
+    Sona.AtSpell.Interrupt:Boolean(k.charName.."Inter", "On "..k.charName.." "..(type(spell.Spellslot) == 'number' and str[spell.Spellslot]), true)
+   end
+  end
+ end
+end, 1)
+
+function RxSona:AutoUseR(unit, spell)
+ if unit.type == Obj_AI_Hero and unit.team ~= myHero.team and IsReady(_R) then
+  if ANTI_SPELLS[spell.name] then
+   if IsInRange(unit, 990) and unit.charName == ANTI_SPELLS[spell.name].Name and Sona.AtSpell.Interrupt[unit.charName.."Inter"]:Value() then 
+    local hitchance, pos = SonaR:Predict(unit)
+    if hitchance > 2 then
+     CastSkillShot(_R, pos)
     end
    end
   end
  end
-end)
-
-function IsInRange(unit, range)
-    return ValidTarget(unit, range) and IsObjectAlive(unit)
 end
 
-PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 0.34 Loaded Success </font><font color='#08F7F3'>Enjoy it and Good Luck :3</font>")) 
+PrintChat(string.format("<font color='#FF0000'>Rx Sona by Rudo </font><font color='#FFFF00'>Version 0.35 Loaded Success </font><font color='#08F7F3'>Enjoy and Good Luck %s (%s)</font>",GetUser(), myHero.name))
+if myHero.charName == "Sona" then RxSona() end
