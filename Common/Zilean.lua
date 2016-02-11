@@ -1,5 +1,5 @@
---[[ Rx Zilean Version 0.575
-     Ver 0.575: Fixed CastQ
+--[[ Rx Zilean Version 0.576
+     Ver 0.576: Fix somethings
      Go to http://gamingonsteroids.com   To Download more script. 
 ------------------------------------------------------------------------------------]]
 require('Inspired')
@@ -9,8 +9,8 @@ PrintChat("<font color='#FFFFFF'>Credits to </font><font color='#54FF9F'>Deftsu,
 class "RxZilean"
 function RxZilean:__init()
 ---- Create Menu ----
-Zilean = MenuConfig("Rx Zilean", "Zilean")
-tslowhp = TargetSelector(GetCastRange(myHero, _Q), 8, DAMAGE_MAGIC)
+Zilean = MenuConfig("RxZilean", "Rx Zilean Version 0.576")
+tslowhp = TargetSelector(myHero:GetSpellData(_Q).range, 8, DAMAGE_MAGIC)
 
 -- [[ Combo ]] --
 Zilean:Menu("cb", "Zilean Combo")
@@ -103,11 +103,11 @@ local ANTI_SPELLS = {
     ["VelKozR"]                     = {Name = "VelKoz",       Spellslot = _R}, 
     ["XerathR"]                     = {Name = "Xerath",       Spellslot = _R} 
 }
-local QDmg, QRange, ERange, CanR = {75, 115, 165, 230, 300}, GetCastRange(myHero, _Q), GetCastRange(myHero, _E), false
+local QDmg, QRange, ERange, CanR, text = {75, 115, 165, 230, 300}, myHero:GetSpellData(_Q).range, myHero:GetSpellData(_E).range, false
 local Ignite = (GetCastName(myHero, SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(myHero, SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
 local function ZileanQ(unit)
- return { delay = 0.1, speed = math.min(GetDistance(unit.pos)/0.43-20,1900), width = 160, range = QRange }
+ return { delay = 0, speed = math.min(GetDistance(unit.pos)/0.445,2000), radius = 80, range = QRange }
 end
 
 local function CheckQ(unit)
@@ -123,13 +123,13 @@ local function CheckR(unit)
 end
 
 local function IsInRange(unit, range)
-    return unit.valid and IsInDistance(unit, range)
+    return unit.visible == true and unit.alive and IsInDistance(unit, range)
 end
 
 local function KarthusDmg(unit)
  for i, enemy in pairs(GetEnemyHeroes()) do
   if enemy ~= nil and enemy.charName == "Karthus" then
-   return enemy:CalcMagicDamage(unit, GetCastLevel(enemy, _R)*150 + 100 + 0.6*enemy.ap)
+   return enemy:CalcMagicDamage(unit, myHero:GetSpellData(_R).level*150 + 100 + 0.6*enemy.ap)
   else
    return 0
   end
@@ -153,7 +153,7 @@ end
 function RxZilean:CastW()
 local target = tslowhp:GetTarget()
  if target and IsInRange(target, QRange) then
-  CastSpell(_W)
+  myHero:Cast(_W)
  end
 end
 
@@ -162,7 +162,7 @@ local target = tslowhp:GetTarget()
  if target and IsInRange(target, QRange) then
   local QPred = GetCircularAOEPrediction(target, ZileanQ(target))
   if QPred.hitChance >= Zilean.Misc.Qhc:Value()/10 then
-   CastSkillShot(_Q, QPred.castPos)
+   myHero:Cast(_Q, QPred.castPos)
   end
  end
 end
@@ -172,7 +172,7 @@ function RxZilean:Combo()
     self:CastQ()
  end
  
- if IsReady(_W) and Zilean.cb.WCB:Value() and GetCurrentMana(myHero) >= 90 + 5*GetCastLevel(myHero, _Q) and not IsReady(_Q) then
+ if IsReady(_W) and Zilean.cb.WCB:Value() and GetCurrentMana(myHero) >= 90 + 5*myHero:GetSpellData(_Q).level and not IsReady(_Q) then
     self:CastW()
  end
  
@@ -182,8 +182,8 @@ function RxZilean:Combo()
 end
 
 function RxZilean:AutoR()
- if CountObjectsNearPos(myHero.pos, 1000, 1000, GetEnemyHeroes(), MINION_ENEMY) > 0 and GetPercentHP(myHero) <= Zilean.Misc.AutoR.myHP:Value() then CastTargetSpell(myHero, _R) end
- if CanR and KarthusDmg(myHero) > myHero.health + myHero.shieldAD + myHero.shieldAP then CastTargetSpell(myHero, _R) end
+ if CountObjectsNearPos(myHero.pos, 1000, 1000, GetEnemyHeroes(), MINION_ENEMY) > 0 and GetPercentHP(myHero) <= Zilean.Misc.AutoR.myHP:Value() then myHero:Cast(_R, myHero) end
+ if CanR and KarthusDmg(myHero) > myHero.health + myHero.shieldAD + myHero.shieldAP then myHero:Cast(_R, myHero) end
 end
 
 function RxZilean:CastECb()
@@ -196,17 +196,17 @@ local unit = GetCurrentTarget()
    local Enm = EnemiesAround(myHero.pos, ERange)
    local ali = ClosestAlly(GetMousePos())
     if Al > 0 and 1 + Al >= Enm and GotBuff(target, "Stun") < 1 then
-      CastTargetSpell(target, _E)
+     myHero:Cast(_E, target)
     elseif Al > 0 and Al < Enm then
 	 if IsInDistance(ally, ERange) then
       if GetDistance(ali, GetMousePos()) <= 160 and GetDistance(ali, GetMousePos()) < GetDistance(myHero.pos, GetMousePos()) and CheckE(ali) then
-       CastTargetSpell(ali, _E)
+       myHero:Cast(_E, ali)
       else
-       if CheckE(myHero) and GetDistance(myHero.pos, GetMousePos()) <= 160 then CastTargetSpell(myHero, _E) end
+       if CheckE(myHero) and GetDistance(myHero.pos, GetMousePos()) <= 160 then myHero:Cast(_E, myHero) end
       end
      end
     elseif Al < 1 and IsInDistance(unit, ERange) and CheckE(myHero) and not IsInDistance(unit, 880) then
-      CastTargetSpell(myHero, _E)
+     myHero:Cast(_E, myHero)
     end
    end
   end
@@ -217,14 +217,14 @@ function RxZilean:KillSteal()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if Ignite and Zilean.KS.IgniteKS:Value() then
    if IsReady(Ignite) and 20*GetLevel(myHero)+50 >= enemy.health+enemy.shieldAD + enemy.hpRegen*2.5 and IsInRange(enemy, 600) then
-	CastTargetSpell(enemy, Ignite)
+	myHero:Cast(Ignite, enemy)
    end
   end
 
-  if IsReady(_Q) and Zilean.KS.QKS:Value() and enemy.health + enemy.shieldAD + enemy.shieldAP < myHero:CalcMagicDamage(enemy, QDmg[GetCastLevel(myHero, _Q)]) and IsInRange(enemy, QRange) then
+  if IsReady(_Q) and Zilean.KS.QKS:Value() and enemy.health + enemy.shieldAD + enemy.shieldAP < myHero:CalcMagicDamage(enemy, 0.9*myHero.ap + QDmg[myHero:GetSpellData(_Q).level]) and IsInRange(enemy, QRange) then
    local QPred = GetCircularAOEPrediction(enemy, ZileanQ(enemy))
-   if QPred.hitChance >= 0.2 then CastSkillShot(_Q, QPred.castPos) end
-   if IsReady(_W) and GetCurrentMana(myHero) >= 145 + 5*GetCastLevel(myHero, _Q) and not IsReady(_Q) then CastSpell(_W) end
+   if QPred.hitChance >= 0.2 then myHero:Cast(_Q, QPred.castPos) end
+   if IsReady(_W) and GetCurrentMana(myHero) >= 145 + 5*myHero:GetSpellData(_Q).level and not IsReady(_Q) then myHero:Cast(_W) end
   end
  end
 end
@@ -234,14 +234,14 @@ function RxZilean:AutoQ(enemy)
   if IsReady(_Q) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSQ.ASQ:Value() and GotBuff(myHero, "recall") < 1 and IsInRange(enemy, QRange) and CheckQ(enemy) then
    local QPred = GetCircularAOEPrediction(enemy, ZileanQ(enemy))
    if QPred.hitChance >= 1 then
-    CastSkillShot(_Q, QPred.castPos)
+    myHero:Cast(_Q, QPred.castPos)
    end
   end
  end
 end
  
 function RxZilean:AutoE()
- if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") < 1 and CheckE(myHero) then CastTargetSpell(myHero, _E) end
+ if IsReady(_E) and GetPercentMP(myHero) >= Zilean.AtSpell.ASMP:Value() and Zilean.AtSpell.ATSE.ASE:Value() and Zilean.AtSpell.ATSE.KeyE:Value() and GotBuff(myHero, "recall") < 1 and CheckE(myHero) then myHero:Cast(_E, myHero) end
   if Zilean.AtSpell.ATSE.KeyE:Value() then MoveToXYZ(GetMousePos()) end
 end
 
@@ -256,7 +256,7 @@ function RxZilean:LaneJungleClear()
   if minimobs.team == MINION_ENEMY or minimobs.team == MINION_JUNGLE then
    if minimobs.health > 0 and IsInRange(minimobs, 900) and IsReady(_Q) and Zilean.ljc.LJcQ:Value() then
     local QPred = GetCircularAOEPrediction(minimobs, ZileanQ(minimobs))
-    if QPred.hitChance >= 0.1 then CastSkillShot(_Q, QPred.castPos) end
+    if QPred.hitChance >= 0.1 then myHero:Cast(_Q, QPred.castPos) end
    end
   end
  end
@@ -303,7 +303,7 @@ local per = '%'
  for l, ally in pairs(GetAllyHeroes()) do
   if IsInRange(ally, 4000) then	
   local pos = WorldToScreen(1, ally.pos)
-   if GetCastLevel(myHero, _R) > 0 then
+   if myHero:GetSpellData(_R).level > 0 then
     local color = GetPercentHP(ally) > 20 and GoS.White or GoS.Red
     if CheckR(ally) and KarthusDmg(ally) > ally.health + ally.shieldAD + ally.shieldAP then
      DrawText("This Unit can die with Karthus R", 22, alliesPos.x, alliesPos.y+12, GoS.Red)
@@ -313,20 +313,20 @@ local per = '%'
   end	
  end
 
-  if myHero.alive and GetCastLevel(myHero, _R) > 0 then
+  if myHero.alive and myHero:GetSpellData(_R).level > 0 then
    local pos = WorldToScreen(1, myHero.pos)
    if GetPercentHP(myHero) <= 20 then DrawText(string.format("%sHP = %d%s CAREFUL!", per, math.max(1, GetPercentHP(myHero)), per), 21, pos.x-20, pos.y+16, GoS.Red) end
   end
 end
 
 function RxZilean:InfoR()
-text = ""
+local text = ""
  for l, ally in pairs(GetAllyHeroes()) do
-  if IsInRange(ally, 2500) and GetPercentHP(ally) < 20 then
+  if IsInRange(ally, 2500) and GetPercentHP(ally) < 20 and EnemiesAround(ally.pos, 1000) > 0 then
     text = text..ally.charName.." %HP < 20%. Should Use R\n"
   end
  end
-    DrawText(text, 27, 0, 110, GoS.Green) 
+   DrawText(text, 27, 0, 110, GoS.Green)
 end
 
 function RxZilean:DrawRHP()
@@ -340,9 +340,9 @@ function RxZilean:DmgHPBar()
  for i, enemy in pairs(GetEnemyHeroes()) do
   if IsInRange(enemy, 3000) then
    if IsReady(_Q) or CheckQ(enemy) then
-    DrawDmgOverHpBar(enemy, enemy.health, 0, myHero:CalcMagicDamage(enemy, QDmg[GetCastLevel(myHero, _Q)]), GoS.White)
+    DrawDmgOverHpBar(enemy, enemy.health, 0, myHero:CalcMagicDamage(enemy, 0.9*myHero.ap + QDmg[myHero:GetSpellData(_Q).level]), GoS.Green)
    else
-    DrawDmgOverHpBar(enemy, enemy.health, myHero.damage, 0, GoS.White)
+    DrawDmgOverHpBar(enemy, enemy.health, myHero.damage, 0, GoS.Green)
    end
   end
  end
@@ -360,15 +360,15 @@ local str = {[_Q] = "Q", [_W] = "W", [_E] = "E", [_R] = "R"}
 end, 1)
 
 function RxZilean:AutoQQ(unit, spell)
- if unit.type == Obj_AI_Hero and unit.team ~= myHero.team and myHero.mana >= 145 + 5*GetCastLevel(myHero, _Q) then
+ if unit.type == Obj_AI_Hero and unit.team ~= myHero.team and myHero.mana >= 145 + 5*myHero:GetSpellData(_Q).level then
   if IsReady(_Q) or CheckQ(unit) then
    if IsReady(_W) or CheckQ(unit) then
     if ANTI_SPELLS[spell.name] then
      if IsInRange(unit, QRange) and unit.charName == ANTI_SPELLS[spell.name].Name and Zilean.Misc.Interrupt[unit.charName.."Inter"]:Value() then 
      local QPred = GetCircularAOEPrediction(unit, ZileanQ(unit))
-      if QPred.hitChance >= 0.2 then CastSkillShot(_Q, QPred.castPos) end
+      if QPred.hitChance >= 0.2 then myHero:Cast(_Q, QPred.castPos) end
       if IsReady(_W) and not IsReady(_Q) then
-        CastSpell(_W)
+       myHero:Cast(_W)
       end
      end
     end
@@ -378,17 +378,17 @@ function RxZilean:AutoQQ(unit, spell)
 end
 
 function RxZilean:UpdateBuff(o, buff)
- if buff.Name == "karthusfallenonetarget" and o.networkID == myHero.networkID then
+ if buff.Name == "karthusfallenonetarget" and o == myHero then
   CanR = true
  end
 end
 
 function RxZilean:RemoveBuff(o, buff)
- if buff.Name == "karthusfallenonetarget" and o.networkID == myHero.networkID then
+ if buff.Name == "karthusfallenonetarget" and o == myHero then
   CanR = false
  end
 end
 
-PrintChat("<font color='#FFFF00'>RxZilean Version 0.575 Loaded Success</font>")
+PrintChat("<font color='#FFFF00'>RxZilean Version 0.576 Loaded Success</font>")
 PrintChat(string.format("<font color='#08F7F3'>Enjoy and Good Luck %s (%s)</font>", GetUser(), myHero.name))
 if myHero.charName == "Zilean" then RxZilean() end
